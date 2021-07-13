@@ -86,6 +86,7 @@ final class TypeChecker
             };
         }
 
+        // A value that is not null
         if ($type === 'nonnull' || $type === 'notnull') {
             return function ($value): bool {
                 return $value !== null;
@@ -110,24 +111,28 @@ final class TypeChecker
             };
         }
 
-        if ($type === 'num') {
+        // A number: int or float
+        if ($type === 'num' || $type === 'number') {
             return function ($value): bool {
                 return is_($value, 'int') || is_($value, 'float');
             };
         }
 
-        if ($type === 'mixed' || $type === 'dynamic') {
-            return function ($value): bool {
+        // Everything
+        if ($type === 'mixed' || $type === 'dynamic' || $type === 'any') {
+            return function (): bool {
                 return true;
             };
         }
 
+        // Noting
         if ($type === 'void' || $type === 'nothing') {
-            return function ($value): bool {
+            return function (): bool {
                 return false;
             };
         }
 
+        // A valid array key: int or string
         if ($type === 'arraykey') {
             return function ($value): bool {
                 return is_($value, 'int') || is_($value, 'string');
@@ -203,6 +208,9 @@ final class TypeChecker
             };
         }
 
+        // Empty
+
+
         // Class/Interface type
         // TODO: instanceof doesn't work with traits
         if (class_exists($type) || interface_exists($type)) {
@@ -211,6 +219,8 @@ final class TypeChecker
             };
         }
 
+        // char
+        // positive, negative
         // Stringish = string|Stringable
         // empty
         // notempty, nonempty

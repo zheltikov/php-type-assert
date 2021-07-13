@@ -81,8 +81,8 @@ Here comes a list of the supported types and how they are checked internally:
 |`'countable'`|`is_countable()`||
 |`'numeric'`|`is_numeric()`||
 |`'scalar'`|`is_scalar()`||
-|`'num'`|`is_int()` or `is_float()`|Useful for custom math functions and libraries.|
-|`'mixed'`, `'dynamic'`|always `true`||
+|`'num'`, `'number'`|`is_int()` or `is_float()`|Useful for custom math functions and libraries.|
+|`'mixed'`, `'dynamic'`, `'any'`|always `true`||
 |`'void'`, `'nothing'`|always `false`||
 |`'arraykey'`|`is_int()` or `is_string()`|Useful for checking whether a value is valid for indexing an array.|
 |`?<some_other_type>`|`$value === null` or `is_($value, 'some_other_type')`|This is also called "Nullable type".<br />The value can be either `null` or of the type specified after.<br />For example: `?string` refers to either `null` or a `string`.|
