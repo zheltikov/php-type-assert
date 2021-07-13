@@ -211,6 +211,9 @@ final class TypeChecker
         // varray<_>, vec<_>
         // darray<_, _>, dict<_, _>
         // array<_>, array<_, _>
+        // Type unions = int|string|null|DateTime
+        // Type intersections = Exception&Throwable
+        // Type negations = !int
 
         // Vector, ImmVector, Map, ImmMap, Set, ImmSet and Pair
         // Container interfaces
