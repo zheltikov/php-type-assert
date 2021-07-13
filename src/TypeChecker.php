@@ -86,7 +86,7 @@ final class TypeChecker
             };
         }
 
-        if ($type === 'nonnull') {
+        if ($type === 'nonnull' || $type === 'notnull') {
             return function ($value): bool {
                 return $value !== null;
             };
@@ -211,6 +211,9 @@ final class TypeChecker
             };
         }
 
+        // Stringish = string|Stringable
+        // empty
+        // notempty, nonempty
         // tuples
         // shapes (by default, closed)
         // open shapes (with ... in the field list)
