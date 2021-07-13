@@ -145,6 +145,17 @@ final class TypeChecker
             };
         }
 
+        // Negated type
+        if (
+            $type[0] === '!'
+            && $strlen > 1
+        ) {
+            $other_type = substr($type, 1);
+            return function ($value) use ($other_type): bool {
+                return !is_($value, $other_type);
+            };
+        }
+
         if ($type === 'classname') {
             return function ($value): bool {
                 return is_($value, 'string') && class_exists($value);
@@ -213,7 +224,6 @@ final class TypeChecker
         // array<_>, array<_, _>
         // Type unions = int|string|null|DateTime
         // Type intersections = Exception&Throwable
-        // Type negations = !int
 
         // Vector, ImmVector, Map, ImmMap, Set, ImmSet and Pair
         // Container interfaces
