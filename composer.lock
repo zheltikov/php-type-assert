@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59817699b3097ddce6e632f916abc8cb",
+    "content-hash": "a648735c645e5c2f38e609c965d63958",
     "packages": [
         {
             "name": "zheltikov/php-exceptions",
@@ -47,6 +47,53 @@
                 "source": "https://github.com/zheltikov/php-exceptions/tree/1.0.0"
             },
             "time": "2021-07-13T09:24:39+00:00"
+        },
+        {
+            "name": "zheltikov/php-invariant",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zheltikov/php-invariant.git",
+                "reference": "63a4468db112051db233e12c1e3e149503f3f848"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zheltikov/php-invariant/zipball/63a4468db112051db233e12c1e3e149503f3f848",
+                "reference": "63a4468db112051db233e12c1e3e149503f3f848",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4",
+                "zheltikov/php-exceptions": "^1.0"
+            },
+            "require-dev": {
+                "nazar-pc/phpt-tests-runner": "^1.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zheltikov\\Invariant\\": "src/"
+                },
+                "files": [
+                    "src/functions.php",
+                    "src/TypeAssert/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Max Zheltikov",
+                    "homepage": "https://github.com/zheltikov"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/zheltikov/php-invariant/issues",
+                "source": "https://github.com/zheltikov/php-invariant/tree/1.1.2"
+            },
+            "time": "2021-07-13T11:05:53+00:00"
         }
     ],
     "packages-dev": [
