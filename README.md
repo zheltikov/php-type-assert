@@ -88,7 +88,9 @@ Here comes a list of the supported types and how they are checked internally:
 |`?<some_other_type>`|`$value === null` or `is_($value, 'some_other_type')`|This is also called "Nullable type".<br />The value can be either `null` or of the type specified after.<br />For example: `?string` refers to either `null` or a `string`.|
 |`!<some_other_type>`|when `is_($value, 'some_other_type')` is `false`|This is called a "Negated type".<br />Useful for checking that a value is not of a certain type.<br />For example: `!array` refers to any type except `array`.|
 |`<class_or_interface_name>`|`$value instanceof 'class_or_interface_name'`|Useful for checking that a value is an class instance that has a certain member (parent class or interface) in its hierarchy.|
-|`'classname'`|`is_string($value)` and `class_exists($value)`|To check whether a given value is a valid classname.|
+|`'classname'`|`is_string($value)` and `class_exists($value)`|To check whether a given value is a valid class name.|
+|`'interfacename'`|`is_string($value)` and `interface_exists($value)`|To check whether a given value is a valid interface name.|
+|`'traitname'`|`is_string($value)` and `trait_exists($value)`|To check whether a given value is a valid trait name.|
 |`'empty'`|`empty($value)`||
 |`'nonempty'`, `'notempty'`|when `empty($value)` is `false`||
 |`'char'`|when `is_string()` and `strlen($value) === 1`||

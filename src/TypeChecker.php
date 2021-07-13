@@ -167,6 +167,18 @@ final class TypeChecker
             };
         }
 
+        if ($type === 'interfacename') {
+            return function ($value): bool {
+                return is_($value, 'string') && interface_exists($value);
+            };
+        }
+
+        if ($type === 'traitname') {
+            return function ($value): bool {
+                return is_($value, 'string') && trait_exists($value);
+            };
+        }
+
         // Tuple
         if (
             $type[0] === '('
