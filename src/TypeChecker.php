@@ -270,21 +270,12 @@ final class TypeChecker
         }
 
         // positive, negative
-        // tuples
-        // shapes (by default, closed)
-        // open shapes (with ... in the field list)
-        // optional shape fields (like `shape(?'my_field' => int)`)
-        // Enums
-        // Backed Enums
         // this
         // classname<_>
-        // interfacename
-        // traitname
+        // interfacename<_>
+        // traitname<_>
         // varray<_>, vec<_>
         // darray<_, _>, dict<_, _>
-        // array<_>, array<_, _>
-        // Type unions = int|string|null|DateTime
-        // Type intersections = Exception&Throwable
 
         // Vector, ImmVector, Map, ImmMap, Set, ImmSet and Pair
         // Container interfaces
