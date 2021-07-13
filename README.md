@@ -1,6 +1,6 @@
 # php-type-assert
 
-A type checking/assertion library for PHP.
+A type checking/assertion library for PHP, for more compact and secure code.
 
 ## Installation
 
@@ -50,6 +50,25 @@ null_as_(1, 'int');        // 1
 null_as_('foo', 'int');    // null
 null_as_(123, '?num');     // 123
 null_as_('bar', '?num');   // null
+
+// As you can see performing type checks with these functions is much more
+// compact that doing it with `if`s
+// For example, instead of...
+
+if (is_int($value) || is_float($value)) {
+    // do something
+}
+
+// ...use...
+
+if (is_($value, 'num')) {
+    // do something
+}
+
+// ...or even...
+
+as_($value, 'num');
+// do something
 
 ```
 
