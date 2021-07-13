@@ -209,7 +209,45 @@ final class TypeChecker
         }
 
         // Empty
+        if ($type === 'empty') {
+            return function ($value): bool {
+                return empty($value);
+            };
+        }
 
+        // Not empty
+        if ($type === 'nonempty' || $type === 'notempty') {
+            return function ($value): bool {
+                return !empty($value);
+            };
+        }
+
+        // Single character
+        if ($type === 'char') {
+            return function ($value): bool {
+                return is_($value, 'string') && strlen($value) === 1;
+            };
+        }
+
+        // Stringish
+        if ($type === 'Stringish') {
+            return function ($value): bool {
+                if (is_($value, 'string')) { return true; }
+
+                // TODO: maybe add a check for `PHP_VERSION_ID >= 80000`?
+                if (interface_exists('\Stringable')) {
+                    if ($value instanceof \Stringable) {
+                        return true;
+                    }
+                }
+
+                if (is_object($value) && method_exists($value, '__toString')) {
+                    return true;
+                }
+
+                return false;
+            };
+        }
 
         // Class/Interface type
         // TODO: instanceof doesn't work with traits
@@ -219,11 +257,7 @@ final class TypeChecker
             };
         }
 
-        // char
         // positive, negative
-        // Stringish = string|Stringable
-        // empty
-        // notempty, nonempty
         // tuples
         // shapes (by default, closed)
         // open shapes (with ... in the field list)
@@ -232,6 +266,8 @@ final class TypeChecker
         // Backed Enums
         // this
         // classname<_>
+        // interfacename
+        // traitname
         // varray<_>, vec<_>
         // darray<_, _>, dict<_, _>
         // array<_>, array<_, _>
