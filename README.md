@@ -99,5 +99,30 @@ Here comes a list of the supported types and how they are checked internally:
 ## TODO
 
 - [X] Support for built-in PHP types
-- [X] Support for some useful types
-- [ ] ...
+- [X] Support for `null` and `nonnull`
+- [X] Support for `empty` and `nonempty`
+- [X] Support for `mixed` and `void`
+- [X] Support for `num`
+- [X] Support for `arraykey`
+- [X] Support for nullable types
+- [X] Support for negated types
+- [X] Support for `classname`, `interfacename` and `traitname`
+- [X] Support for `char`
+- [X] Support for `Stringish`: any string-like value
+- [X] Support for custom classnames
+- [ ] Support for tuples. For example: `(int, ?DateTime, bool)`
+- [ ] Support for closed shapes. For example: `shape('id' => int, 'name' => string)`
+- [ ] Support for open shapes. For example: `shape('id' => int, 'name' => string, ...)`
+- [ ] Support for optional shape fields. For example: `shape('id' => int, ?'name' => string)`
+- [ ] Support for enums:
+  - [ ] Check by enum type
+  - [ ] Check by enum field name
+- [ ] Support for array generics
+  - [ ] By value. For example: `array<User>`
+  - [ ] By key and value. For example: `array<string, int>`
+- [ ] Support for unions. For example: `int|string|null`
+- [ ] Support for intersections. For example: `Exception&Throwable`
+- [ ] Modularity, ability to define custom checker functions and types
+- [ ] Memoize some checker functions
+- [ ] Support for type alias definitions
+- [ ] Support for type precedence checking definition
