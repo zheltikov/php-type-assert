@@ -29,7 +29,27 @@ require_once(__DIR__ . '/../vendor/autoload.php');
 
 use Zheltikov\TypeAssert\{is_, as_, null_as_};
 
-// TODO: ...
+// Using `is_()` to check types
+is_(1, 'int');        // true
+is_('foo', 'int');    // false
+is_(1, 'num');        // true
+is_(1.5, 'num');      // true
+is_('foo', 'num');    // false
+is_('mykey', '?arraykey');  // true
+is_('bar', '!num');    // true
+is_('X', 'char');    // true
+
+// Enforcing types with `as_()`
+as_(1, 'int');        // 1
+as_('foo', 'int');    // TypeAssertionException
+as_(123, '?num');     // 123
+as_('bar', '?num');   // TypeAssertionException
+
+// Get `null` if the type does not match with `null_as_()`
+null_as_(1, 'int');        // 1
+null_as_('foo', 'int');    // null
+null_as_(123, '?num');     // 123
+null_as_('bar', '?num');   // null
 
 ```
 
