@@ -149,6 +149,9 @@ Here comes a list of the supported types and how they are checked internally:
 - [X] Support for `char`
 - [X] Support for `Stringish`: any string-like value
 - [X] Support for custom classnames
+- [ ] Support for `true` and `false`
+- [ ] Support for `positive`, `nonpositive` and `notpositive`
+- [ ] Support for `negative`, `nonnegative` and `notnegative`
 - [ ] Support for tuples. For example: `(int, ?DateTime, bool)`
 - [ ] Support for closed shapes. For example: `shape('id' => int, 'name' => string)`
 - [ ] Support for open shapes. For example: `shape('id' => int, 'name' => string, ...)`
