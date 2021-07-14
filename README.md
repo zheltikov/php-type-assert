@@ -136,6 +136,10 @@ Here comes a list of the supported types and how they are checked internally:
 |`'Stringish'`|when `is_string()`, otherwise. see Notes.|This type refers to values that are strings or are string-convertible objects; those that provide the `__toString()` method.<br />For PHP 8.0, a value is also `'Stringish'` if the following is true: `$value instanceof \Stringable`.|
 |`'true'`|`$value === true`||
 |`'false'`|`$value === false`||
+|`'positive'`|`$value > 0`||
+|`'nonpositive'`, `'notpositive'`|`$value <= 0`||
+|`'negative'`|`$value < 0`||
+|`'nonnegative'`, `'notnegative'`|`$value >= 0`||
 
 ## TODO
 
@@ -152,8 +156,8 @@ Here comes a list of the supported types and how they are checked internally:
 - [X] Support for `Stringish`: any string-like value
 - [X] Support for custom classnames
 - [X] Support for `true` and `false`
-- [ ] Support for `positive`, `nonpositive` and `notpositive`
-- [ ] Support for `negative`, `nonnegative` and `notnegative`
+- [X] Support for `positive`, `nonpositive` and `notpositive`
+- [X] Support for `negative`, `nonnegative` and `notnegative`
 - [ ] Support for tuples. For example: `(int, ?DateTime, bool)`
 - [ ] Support for closed shapes. For example: `shape('id' => int, 'name' => string)`
 - [ ] Support for open shapes. For example: `shape('id' => int, 'name' => string, ...)`

@@ -275,6 +275,34 @@ final class TypeChecker
             };
         }
 
+        // Positive
+        if ($type === 'positive') {
+            return function ($value): bool {
+                return $value > 0;
+            };
+        }
+
+        // Not Positive
+        if ($type === 'nonpositive' || $type === 'notpositive') {
+            return function ($value): bool {
+                return !is_($value, 'positive');
+            };
+        }
+
+        // Negative
+        if ($type === 'negative') {
+            return function ($value): bool {
+                return $value < 0;
+            };
+        }
+
+        // Not Negative
+        if ($type === 'nonnegative' || $type === 'notnegative') {
+            return function ($value): bool {
+                return !is_($value, 'negative');
+            };
+        }
+
         // Class/Interface type
         // TODO: instanceof doesn't work with traits
         if (class_exists($type) || interface_exists($type)) {
