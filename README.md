@@ -134,6 +134,8 @@ Here comes a list of the supported types and how they are checked internally:
 |`'nonempty'`, `'notempty'`|when `empty($value)` is `false`||
 |`'char'`|when `is_string()` and `strlen($value) === 1`||
 |`'Stringish'`|when `is_string()`, otherwise. see Notes.|This type refers to values that are strings or are string-convertible objects; those that provide the `__toString()` method.<br />For PHP 8.0, a value is also `'Stringish'` if the following is true: `$value instanceof \Stringable`.|
+|`'true'`|`$value === true`||
+|`'false'`|`$value === false`||
 
 ## TODO
 
@@ -149,7 +151,7 @@ Here comes a list of the supported types and how they are checked internally:
 - [X] Support for `char`
 - [X] Support for `Stringish`: any string-like value
 - [X] Support for custom classnames
-- [ ] Support for `true` and `false`
+- [X] Support for `true` and `false`
 - [ ] Support for `positive`, `nonpositive` and `notpositive`
 - [ ] Support for `negative`, `nonnegative` and `notnegative`
 - [ ] Support for tuples. For example: `(int, ?DateTime, bool)`

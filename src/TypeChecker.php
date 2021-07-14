@@ -261,6 +261,20 @@ final class TypeChecker
             };
         }
 
+        // True
+        if ($type === 'true') {
+            return function ($value): bool {
+                return $value === true;
+            };
+        }
+
+        // False
+        if ($type === 'false') {
+            return function ($value): bool {
+                return $value === false;
+            };
+        }
+
         // Class/Interface type
         // TODO: instanceof doesn't work with traits
         if (class_exists($type) || interface_exists($type)) {
