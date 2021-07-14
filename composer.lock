@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "378ee957c4da29a1d96eaccafd80a1eb",
+    "content-hash": "0be435cddd9b53e2b3a126fe0874579b",
     "packages": [
         {
             "name": "zheltikov/php-exceptions",
@@ -50,21 +50,22 @@
         },
         {
             "name": "zheltikov/php-invariant",
-            "version": "1.1.2",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zheltikov/php-invariant.git",
-                "reference": "63a4468db112051db233e12c1e3e149503f3f848"
+                "reference": "c704b777a4e319e79eee68e279298144c88f26dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zheltikov/php-invariant/zipball/63a4468db112051db233e12c1e3e149503f3f848",
-                "reference": "63a4468db112051db233e12c1e3e149503f3f848",
+                "url": "https://api.github.com/repos/zheltikov/php-invariant/zipball/c704b777a4e319e79eee68e279298144c88f26dc",
+                "reference": "c704b777a4e319e79eee68e279298144c88f26dc",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4",
-                "zheltikov/php-exceptions": "^1.0"
+                "zheltikov/php-exceptions": "^1.0",
+                "zheltikov/php-type-assert": "^1.0"
             },
             "require-dev": {
                 "nazar-pc/phpt-tests-runner": "^1.4"
@@ -91,9 +92,9 @@
             ],
             "support": {
                 "issues": "https://github.com/zheltikov/php-invariant/issues",
-                "source": "https://github.com/zheltikov/php-invariant/tree/1.1.2"
+                "source": "https://github.com/zheltikov/php-invariant/tree/1.2.0"
             },
-            "time": "2021-07-13T11:05:53+00:00"
+            "time": "2021-07-14T06:48:11+00:00"
         }
     ],
     "packages-dev": [
