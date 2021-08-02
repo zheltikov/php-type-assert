@@ -50,25 +50,27 @@
         },
         {
             "name": "zheltikov/php-invariant",
-            "version": "1.2.0",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zheltikov/php-invariant.git",
-                "reference": "c704b777a4e319e79eee68e279298144c88f26dc"
+                "reference": "ef265ac63a8a2f85a3f259e745f2334dffdccf63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zheltikov/php-invariant/zipball/c704b777a4e319e79eee68e279298144c88f26dc",
-                "reference": "c704b777a4e319e79eee68e279298144c88f26dc",
+                "url": "https://api.github.com/repos/zheltikov/php-invariant/zipball/ef265ac63a8a2f85a3f259e745f2334dffdccf63",
+                "reference": "ef265ac63a8a2f85a3f259e745f2334dffdccf63",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4",
-                "zheltikov/php-exceptions": "^1.0",
-                "zheltikov/php-type-assert": "^1.0"
+                "zheltikov/php-exceptions": "^1.0"
             },
             "require-dev": {
                 "nazar-pc/phpt-tests-runner": "^1.4"
+            },
+            "suggest": {
+                "zheltikov/php-type-assert": "Provides type checking/assertion functionality."
             },
             "type": "library",
             "autoload": {
@@ -76,8 +78,7 @@
                     "Zheltikov\\Invariant\\": "src/"
                 },
                 "files": [
-                    "src/functions.php",
-                    "src/TypeAssert/functions.php"
+                    "src/functions.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -92,9 +93,9 @@
             ],
             "support": {
                 "issues": "https://github.com/zheltikov/php-invariant/issues",
-                "source": "https://github.com/zheltikov/php-invariant/tree/1.2.0"
+                "source": "https://github.com/zheltikov/php-invariant/tree/1.2.2"
             },
-            "time": "2021-07-14T06:48:11+00:00"
+            "time": "2021-07-19T08:58:03+00:00"
         }
     ],
     "packages-dev": [
