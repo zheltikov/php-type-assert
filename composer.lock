@@ -4,8 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0be435cddd9b53e2b3a126fe0874579b",
+    "content-hash": "f96911e681082da90aaa35f3bf20e12b",
     "packages": [
+        {
+            "name": "ircmaxell/php-yacc",
+            "version": "v0.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ircmaxell/PHP-Yacc.git",
+                "reference": "c1525792be8f477a33f1466dfe8ad8eb09242b16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ircmaxell/PHP-Yacc/zipball/c1525792be8f477a33f1466dfe8ad8eb09242b16",
+                "reference": "c1525792be8f477a33f1466dfe8ad8eb09242b16",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": ">=0.8",
+                "phpunit/phpunit": ">=6.3"
+            },
+            "bin": [
+                "bin/phpyacc"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpYacc\\": "lib/"
+                },
+                "files": [
+                    "lib/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Anthony Ferrara",
+                    "email": "ircmaxell@php.net"
+                }
+            ],
+            "description": "A PHP YACC Parser-Generator library",
+            "support": {
+                "issues": "https://github.com/ircmaxell/PHP-Yacc/issues",
+                "source": "https://github.com/ircmaxell/PHP-Yacc/tree/master"
+            },
+            "time": "2020-08-09T18:42:33+00:00"
+        },
         {
             "name": "zheltikov/php-exceptions",
             "version": "1.0.0",
