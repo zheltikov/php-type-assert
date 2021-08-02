@@ -16,8 +16,7 @@
     "zheltikov/php-invariant": "^1.1"
   },
   "require-dev": {
-    "nazar-pc/phpt-tests-runner": "^1.4",
-    "ircmaxell/php-yacc": "^0.0.7"
+    "nazar-pc/phpt-tests-runner": "^1.4"
   },
   "authors": [
     {
