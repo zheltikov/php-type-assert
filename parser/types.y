@@ -54,16 +54,22 @@
 %token GENERIC_LIST_START
 %token GENERIC_LIST_END
 %token TOKEN_UNION
+%token TOKEN_INTERSECTION
 
 %%
 
-root : type         { ast = $1; }
-     | union_type   { ast = $1; }
+root : type                 { ast = $1; }
+     | union_type           { ast = $1; }
+     | intersection_type    { ast = $1; }
      ;
 
 union_type : union_type TOKEN_UNION type    { $$ = new Node(Type::UNION); $$->appendChild($1)->appendChild($3); }
            | type                           { $$ = new Node(Type::UNION); $$->appendChild($1); }
            ;
+
+intersection_type : intersection_type TOKEN_INTERSECTION type    { $$ = new Node(Type::INTERSECTION); $$->appendChild($1)->appendChild($3); }
+                  | type                                         { $$ = new Node(Type::INTERSECTION); $$->appendChild($1); }
+                  ;
 
 type : scalar_type      { $$ = $1; }
      | compound_type    { $$ = $1; }

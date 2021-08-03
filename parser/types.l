@@ -87,6 +87,7 @@
 <                   { return GENERIC_LIST_START; }
 >                   { return GENERIC_LIST_END; }
 |                   { return TOKEN_UNION; }
+&                   { return TOKEN_INTERSECTION; }
 
 [ \t\n]             ;
 .                   { yyerror("Unexpected character"); }
