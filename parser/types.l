@@ -8,7 +8,10 @@ char* cursor;
 int yylex()
 {
 
+restart:
+
 %{ // Begin re2c lexer
+re2c:yyfill:check = 0;
 re2c:yyfill:enable = 0;
 re2c:define:YYCTYPE = "char";
 re2c:define:YYCURSOR = "cursor";
@@ -101,7 +104,7 @@ re2c:define:YYCURSOR = "cursor";
 "|"                 { return TOKEN_UNION; }
 "&"                 { return TOKEN_INTERSECTION; }
 
-[ \t\n]             { std::cout << "whitespace"; return TOKEN_WHITESPACE; }
+[ \n\r\t]+          { std::cout << "whitespace"; goto restart; }
 .                   { return TOKEN_ERROR; }
 
 %} // End lexer

@@ -183,8 +183,12 @@ special_type : TYPE_RESOURCE    { $$ = new Node(Type::RESOURCE); }
 int main(int argc, char** argv)
 {
     std::string filename = argv[1];
+    std::cout << "Filename: " << filename << "\n";
+
     std::ifstream f(filename);
     std::string buffer(std::istreambuf_iterator<char>(f), {});
+
+    std::cout << "Buffer: " << buffer << "\n";
 
     // cursor = buffer.c_str();
     cursor = const_cast<char*>(buffer.c_str());
@@ -192,6 +196,8 @@ int main(int argc, char** argv)
     yyparse();
 
     ast->print();
+
+    std::cout << "\n";
 
     return 0;
 }
