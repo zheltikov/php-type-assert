@@ -74,7 +74,7 @@
 | "notnegative"     { return TYPE_NOT_NEGATIVE; }
 
 [a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*
-                    { return TYPE_USER_CLASSNAME; }
+                    { return TYPE_USER_DEFINED; }
 
 ?                   { return PREFIX_NULLABLE; }
 !                   { return PREFIX_NEGATED; }
@@ -82,8 +82,10 @@
 )                   { return TUPLE_END; }
 ,                   { return TOKEN_COMMA; }
 =>                  { return TOKEN_ARROW; }
+<                   { return GENERIC_LIST_START; }
+>                   { return GENERIC_LIST_END; }
 
 [ \t\n]             ;
-.                   { ECHO; yyerror("Unexpected character"); }
+.                   { yyerror("Unexpected character"); }
 
 %%

@@ -7,13 +7,122 @@
 
 %start root
 
+%token TYPE_BOOL
+%token TYPE_INT
+%token TYPE_FLOAT
+%token TYPE_STRING
+%token TYPE_ARRAY
+%token TYPE_OBJECT
+%token TYPE_CALLABLE
+%token TYPE_ITERABLE
+%token TYPE_RESOURCE
+%token TYPE_NULL
+%token TYPE_NOT_NULL
+%token TYPE_COUNTABLE
+%token TYPE_NUMERIC
+%token TYPE_SCALAR
+%token TYPE_NUMBER
+%token TYPE_MIXED
+%token TYPE_VOID
+%token TYPE_ARRAYKEY
+%token TYPE_CLASSNAME
+%token TYPE_INTERFACENAME
+%token TYPE_TRAITNAME
+%token TYPE_SHAPE
+%token TYPE_VEC
+%token TYPE_DICT
+%token TYPE_KEYSET
+%token TYPE_VEC_OR_DICT
+%token TYPE_EMPTY
+%token TYPE_NOT_EMPTY
+%token TYPE_CHAR
+%token TYPE_STRINGISH
+%token TYPE_TRUE
+%token TYPE_FALSE
+%token TYPE_POSITIVE
+%token TYPE_NOT_POSITIVE
+%token TYPE_NEGATIVE
+%token TYPE_NOT_NEGATIVE
+%token TYPE_USER_DEFINED
+
+%token PREFIX_NULLABLE
+%token PREFIX_NEGATED
+%token TUPLE_START
+%token TUPLE_END
+%token TOKEN_COMMA
+%token TOKEN_ARROW
+%token GENERIC_LIST_START
+%token GENERIC_LIST_END
+
 %%
 
-root : type    { ast = $1; }
+root : type         { ast = $1; }
      ;
 
-type : /* empty */    { $$ = null; }
+type : scalar_type      { $$ = $1; }
+     | compound_type    { $$ = $1; }
+     | special_type     { $$ = $1; }
+     | other_type       { $$ = $1; }
      ;
+
+scalar_type : TYPE_BOOL      { $$ = new Node(Type::BOOL); }
+            | TYPE_INT       { $$ = new Node(Type::INT); }
+            | TYPE_FLOAT     { $$ = new Node(Type::FLOAT); }
+            | TYPE_STRING    { $$ = new Node(Type::STRING); }
+            ;
+
+compound_type : TYPE_ARRAY       { $$ = new Node(Type::ARRAY); }
+              | TYPE_OBJECT      { $$ = new Node(Type::OBJECT); }
+              | TYPE_CALLABLE    { $$ = new Node(Type::CALLABLE); }
+              | TYPE_ITERABLE    { $$ = new Node(Type::ITERABLE); }
+              ;
+
+special_type : TYPE_RESOURCE    { $$ = new Node(Type::RESOURCE); }
+             | TYPE_NULL        { $$ = new Node(Type::NULL); }
+             ;
+
+other_type : combo_type           { $$ = $1; }
+           | helper_type          { $$ = $1; }
+           | generic_type         { $$ = $1; }
+           | collection_type      { $$ = $1; }
+           | user_defined_type    { $$ = $1; }
+           ;
+
+combo_type : TYPE_SHAPE    { $$ = new Node(Type::SHAPE); }
+           | TYPE_TUPLE    { $$ = new Node(Type::TUPLE); }
+           ;
+
+collection_type : TYPE_VEC            { $$ = new Node(Type::VEC); }
+                | TYPE_DICT           { $$ = new Node(Type::DICT); }
+                | TYPE_KEYSET         { $$ = new Node(Type::KEYSET); }
+                | TYPE_VEC_OR_DICT    { $$ = new Node(Type::VEC_OR_DICT); }
+                ;
+
+user_defined_type : TYPE_USER_DEFINED    { $$ = new Node(Type::USER_DEFINED); }
+                  ;
+
+helper_type : TYPE_NOT_NULL         { $$ = new Node(Type::NOT_NULL); }
+            | TYPE_COUNTABLE        { $$ = new Node(Type::COUNTABLE); }
+            | TYPE_NUMERIC          { $$ = new Node(Type::NUMERIC); }
+            | TYPE_SCALAR           { $$ = new Node(Type::SCALAR); }
+            | TYPE_NUMBER           { $$ = new Node(Type::NUMBER); }
+            | TYPE_MIXED            { $$ = new Node(Type::MIXED); }
+            | TYPE_VOID             { $$ = new Node(Type::VOID); }
+            | TYPE_ARRAYKEY         { $$ = new Node(Type::ARRAYKEY); }
+            | TYPE_CLASSNAME        { $$ = new Node(Type::CLASSNAME); }
+            | TYPE_INTERFACENAME    { $$ = new Node(Type::INTERFACENAME); }
+            | TYPE_TRAITNAME        { $$ = new Node(Type::TRAITNAME); }
+            | TYPE_EMPTY            { $$ = new Node(Type::EMPTY); }
+            | TYPE_NOT_EMPTY        { $$ = new Node(Type::NOT_EMPTY); }
+            | TYPE_CHAR             { $$ = new Node(Type::CHAR); }
+            | TYPE_STRINGISH        { $$ = new Node(Type::STRINGISH); }
+            | TYPE_TRUE             { $$ = new Node(Type::TRUE); }
+            | TYPE_FALSE            { $$ = new Node(Type::FALSE); }
+            | TYPE_POSITIVE         { $$ = new Node(Type::POSITIVE); }
+            | TYPE_NOT_POSITIVE     { $$ = new Node(Type::NOT_POSITIVE); }
+            | TYPE_NEGATIVE         { $$ = new Node(Type::NEGATIVE); }
+            | TYPE_NOT_NEGATIVE     { $$ = new Node(Type::NOT_NEGATIVE); }
+            ;
 
 %%
 
