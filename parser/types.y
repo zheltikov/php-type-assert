@@ -5,8 +5,6 @@
 #include <variant>
 #include <vector>
 
-#include "types.hpp"
-
 enum Type {
     BOOL,
     INT,
@@ -76,15 +74,8 @@ public:
     }
 };
 
-void list_add() {}
-void create_list() {}
-
-// TODO: remove this
-int yylex(void) { return -1; }
-
-void yyerror(std::string str) {
-    std::cerr << str << "\n";
-}
+int yylex();
+void yyerror(std::string);
 
 Node* ast;
 
@@ -260,8 +251,18 @@ non_empty_generic_list : non_empty_generic_list TOKEN_COMMA type    { $$ = $1; $
 
 %%
 
-int main()
+#include <fstream>
+#include "types.hpp"
+
+int main(int argc, char** argv)
 {
+    std::string filename = argv[1];
+    std::ifstream f(filename);
+    std::string buffer(std::istreambuf_iterator<char>(f), {});
+
+    // cursor = buffer.c_str();
+    cursor = const_cast<char*>(buffer.c_str());
+
     yyparse();
 
     ast->print();

@@ -1,10 +1,17 @@
 
+void yyerror(std::string str) {
+    std::cerr << str << "\n";
+}
+
+char* cursor;
+
 int yylex()
 {
 
 %{ // Begin re2c lexer
 re2c:yyfill:enable = 0;
 re2c:define:YYCTYPE = "char";
+re2c:define:YYCURSOR = "cursor";
 
 "bool"
 | "boolean"         { return TYPE_BOOL; }
