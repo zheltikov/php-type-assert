@@ -101,8 +101,8 @@ re2c:define:YYCURSOR = "cursor";
 "|"                 { return TOKEN_UNION; }
 "&"                 { return TOKEN_INTERSECTION; }
 
-[ \t\n]             { ; }
-.                   { yyerror("Unexpected character"); }
+[ \t\n]             { std::cout << "whitespace"; return TOKEN_WHITESPACE; }
+.                   { return TOKEN_ERROR; }
 
 %} // End lexer
 
