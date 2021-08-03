@@ -5,7 +5,7 @@
 #include <variant>
 #include <vector>
 
-#include "y.tab.h"
+#include "types.hpp"
 
 enum Type {
     BOOL,

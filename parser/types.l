@@ -1,61 +1,84 @@
 
-%%
+int yylex()
+{
 
-bool|boolean        { return TYPE_BOOL; }
-int|integer|long    { return TYPE_INT; }
-float|double|real   { return TYPE_FLOAT; }
+%{ // Begin re2c lexer
+re2c:yyfill:enable = 0;
+re2c:define:YYCTYPE = "char";
 
-string              { return TYPE_STRING; }
-array               { return TYPE_ARRAY; }
-object              { return TYPE_OBJECT; }
-callable            { return TYPE_CALLABLE; }
-iterable            { return TYPE_ITERABLE; }
-resource            { return TYPE_RESOURCE; }
-null                { return TYPE_NULL; }
+"bool"
+| "boolean"         { return TYPE_BOOL; }
 
-nonnull|notnull     { return TYPE_NOT_NULL; }
+"int"
+| "integer"
+| "long"            { return TYPE_INT; }
 
-countable           { return TYPE_COUNTABLE; }
-numeric             { return TYPE_NUMERIC; }
-scalar              { return TYPE_SCALAR; }
+"float"
+| "double"
+| "real"            { return TYPE_FLOAT; }
 
-num|number          { return TYPE_NUMBER; }
-mixed|dynamic|any   { return TYPE_MIXED; }
-void|nothing        { return TYPE_VOID; }
+"string"            { return TYPE_STRING; }
+"array"             { return TYPE_ARRAY; }
+"object"            { return TYPE_OBJECT; }
+"callable"          { return TYPE_CALLABLE; }
+"iterable"          { return TYPE_ITERABLE; }
+"resource"          { return TYPE_RESOURCE; }
+"null"              { return TYPE_NULL; }
 
-arraykey            { return TYPE_ARRAYKEY; }
-classname           { return TYPE_CLASSNAME; }
-interfacename       { return TYPE_INTERFACENAME; }
-traitname           { return TYPE_TRAITNAME; }
-shape               { return TYPE_SHAPE; }
+"nonnull"
+| "notnull"         { return TYPE_NOT_NULL; }
 
-vec|varray          { return TYPE_VEC; }
-dict|darray         { return TYPE_DICT; }
+"countable"         { return TYPE_COUNTABLE; }
+"numeric"           { return TYPE_NUMERIC; }
+"scalar"            { return TYPE_SCALAR; }
 
-keyset              { return TYPE_KEYSET; }
+"num"
+| "number"          { return TYPE_NUMBER; }
 
-varray_or_darray|vec_or_dict
-                    { return TYPE_VEC_OR_DICT; }
+"mixed"
+| "dynamic"
+| "any"             { return TYPE_MIXED; }
 
-empty               { return TYPE_EMPTY; }
+"void"
+| "nothing"         { return TYPE_VOID; }
 
-nonempty|notempty   { return TYPE_NOT_EMPTY; }
+"arraykey"          { return TYPE_ARRAYKEY; }
+"classname"         { return TYPE_CLASSNAME; }
+"interfacename"     { return TYPE_INTERFACENAME; }
+"traitname"         { return TYPE_TRAITNAME; }
+"shape"             { return TYPE_SHAPE; }
 
-char                { return TYPE_CHAR; }
-Stringish           { return TYPE_STRINGISH; }
-true                { return TYPE_TRUE; }
-false               { return TYPE_FALSE; }
-positive            { return TYPE_POSITIVE; }
+"vec"
+| "varray"          { return TYPE_VEC; }
 
-nonpositive|notpositive
-                    { return TYPE_NOT_POSITIVE; }
+"dict"
+| "darray"          { return TYPE_DICT; }
 
-negative            { return TYPE_NEGATIVE; }
+"keyset"            { return TYPE_KEYSET; }
 
-nonnegative|notnegative
-                    { return TYPE_NOT_NEGATIVE; }
+"varray_or_darray"
+| "vec_or_dict"     { return TYPE_VEC_OR_DICT; }
 
-_                   { return TYPE_PLACEHOLDER; }
+"empty"             { return TYPE_EMPTY; }
+
+"nonempty"
+| "notempty"        { return TYPE_NOT_EMPTY; }
+
+"char"              { return TYPE_CHAR; }
+"Stringish"         { return TYPE_STRINGISH; }
+"true"              { return TYPE_TRUE; }
+"false"             { return TYPE_FALSE; }
+"positive"          { return TYPE_POSITIVE; }
+
+"nonpositive"
+| "notpositive"     { return TYPE_NOT_POSITIVE; }
+
+"negative"          { return TYPE_NEGATIVE; }
+
+"nonnegative"
+| "notnegative"     { return TYPE_NOT_NEGATIVE; }
+
+"_"                 { return TYPE_PLACEHOLDER; }
 
 [a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*
                     { return TYPE_USER_DEFINED; }
@@ -74,4 +97,6 @@ _                   { return TYPE_PLACEHOLDER; }
 [ \t\n]             { ; }
 .                   { yyerror("Unexpected character"); }
 
-%%
+%} // End lexer
+
+}

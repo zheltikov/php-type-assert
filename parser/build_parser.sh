@@ -4,5 +4,5 @@
 
 rm types.cpp
 bison types.y -o types.cpp &&
-  flex types.l &&
+  re2c types.l -o types.hpp &&
   g++ -pipe -time -static -std=c++17 types.cpp -o parser
