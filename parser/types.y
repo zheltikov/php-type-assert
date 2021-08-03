@@ -53,11 +53,17 @@
 %token TOKEN_ARROW
 %token GENERIC_LIST_START
 %token GENERIC_LIST_END
+%token TOKEN_UNION
 
 %%
 
 root : type         { ast = $1; }
+     | union_type   { ast = $1; }
      ;
+
+union_type : union_type TOKEN_UNION type    { $$ = new Node(Type::UNION); $$->appendChild($1)->appendChild($3); }
+           | type                           { $$ = new Node(Type::UNION); $$->appendChild($1); }
+           ;
 
 type : scalar_type      { $$ = $1; }
      | compound_type    { $$ = $1; }

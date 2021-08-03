@@ -86,6 +86,7 @@
 =>                  { return TOKEN_ARROW; }
 <                   { return GENERIC_LIST_START; }
 >                   { return GENERIC_LIST_END; }
+|                   { return TOKEN_UNION; }
 
 [ \t\n]             ;
 .                   { yyerror("Unexpected character"); }
