@@ -1,92 +1,9 @@
 %{
 
 #include <string>
-#include <iostream>
-#include <variant>
-#include <vector>
 
-enum Type {
-    BOOL,
-    INT,
-    FLOAT,
-    STRING,
-    ARRAY,
-    OBJECT,
-    CALLABLE,
-    ITERABLE,
-    RESOURCE,
-    _NULL,
-    VEC,
-    DICT,
-    KEYSET,
-    VEC_OR_DICT,
-    USER_DEFINED,
-    NOT_NULL,
-    COUNTABLE,
-    NUMERIC,
-    SCALAR,
-    NUMBER,
-    MIXED,
-    VOID,
-    ARRAYKEY,
-    CLASSNAME,
-    INTERFACENAME,
-    TRAITNAME,
-    EMPTY,
-    NOT_EMPTY,
-    CHAR,
-    STRINGISH,
-    TRUE,
-    FALSE,
-    POSITIVE,
-    NOT_POSITIVE,
-    NEGATIVE,
-    NOT_NEGATIVE,
-
-    NULLABLE,
-    NEGATED,
-    TUPLE,
-    SHAPE,
-    GENERIC_LIST,
-    UNION,
-};
-
-class Node
-{
-private:
-    Type type;
-    std::vector<Node*> children;
-
-public:
-    Node(Type type) {
-        std::cout << "new Node(" << type << ")\n";
-        this->type = type;
-    }
-
-    auto appendChild(Node* child) {
-        children.push_back(child);
-        return this;
-    }
-    // TODO: fix this one below
-    void appendChildren(Node* children) {}
-
-    void print() {
-        std::cout << "{\"type\":" << type << ",\"children\":[";
-        int i = 1;
-        int c = children.size();
-        for (auto* child : children) {
-            child->print();
-            if (i < c) { std::cout << ","; }
-            i++;
-        }
-        std::cout << "]}";
-    }
-};
-
-int yylex();
-void yyerror(std::string);
-
-Node* ast;
+#include "Type.cpp"
+#include "Node.cpp"
 
 %}
 
@@ -177,27 +94,4 @@ special_type : TYPE_RESOURCE    { $$ = new Node(Type::RESOURCE); }
 
 %%
 
-#include <fstream>
-#include "types.hpp"
-
-int main(int argc, char** argv)
-{
-    std::string filename = argv[1];
-    std::cout << "Filename: " << filename << "\n";
-
-    std::ifstream f(filename);
-    std::string buffer(std::istreambuf_iterator<char>(f), {});
-
-    std::cout << "Buffer: " << buffer << "\n";
-
-    // cursor = buffer.c_str();
-    cursor = const_cast<char*>(buffer.c_str());
-
-    yyparse();
-
-    ast->print();
-
-    std::cout << "\n";
-
-    return 0;
-}
+#include "lexer.cpp"

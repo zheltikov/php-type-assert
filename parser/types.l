@@ -1,10 +1,4 @@
 
-void yyerror(std::string str) {
-    std::cerr << str << "\n";
-}
-
-char* cursor;
-
 int yylex()
 {
 
@@ -104,7 +98,7 @@ re2c:define:YYCURSOR = "cursor";
 "|"                 { return TOKEN_UNION; }
 "&"                 { return TOKEN_INTERSECTION; }
 
-[ \n\r\t]+          { std::cout << "whitespace"; goto restart; }
+[ \n\r\t]+          { std::cout << "(whitespace)"; goto restart; }
 .                   { return TOKEN_ERROR; }
 
 %} // End lexer
