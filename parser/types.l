@@ -80,8 +80,8 @@
 
 ?                   { return PREFIX_NULLABLE; }
 !                   { return PREFIX_NEGATED; }
-(                   { return TUPLE_START; }
-)                   { return TUPLE_END; }
+(                   { return PAREN_LEFT; }
+)                   { return PAREN_RIGHT; }
 ,                   { return TOKEN_COMMA; }
 =>                  { return TOKEN_ARROW; }
 <                   { return GENERIC_LIST_START; }

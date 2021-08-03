@@ -2,6 +2,14 @@
 
 #include <string>
 #include <iostream>
+#include <variant>
+
+class Node
+{
+};
+
+// std::variant<Node> ast;
+Node ast;
 
 %}
 
@@ -29,6 +37,7 @@
 %token TYPE_INTERFACENAME
 %token TYPE_TRAITNAME
 %token TYPE_SHAPE
+%token TYPE_TUPLE
 %token TYPE_VEC
 %token TYPE_DICT
 %token TYPE_KEYSET
@@ -44,11 +53,12 @@
 %token TYPE_NEGATIVE
 %token TYPE_NOT_NEGATIVE
 %token TYPE_USER_DEFINED
+%token TYPE_PLACEHOLDER
 
 %token PREFIX_NULLABLE
 %token PREFIX_NEGATED
-%token TUPLE_START
-%token TUPLE_END
+%token PAREN_LEFT
+%token PAREN_RIGHT
 %token TOKEN_COMMA
 %token TOKEN_ARROW
 %token GENERIC_LIST_START
@@ -59,24 +69,29 @@
 %%
 
 root : type                 { ast = $1; }
-     | union_type           { ast = $1; }
-     | intersection_type    { ast = $1; }
      ;
 
-union_type : union_type TOKEN_UNION type    { $$ = new Node(Type::UNION); $$->appendChild($1)->appendChild($3); }
-           | type                           { $$ = new Node(Type::UNION); $$->appendChild($1); }
+union_type : type TOKEN_UNION union_type
+           { $$ = new Node(Type::UNION);
+           $$->appendChild($1)->appendChild($3); }
            ;
 
-intersection_type : intersection_type TOKEN_INTERSECTION type    { $$ = new Node(Type::INTERSECTION); $$->appendChild($1)->appendChild($3); }
-                  | type                                         { $$ = new Node(Type::INTERSECTION); $$->appendChild($1); }
+intersection_type : type TOKEN_INTERSECTION intersection_type
+                  { $$ = new Node(Type::INTERSECTION);
+                  $$->appendChild($1)->appendChild($3); }
                   ;
 
-type : scalar_type      { $$ = $1; }
-     | compound_type    { $$ = $1; }
-     | special_type     { $$ = $1; }
-     | other_type       { $$ = $1; }
-     | nullable_type    { $$ = $1; }
-     | negated_type     { $$ = $1; }
+type : scalar_type                    { $$ = $1; }
+     | compound_type                  { $$ = $1; }
+     | special_type                   { $$ = $1; }
+     | other_type                     { $$ = $1; }
+     | nullable_type                  { $$ = $1; }
+     | negated_type                   { $$ = $1; }
+     | PAREN_LEFT type PAREN_RIGHT    { $$ = $2; }
+     | tuple
+     | shape
+     | union_type           { $$ = $1; }
+     | intersection_type    { $$ = $1; }
      ;
 
 nullable_type : PREFIX_NULLABLE type    { $$ = new Node(Type::NULLABLE); $$->appendChild($2); }
@@ -85,11 +100,17 @@ nullable_type : PREFIX_NULLABLE type    { $$ = new Node(Type::NULLABLE); $$->app
 negated_type : PREFIX_NEGATED type    { $$ = new Node(Type::NEGATED); $$->appendChild($2); }
              ;
 
-tuple : TYPE_TUPLE TUPLE_START tuple_list TUPLE_END    { $$ = new Node(Type::TUPLE); $$->appendChildren($3); }
+tuple : TYPE_TUPLE PAREN_LEFT tuple_list PAREN_RIGHT    { $$ = new Node(Type::TUPLE); $$->appendChildren($3); }
       ;
 
-shape : TYPE_SHAPE TUPLE_START shape_list TUPLE_END    { $$ = new Node(Type::SHAPE); $$->appendChildren($3); }
+tuple_list : /* empty */
+           ;
+
+shape : TYPE_SHAPE PAREN_LEFT shape_list PAREN_RIGHT    { $$ = new Node(Type::SHAPE); $$->appendChildren($3); }
       ;
+
+shape_list : /* empty */
+           ;
 
 scalar_type : TYPE_BOOL      { $$ = new Node(Type::BOOL); }
             | TYPE_INT       { $$ = new Node(Type::INT); }
@@ -162,10 +183,8 @@ non_empty_generic_list : non_empty_generic_list TOKEN_COMMA type    { $$ = list_
 
 int main()
 {
-    std::variant ast;
-
     yyparse();
-    std::cout << transpiled_code << "\n";
+    std::cout << ast.print() << "\n";
 
     return 0;
 }
