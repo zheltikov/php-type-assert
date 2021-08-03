@@ -48,6 +48,7 @@ enum Type {
     TUPLE,
     SHAPE,
     GENERIC_LIST,
+    UNION,
 };
 
 class Node
@@ -62,16 +63,23 @@ public:
         this->type = type;
     }
 
-    void appendChild(Node* child) {}
+    auto appendChild(Node* child) {
+        children.push_back(child);
+        return this;
+    }
     // TODO: fix this one below
     void appendChildren(Node* children) {}
 
     void print() {
-        std::cout << "Node(type: " << type << ") {\n";
+        std::cout << "{\"type\":" << type << ",\"children\":[";
+        int i = 1;
+        int c = children.size();
         for (auto* child : children) {
             child->print();
+            if (i < c) { std::cout << ","; }
+            i++;
         }
-        std::cout << "}\n";
+        std::cout << "]}";
     }
 };
 
@@ -144,7 +152,9 @@ Node* ast;
 root : type                 { ast = $1; return 0; }
      ;
 
-type : scalar_type                    { $$ = $1; }
+type : type TOKEN_UNION type          { $$ = new Node(Type::UNION);
+                                        $$->appendChild($1)->appendChild($3); }
+     | scalar_type                    { $$ = $1; }
      | compound_type                  { $$ = $1; }
      | special_type                   { $$ = $1; }
      ;
