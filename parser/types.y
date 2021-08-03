@@ -3,15 +3,85 @@
 #include <string>
 #include <iostream>
 #include <variant>
+#include <vector>
+
+enum Type {
+    BOOL,
+    INT,
+    FLOAT,
+    STRING,
+    ARRAY,
+    OBJECT,
+    CALLABLE,
+    ITERABLE,
+    RESOURCE,
+    _NULL,
+    VEC,
+    DICT,
+    KEYSET,
+    VEC_OR_DICT,
+    USER_DEFINED,
+    NOT_NULL,
+    COUNTABLE,
+    NUMERIC,
+    SCALAR,
+    NUMBER,
+    MIXED,
+    VOID,
+    ARRAYKEY,
+    CLASSNAME,
+    INTERFACENAME,
+    TRAITNAME,
+    EMPTY,
+    NOT_EMPTY,
+    CHAR,
+    STRINGISH,
+    TRUE,
+    FALSE,
+    POSITIVE,
+    NOT_POSITIVE,
+    NEGATIVE,
+    NOT_NEGATIVE,
+
+    NULLABLE,
+    NEGATED,
+    TUPLE,
+    SHAPE,
+    GENERIC_LIST,
+};
 
 class Node
 {
+private:
+    Type type;
+    std::vector<Node*> children;
+
+public:
+    Node(Type type) {
+        this->type = type;
+    }
+
+    void appendChild(Node* child) {}
+    // TODO: fix this one below
+    void appendChildren(Node* children) {}
+
+    void print() {
+        std::cout << "Node(type: " << type << ") {\n";
+        for (auto* child : children) {
+            child->print();
+        }
+        std::cout << "}\n";
+    }
 };
 
-// std::variant<Node> ast;
-Node ast;
+void list_add() {}
+void create_list() {}
+
+Node* ast;
 
 %}
+
+%define api.value.type { Node* }
 
 %start root
 
@@ -125,7 +195,7 @@ compound_type : TYPE_ARRAY       { $$ = new Node(Type::ARRAY); }
               ;
 
 special_type : TYPE_RESOURCE    { $$ = new Node(Type::RESOURCE); }
-             | TYPE_NULL        { $$ = new Node(Type::NULL); }
+             | TYPE_NULL        { $$ = new Node(Type::_NULL); }
              ;
 
 other_type : helper_type          { $$ = $1; }
@@ -175,8 +245,8 @@ generic_list : non_empty_generic_list
              | /* empty */
              ;
 
-non_empty_generic_list : non_empty_generic_list TOKEN_COMMA type    { $$ = list_add($1, $3); }
-	                   | type                                       { $$ = create_list($1); }
+non_empty_generic_list : non_empty_generic_list TOKEN_COMMA type    { $$ = $1; $$->appendChild($3); }
+	                   | type                                       { $$ = new Node(Type::GENERIC_LIST); $$->appendChild($1); }
                        ;
 
 %%
@@ -184,7 +254,8 @@ non_empty_generic_list : non_empty_generic_list TOKEN_COMMA type    { $$ = list_
 int main()
 {
     yyparse();
-    std::cout << ast.print() << "\n";
+
+    ast->print();
 
     return 0;
 }
