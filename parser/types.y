@@ -63,7 +63,21 @@ type : scalar_type      { $$ = $1; }
      | compound_type    { $$ = $1; }
      | special_type     { $$ = $1; }
      | other_type       { $$ = $1; }
+     | nullable_type    { $$ = $1; }
+     | negated_type     { $$ = $1; }
      ;
+
+nullable_type : PREFIX_NULLABLE type    { $$ = new Node(Type::NULLABLE); $$->appendChild($2); }
+              ;
+
+negated_type : PREFIX_NEGATED type    { $$ = new Node(Type::NEGATED); $$->appendChild($2); }
+             ;
+
+tuple : TYPE_TUPLE TUPLE_START tuple_list TUPLE_END    { $$ = new Node(Type::TUPLE); $$->appendChildren($3); }
+      ;
+
+shape : TYPE_SHAPE TUPLE_START shape_list TUPLE_END    { $$ = new Node(Type::SHAPE); $$->appendChildren($3); }
+      ;
 
 scalar_type : TYPE_BOOL      { $$ = new Node(Type::BOOL); }
             | TYPE_INT       { $$ = new Node(Type::INT); }
@@ -81,15 +95,10 @@ special_type : TYPE_RESOURCE    { $$ = new Node(Type::RESOURCE); }
              | TYPE_NULL        { $$ = new Node(Type::NULL); }
              ;
 
-other_type : combo_type           { $$ = $1; }
-           | helper_type          { $$ = $1; }
+other_type : helper_type          { $$ = $1; }
            | generic_type         { $$ = $1; }
            | collection_type      { $$ = $1; }
            | user_defined_type    { $$ = $1; }
-           ;
-
-combo_type : TYPE_SHAPE    { $$ = new Node(Type::SHAPE); }
-           | TYPE_TUPLE    { $$ = new Node(Type::TUPLE); }
            ;
 
 collection_type : TYPE_VEC            { $$ = new Node(Type::VEC); }
@@ -123,6 +132,19 @@ helper_type : TYPE_NOT_NULL         { $$ = new Node(Type::NOT_NULL); }
             | TYPE_NEGATIVE         { $$ = new Node(Type::NEGATIVE); }
             | TYPE_NOT_NEGATIVE     { $$ = new Node(Type::NOT_NEGATIVE); }
             ;
+
+generic_type : TYPE_ARRAY GENERIC_LIST_START generic_list GENERIC_LIST_END
+             | collection_type GENERIC_LIST_START generic_list GENERIC_LIST_END
+             ;
+
+generic_list : non_empty_generic_list
+             | TYPE_PLACEHOLDER
+             | /* empty */
+             ;
+
+non_empty_generic_list : non_empty_generic_list TOKEN_COMMA type    { $$ = list_add($1, $3); }
+	                   | type                                       { $$ = create_list($1); }
+                       ;
 
 %%
 

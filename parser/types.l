@@ -73,6 +73,8 @@
 "nonnegative"
 | "notnegative"     { return TYPE_NOT_NEGATIVE; }
 
+"_"                 { return TYPE_PLACEHOLDER; }
+
 [a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*
                     { return TYPE_USER_DEFINED; }
 
