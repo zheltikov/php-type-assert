@@ -5,6 +5,8 @@
 #include <variant>
 #include <vector>
 
+#include "y.tab.h"
+
 enum Type {
     BOOL,
     INT,
@@ -76,6 +78,13 @@ public:
 
 void list_add() {}
 void create_list() {}
+
+// TODO: remove this
+int yylex(void) { return -1; }
+
+void yyerror(std::string str) {
+    std::cerr << str << "\n";
+}
 
 Node* ast;
 
@@ -258,8 +267,4 @@ int main()
     ast->print();
 
     return 0;
-}
-
-void yyerror(std::string str) {
-    std::cerr << str << "\n";
 }
