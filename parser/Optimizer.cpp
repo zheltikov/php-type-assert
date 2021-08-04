@@ -2,6 +2,7 @@
 #pragma once
 
 #include <type_traits>
+#include <map>
 
 #include "Node.cpp"
 
@@ -19,6 +20,7 @@ class Optimizer
 	void execute();
  protected:
 	void unwrapUnions();
+	void dedupeUnions();
 };
 
 // -----------------------------------------------------------------------------
@@ -42,7 +44,10 @@ void Optimizer::execute()
 
 	while (serialized.compare(root->toJson()) != 0) {
 		serialized = root->toJson();
+
 		unwrapUnions();
+		dedupeUnions();
+
 		i++;
 	}
 
@@ -68,6 +73,64 @@ void Optimizer::unwrapUnions()
 				}
 			}
 
+			*node = *new_node;
+		}
+	}
+}
+
+void Optimizer::dedupeUnions()
+{
+	Node* node = root->getFirstByType(Type::UNION);
+	if (node != nullptr) {
+		static_assert(std::is_same<decltype(node), Node*>::value, "Node must be of type Node*");
+
+		std::map<Type, int> counter;
+		bool needs_optimization = false;
+
+		for (auto* child: node->getChildren()) {
+			auto child_count = child->getChildren().size();
+			if (child_count > 0) { continue; }
+
+			auto type = child->getType();
+			if (map_key_exists(counter, type)) {
+				counter[type]++;
+				needs_optimization = true;
+			} else {
+				counter[type] = 1;
+			}
+		}
+
+		std::cout << "\n*********************************\n";
+		for (auto pair: counter) {
+			std::cout << "\n{Type: " << pair.first << ", Count: " << pair.second << "}";
+			if (pair.second > 1) {
+				std::cout << "<-- dedupe";
+			}
+			std::cout << "\n";
+		}
+		std::cout << "\n*********************************\n";
+
+		if (needs_optimization) {
+			std::map<Type, int> just_added;
+			Node* new_node = new Node(Type::UNION);
+			for (auto* child: node->getChildren()) {
+				auto child_count = child->getChildren().size();
+				if (child_count > 0) {
+					new_node->appendChild(child);
+				}
+
+				auto type = child->getType();
+				if (map_key_exists(counter, type)) {
+					if (!map_key_exists(just_added, type)) {
+						new_node->appendChild(child);
+						just_added[child->getType()] = 1;
+					} else {
+						delete child;
+					}
+				} else {
+					new_node->appendChild(child);
+				}
+			}
 			*node = *new_node;
 		}
 	}
