@@ -6,7 +6,7 @@
 
 #include "Type.cpp"
 
-std::string nodeTypeToJson(Type type)
+std::string nodeTypeToString(Type type)
 {
 	switch (type) {
 	case Type::UNION:

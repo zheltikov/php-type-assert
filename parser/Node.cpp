@@ -56,27 +56,36 @@ auto Node::appendChildren(std::vector<Node*> children)
 
 std::string Node::toJson() const
 {
-	std::string json;
-	// json += "{\"type\":" + nodeTypeToJson(type) + ",\"children\":[";
-	json += nodeTypeToJson(type);
-
+	std::string result;
+	int count = children.size();
+	bool human_readable = false;
 	int i = 1;
-	int c = children.size();
 
-	if (c) {
-		json += '<';
+	if (human_readable) {
+		result += nodeTypeToString(type);
+
+		if (count) { result += '<'; }
+		for (auto* child : children) {
+			result += child->toJson();
+			if (i < count) { result += ", "; }
+			i++;
+		}
+		if (count) { result += '>'; }
+	} else {
+		result += "{\"type\":\"" + nodeTypeToString(type) + "\"";
+
+		if (count) { result += ",\"children\":["; }
+		for (auto* child : children) {
+			result += child->toJson();
+			if (i < count) { result += ','; }
+			i++;
+		}
+		if (count) { result += ']'; }
+
+		result += '}';
 	}
 
-	for (auto* child : children) {
-		json += child->toJson();
-		if (i < c) { json += ", "; }
-		i++;
-	}
-	if (c) {
-		json += '>';
-	}
-
-	return json;
+	return result;
 }
 
 Node* Node::getFirstByType(Type type) const
