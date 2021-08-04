@@ -18,6 +18,7 @@ int yylex();
 void yyerror(std::string);
 
 #include "parser.cpp"
+#include "Optimizer.cpp"
 
 int main(int argc, char** argv)
 {
@@ -33,6 +34,11 @@ int main(int argc, char** argv)
 	cursor = const_cast<char*>(buffer.c_str());
 
 	yyparse();
+
+	auto optimizer = new Optimizer();
+	optimizer->setRoot(ast)
+		->execute();
+	ast = optimizer->getRoot();
 
 	std::string json = ast->toJson();
 	std::cout << "\n\n" << json << "\n";
