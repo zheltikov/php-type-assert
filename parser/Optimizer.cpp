@@ -37,7 +37,7 @@ Node* Optimizer::getRoot() const
 
 void Optimizer::execute()
 {
-	std::cout << "Unoptimized: " << root->toJson() << "\n";
+	//std::cout << "Unoptimized:  " << root->toJson() << "\n";
 
 	std::string serialized;
 	auto i = 1;
@@ -48,11 +48,12 @@ void Optimizer::execute()
 		unwrapUnions();
 		dedupeUnions();
 
+		//std::cout << "Intermediate: " << root->toJson() << "\n";
 		i++;
 	}
 
-	std::cout << "Optimized: " << root->toJson() << "\n";
-	std::cout << i << " optimization iterations.\n";
+	//std::cout << "Optimized:    " << root->toJson() << "\n";
+	//std::cout << i << " optimization iterations.\n";
 }
 
 void Optimizer::unwrapUnions()

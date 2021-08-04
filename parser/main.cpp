@@ -23,7 +23,7 @@ void yyerror(std::string);
 int main(int argc, char** argv)
 {
 	std::string filename = argv[1];
-	std::cout << "Filename: " << filename << "\n";
+	//std::cout << "Filename: " << filename << "\n";
 
 	std::ifstream f(filename);
 	std::string buffer(std::istreambuf_iterator<char>(f), {});
@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 	ast = optimizer->getRoot();
 
 	std::string json = ast->toJson();
-	std::cout << "\n\n" << json << "\n";
+	std::cout << json << "\n";
 
 	return 0;
 }
