@@ -37,7 +37,7 @@ Node* Optimizer::getRoot() const
 
 void Optimizer::execute()
 {
-	std::cout << "\nUnoptimized: " << root->toJson() << "\n";
+	std::cout << "Unoptimized: " << root->toJson() << "\n";
 
 	std::string serialized;
 	auto i = 1;
@@ -51,8 +51,8 @@ void Optimizer::execute()
 		i++;
 	}
 
-	std::cout << "\nOptimized: " << root->toJson() << "\n";
-	std::cout << "\n" << i << " optimization iterations.\n";
+	std::cout << "Optimized: " << root->toJson() << "\n";
+	std::cout << i << " optimization iterations.\n";
 }
 
 void Optimizer::unwrapUnions()
@@ -99,16 +99,6 @@ void Optimizer::dedupeUnions()
 				counter[type] = 1;
 			}
 		}
-
-		std::cout << "\n*********************************\n";
-		for (auto pair: counter) {
-			std::cout << "\n{Type: " << pair.first << ", Count: " << pair.second << "}";
-			if (pair.second > 1) {
-				std::cout << "<-- dedupe";
-			}
-			std::cout << "\n";
-		}
-		std::cout << "\n*********************************\n";
 
 		if (needs_optimization) {
 			std::map<Type, int> just_added;

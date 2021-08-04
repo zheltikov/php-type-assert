@@ -20,6 +20,18 @@ std::string nodeTypeToString(Type type)
 		return "int";
 	case Type::ARRAY:
 		return "array";
+	case Type::OBJECT:
+		return "object";
+	case Type::FLOAT:
+		return "float";
+	case Type::CALLABLE:
+		return "callable";
+	case Type::ITERABLE:
+		return "iterable";
+	case Type::RESOURCE:
+		return "resource";
+	case Type::_NULL:
+		return "null";
 	}
 
 	std::cerr << "Received unknown node type: " << type << "\n";

@@ -31,13 +31,13 @@ class Node
 
 Node::Node(Type type)
 {
-	std::cout << "(node " << type << ")";
+	// std::cout << "(node " << type << ")";
 	this->type = type;
 }
 
 Node::~Node()
 {
-	std::cout << "(~node " << type << ")";
+	// std::cout << "(~node " << type << ")";
 }
 
 auto Node::appendChild(Node* child)
