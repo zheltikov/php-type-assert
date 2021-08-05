@@ -76,6 +76,7 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION);
      | special_type                   { $$ = $1; }
      | PREFIX_NULLABLE type           { $$ = new Node(Type::NULLABLE);
                                         $$->appendChild($2); }
+     | PAREN_LEFT type PAREN_RIGHT    { $$ = $2; }
      ;
 
 scalar_type : TYPE_BOOL      { $$ = new Node(Type::BOOL); }
