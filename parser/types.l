@@ -82,6 +82,8 @@ re2c:define:YYCURSOR = "cursor";
 "nonnegative"
 | "notnegative"     { return TYPE_NOT_NEGATIVE; }
 
+"tuple"             { return TYPE_TUPLE; }
+
 "_"                 { return TYPE_PLACEHOLDER; }
 
 [a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*
@@ -98,7 +100,7 @@ re2c:define:YYCURSOR = "cursor";
 "|"                 { return TOKEN_UNION; }
 "&"                 { return TOKEN_INTERSECTION; }
 
-[ \n\r\t]+          { std::cout << "(whitespace)"; goto restart; }
+[ \n\r\t]+          { /* std::cout << "(whitespace)"; */ goto restart; }
 .                   { return TOKEN_ERROR; }
 
 %} // End lexer

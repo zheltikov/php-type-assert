@@ -34,6 +34,8 @@ std::string nodeTypeToString(Type type)
 		return "null";
 	case Type::NULLABLE:
 		return "nullable";
+	case Type::TUPLE:
+		return "tuple";
 	}
 
 	std::cerr << "Received unknown node type: " << type << "\n";

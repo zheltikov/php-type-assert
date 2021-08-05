@@ -77,7 +77,17 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION);
      | PREFIX_NULLABLE type           { $$ = new Node(Type::NULLABLE);
                                         $$->appendChild($2); }
      | PAREN_LEFT type PAREN_RIGHT    { $$ = $2; }
+     | tuple                          { $$ = $1; }
      ;
+
+tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT
+                                      { $$ = new Node(Type::TUPLE);
+                                        $$->appendChildren($3->getChildren()); }
+      ;
+
+type_comma_list : type TOKEN_COMMA type_comma_list    { $$ = $3; $$->appendChild($1); }
+                | type                                { $$ = new Node(Type::LIST); $$->appendChild($1); }
+                ;
 
 scalar_type : TYPE_BOOL      { $$ = new Node(Type::BOOL); }
             | TYPE_INT       { $$ = new Node(Type::INT); }
