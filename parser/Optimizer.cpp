@@ -21,6 +21,7 @@ class Optimizer
  protected:
 	void unwrapUnions();
 	void dedupeUnions();
+	void nullableToUnion();
 };
 
 // -----------------------------------------------------------------------------
@@ -47,6 +48,7 @@ void Optimizer::execute()
 
 		unwrapUnions();
 		dedupeUnions();
+		nullableToUnion();
 
 		//std::cout << "Intermediate: " << root->toJson() << "\n";
 		i++;
@@ -124,6 +126,21 @@ void Optimizer::dedupeUnions()
 			}
 			*node = *new_node;
 		}
+	}
+}
+
+void Optimizer::nullableToUnion()
+{
+	Node* node = root->getFirstByType(Type::NULLABLE);
+	if (node != nullptr) {
+		static_assert(std::is_same<decltype(node), Node*>::value, "Node must be of type Node*");
+
+		Node* new_node = new Node(Type::UNION);
+
+		new_node->appendChild(new Node(Type::_NULL))
+			->appendChildren(node->getChildren());
+
+		*node = *new_node;
 	}
 }
 
