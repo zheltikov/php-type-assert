@@ -85,7 +85,7 @@ tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT
                                         $$->appendChildren($3->getChildren()); }
       ;
 
-type_comma_list : type TOKEN_COMMA type_comma_list    { $$ = $3; $$->appendChild($1); }
+type_comma_list : type TOKEN_COMMA type_comma_list    { $$ = $3; $$->prependChild($1); }
                 | type                                { $$ = new Node(Type::LIST); $$->appendChild($1); }
                 ;
 

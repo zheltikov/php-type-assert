@@ -16,6 +16,7 @@ class Node
  public:
 	Node(Type type);
 	~Node();
+	auto prependChild(Node* child);
 	auto appendChild(Node* child);
 	auto appendChildren(std::vector<Node*> children);
 	std::string toJson() const;
@@ -38,6 +39,12 @@ Node::Node(Type type)
 Node::~Node()
 {
 	// std::cout << "(~node " << type << ")";
+}
+
+auto Node::prependChild(Node* child)
+{
+	children.insert(children.begin(), child);
+	return this;
 }
 
 auto Node::appendChild(Node* child)
