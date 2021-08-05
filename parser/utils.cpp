@@ -32,6 +32,8 @@ std::string nodeTypeToString(Type type)
 		return "resource";
 	case Type::_NULL:
 		return "null";
+	case Type::NULLABLE:
+		return "nullable";
 	}
 
 	std::cerr << "Received unknown node type: " << type << "\n";

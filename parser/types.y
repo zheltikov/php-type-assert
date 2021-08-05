@@ -74,6 +74,8 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION);
      | scalar_type                    { $$ = $1; }
      | compound_type                  { $$ = $1; }
      | special_type                   { $$ = $1; }
+     | PREFIX_NULLABLE type           { $$ = new Node(Type::NULLABLE);
+                                        $$->appendChild($2); }
      ;
 
 scalar_type : TYPE_BOOL      { $$ = new Node(Type::BOOL); }
