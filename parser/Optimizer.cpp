@@ -70,7 +70,7 @@ void Optimizer::unwrapUnions()
 			for (auto child: std::get<Node>(node).getChildren()) {
 				if (child.getType() == Type::UNION) {
 					new_node.appendChildren(child.getChildren());
-					delete child;
+					std::get<Node>(node).deleteChild(child);
 				} else {
 					new_node.appendChild(child);
 				}
@@ -117,7 +117,7 @@ void Optimizer::dedupeUnions()
 						new_node.appendChild(child);
 						just_added[child.getType()] = 1;
 					} else {
-						delete child;
+						std::get<Node>(node).deleteChild(child);
 					}
 				} else {
 					new_node.appendChild(child);

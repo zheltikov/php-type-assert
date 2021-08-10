@@ -15,6 +15,7 @@ class Node
 	std::vector<Node> children;
 
  public:
+	Node();
 	Node(Type type);
 	~Node();
 	auto prependChild(Node child);
@@ -27,14 +28,42 @@ class Node
 	std::vector<Node> getChildren() const;
 	int hasChildren() const;
 	Type getType() const;
+	auto setType(Type);
+
+	auto deleteChild(Node&);
 };
 
 // -----------------------------------------------------------------------------
 
+Node::Node()
+{
+}
+
+auto Node::setType(Type type)
+{
+	this->type = type;
+	return *this;
+}
+
+auto Node::deleteChild(Node& child_to_remove)
+{
+	std::vector<Node> new_children;
+
+	for (auto child : children) {
+		if (&child != &child_to_remove) {
+			new_children.push_back(child);
+		}
+	}
+
+	children = new_children;
+
+	return *this;
+}
+
 Node::Node(Type type)
 {
 	// std::cout << "(node " << type << ")";
-	this->type = type;
+	setType(type);
 }
 
 Node::~Node()
