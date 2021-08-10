@@ -12,7 +12,7 @@ char* cursor;
 
 #include "Node.cpp"
 
-Node* ast;
+std::variant<Node, std::nullptr_t> ast = nullptr;
 
 int yylex();
 void yyerror(std::string);
@@ -35,12 +35,12 @@ int main(int argc, char** argv)
 
 	yyparse();
 
-	auto optimizer = new Optimizer();
-	optimizer->setRoot(ast)
-		->execute();
-	ast = optimizer->getRoot();
+	auto optimizer = Optimizer();
+	optimizer.setRoot(std::get<Node>(ast))
+		.execute();
+	ast = optimizer.getRoot();
 
-	std::string json = ast->toJson();
+	std::string json = std::get<Node>(ast).toJson();
 	std::cout << json << "\n";
 
 	return 0;

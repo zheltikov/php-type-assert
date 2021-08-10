@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <variant>
 
 #include "Type.cpp"
 #include "utils.cpp"
@@ -11,19 +12,19 @@ class Node
 {
  private:
 	Type type;
-	std::vector<Node*> children;
+	std::vector<Node> children;
 
  public:
 	Node(Type type);
 	~Node();
-	auto prependChild(Node* child);
-	auto appendChild(Node* child);
-	auto appendChildren(std::vector<Node*> children);
+	auto prependChild(Node child);
+	auto appendChild(Node child);
+	auto appendChildren(std::vector<Node> children);
 	std::string toJson() const;
 
-	Node* getFirstByType(Type) const;
+	std::variant<Node, std::nullptr_t> getFirstByType(Type) const;
 	bool hasChildOfType(Type) const;
-	std::vector<Node*> getChildren() const;
+	std::vector<Node> getChildren() const;
 	int hasChildren() const;
 	Type getType() const;
 };
@@ -41,39 +42,39 @@ Node::~Node()
 	// std::cout << "(~node " << type << ")";
 }
 
-auto Node::prependChild(Node* child)
+auto Node::prependChild(Node child)
 {
 	children.insert(children.begin(), child);
-	return this;
+	return *this;
 }
 
-auto Node::appendChild(Node* child)
+auto Node::appendChild(Node child)
 {
 	children.push_back(child);
-	return this;
+	return *this;
 }
 
-auto Node::appendChildren(std::vector<Node*> children)
+auto Node::appendChildren(std::vector<Node> children)
 {
-	for (auto* child : children) {
+	for (auto child : children) {
 		this->appendChild(child);
 	}
-	return this;
+	return *this;
 }
 
 std::string Node::toJson() const
 {
 	std::string result;
 	int count = children.size();
-	bool human_readable = false;
+	bool human_readable = true;
 	int i = 1;
 
 	if (human_readable) {
 		result += nodeTypeToString(type);
 
 		if (count) { result += '<'; }
-		for (auto* child : children) {
-			result += child->toJson();
+		for (auto child : children) {
+			result += child.toJson();
 			if (i < count) { result += ", "; }
 			i++;
 		}
@@ -82,8 +83,8 @@ std::string Node::toJson() const
 		result += "{\"type\":\"" + nodeTypeToString(type) + "\"";
 
 		if (count) { result += ",\"children\":["; }
-		for (auto* child : children) {
-			result += child->toJson();
+		for (auto child : children) {
+			result += child.toJson();
 			if (i < count) { result += ','; }
 			i++;
 		}
@@ -95,21 +96,21 @@ std::string Node::toJson() const
 	return result;
 }
 
-Node* Node::getFirstByType(Type type) const
+std::variant<Node, std::nullptr_t> Node::getFirstByType(Type type) const
 {
 	if (this->type == type) {
-		return const_cast<Node*>(this);
+		return *this;
 	}
 
-	for (auto* child : children) {
-		if (child->getType() == type) {
+	for (auto child : children) {
+		if (child.getType() == type) {
 			return child;
 		}
 
-		if (child->hasChildren()) {
-			auto* result = child->getFirstByType(type);
-			if (result != nullptr) {
-				return result;
+		if (child.hasChildren()) {
+			std::variant<Node, std::nullptr_t> result = child.getFirstByType(type);
+			if (std::holds_alternative<Node>(result)) {
+				return std::get<Node>(result);
 			}
 		}
 	}
@@ -119,8 +120,8 @@ Node* Node::getFirstByType(Type type) const
 
 bool Node::hasChildOfType(Type type) const
 {
-	for (auto* child : children) {
-		if (child->getType() == type) {
+	for (auto child : children) {
+		if (child.getType() == type) {
 			return true;
 		}
 	}
@@ -128,7 +129,7 @@ bool Node::hasChildOfType(Type type) const
 	return false;
 }
 
-std::vector<Node*> Node::getChildren() const
+std::vector<Node> Node::getChildren() const
 {
 	return children;
 }
