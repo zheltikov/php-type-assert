@@ -5,21 +5,14 @@ $meta #
 #semval(%n) $stackPos-(%l-%n)
 #semval(%n,%t) $stackPos-(%l-%n)
 
-namespace PhpParser\Parser;
-
-use PhpParser\Error;
-use PhpParser\Node;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Name;
-use PhpParser\Node\Scalar;
-use PhpParser\Node\Stmt;
+namespace Zheltikov\TypeAssert\Parser;
 #include;
 
 /* This is an automatically GENERATED file, which should not be manually edited.
  * Instead edit one of the following:
- *  * the grammar files grammar/php5.y or grammar/php7.y
- *  * the skeleton file grammar/parser.template
- *  * the preprocessing script grammar/rebuildParsers.php
+ *  * the grammar files parser/types.y
+ *  * the skeleton file parser/parser.template
+ *  * the preprocessing script parser/rebuild_parser.php
  */
 class #(-p) extends \PhpParser\ParserAbstract
 {
@@ -35,61 +28,62 @@ class #(-p) extends \PhpParser\ParserAbstract
     protected $YY2TBLSTATE = #(YY2TBLSTATE);
     protected $numNonLeafStates = #(YYNLSTATES);
 
-    protected $symbolToName = array(
+    protected $symbolToName = [
         #listvar terminals
-    );
+    ];
 
-    protected $tokenToSymbol = array(
+    protected $tokenToSymbol = [
         #listvar yytranslate
-    );
+    ];
 
-    protected $action = array(
+    protected $action = [
         #listvar yyaction
-    );
+    ];
 
-    protected $actionCheck = array(
+    protected $actionCheck = [
         #listvar yycheck
-    );
+    ];
 
-    protected $actionBase = array(
+    protected $actionBase = [
         #listvar yybase
-    );
+    ];
 
-    protected $actionDefault = array(
+    protected $actionDefault = [
         #listvar yydefault
-    );
+    ];
 
-    protected $goto = array(
+    protected $goto = [
         #listvar yygoto
-    );
+    ];
 
-    protected $gotoCheck = array(
+    protected $gotoCheck = [
         #listvar yygcheck
-    );
+    ];
 
-    protected $gotoBase = array(
+    protected $gotoBase = [
         #listvar yygbase
-    );
+    ];
 
-    protected $gotoDefault = array(
+    protected $gotoDefault = [
         #listvar yygdefault
-    );
+    ];
 
-    protected $ruleToNonTerminal = array(
+    protected $ruleToNonTerminal = [
         #listvar yylhs
-    );
+    ];
 
-    protected $ruleToLength = array(
+    protected $ruleToLength = [
         #listvar yylen
-    );
+    ];
 #if -t
 
-    protected $productions = array(
+    protected $productions = [
         #production-strings;
-    );
+    ];
 #endif
 
-    protected function initReduceCallbacks() {
+    protected function initReduceCallbacks()
+    {
         $this->reduceCallbacks = [
 #reduce
             %n => function ($stackPos) {
