@@ -1,4 +1,6 @@
 <?php
+
+/* @generated */
 $meta #
 #semval($) $this->semValue
 #semval($,%t) $this->semValue

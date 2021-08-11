@@ -1,4 +1,6 @@
 <?php
+
+/* @generated */
 $meta #
 #semval($) $this->semValue
 #semval($,%t) $this->semValue
@@ -12,6 +14,6 @@ namespace Zheltikov\TypeAssert\Parser;
 final class Tokens
 {
 #tokenval
-    const %s = %n;
+    public const %s = %n;
 #endtokenval
 }
