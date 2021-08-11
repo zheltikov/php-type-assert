@@ -18,6 +18,9 @@ namespace Zheltikov\TypeAssert\Parser;
  */
 class #(-p) extends ParserAbstract
 {
+    /** @var Node|null */
+    protected $semValue;
+
     protected $tokenToSymbolMapSize = #(YYMAXLEX);
     protected $actionTableSize = #(YYLAST);
     protected $gotoTableSize = #(YYGLAST);
