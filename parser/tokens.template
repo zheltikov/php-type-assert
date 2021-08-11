@@ -5,10 +5,10 @@ $meta #
 #semval(%n) $this->stackPos-(%l-%n)
 #semval(%n,%t) $this->stackPos-(%l-%n)
 
-namespace PhpParser\Parser;
+namespace Zheltikov\TypeAssert\Parser;
 #include;
 
-/* GENERATED file based on grammar/tokens.y */
+/* GENERATED file based on parser/tokens.y */
 final class Tokens
 {
 #tokenval
