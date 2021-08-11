@@ -38,10 +38,10 @@ Node Optimizer::getRoot() const
 
 void Optimizer::execute()
 {
-	//std::cout << "Unoptimized:  " << root->toJson() << "\n";
+	return;
+	std::cout << "Unoptimized:  " << root.toJson() << "\n";
 
-	std::string
-		serialized;
+	std::string serialized;
 	auto i = 1;
 
 	while (serialized.compare(root.toJson()) != 0) {
@@ -51,12 +51,12 @@ void Optimizer::execute()
 		dedupeUnions();
 		nullableToUnion();
 
-		//std::cout << "Intermediate: " << root->toJson() << "\n";
+		std::cout << "Intermediate: " << root.toJson() << "\n";
 		i++;
 	}
 
-	//std::cout << "Optimized:    " << root->toJson() << "\n";
-	//std::cout << i << " optimization iterations.\n";
+	std::cout << "Optimized:    " << root.toJson() << "\n";
+	std::cout << i << " optimization iterations.\n";
 }
 
 void Optimizer::unwrapUnions()
@@ -68,11 +68,11 @@ void Optimizer::unwrapUnions()
 			Node new_node = Node(Type::UNION);
 
 			for (auto child: std::get<Node>(node).getChildren()) {
-				if (child.getType() == Type::UNION) {
-					new_node.appendChildren(child.getChildren());
-					std::get<Node>(node).deleteChild(child);
+				if (std::get<Node>(child).getType() == Type::UNION) {
+					new_node.appendChildren(std::get<Node>(child).getChildren());
+					std::get<Node>(node).deleteChild(std::get<Node>(child));
 				} else {
-					new_node.appendChild(child);
+					new_node.appendChild(std::get<Node>(child));
 				}
 			}
 
@@ -90,10 +90,10 @@ void Optimizer::dedupeUnions()
 		bool needs_optimization = false;
 
 		for (auto child: std::get<Node>(node).getChildren()) {
-			auto child_count = child.getChildren().size();
+			auto child_count = std::get<Node>(child).getChildren().size();
 			if (child_count > 0) { continue; }
 
-			auto type = child.getType();
+			auto type = std::get<Node>(child).getType();
 			if (map_key_exists(counter, type)) {
 				counter[type]++;
 				needs_optimization = true;
@@ -106,21 +106,21 @@ void Optimizer::dedupeUnions()
 			std::map<Type, int> just_added;
 			Node new_node = Node(Type::UNION);
 			for (auto child: std::get<Node>(node).getChildren()) {
-				auto child_count = child.getChildren().size();
+				auto child_count = std::get<Node>(child).getChildren().size();
 				if (child_count > 0) {
-					new_node.appendChild(child);
+					new_node.appendChild(std::get<Node>(child));
 				}
 
-				auto type = child.getType();
+				auto type = std::get<Node>(child).getType();
 				if (map_key_exists(counter, type)) {
 					if (!map_key_exists(just_added, type)) {
-						new_node.appendChild(child);
-						just_added[child.getType()] = 1;
+						new_node.appendChild(std::get<Node>(child));
+						just_added[std::get<Node>(child).getType()] = 1;
 					} else {
-						std::get<Node>(node).deleteChild(child);
+						std::get<Node>(node).deleteChild(std::get<Node>(child));
 					}
 				} else {
-					new_node.appendChild(child);
+					new_node.appendChild(std::get<Node>(child));
 				}
 			}
 			node = new_node;

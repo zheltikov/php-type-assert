@@ -12,7 +12,7 @@ class Node
 {
  private:
 	Type type;
-	std::vector<Node> children;
+	std::vector<std::variant<Node, std::nullptr_t>> children;
 
  public:
 	Node();
@@ -20,12 +20,12 @@ class Node
 	~Node();
 	auto prependChild(Node child);
 	auto appendChild(Node child);
-	auto appendChildren(std::vector<Node> children);
+	auto appendChildren(std::vector<std::variant<Node, std::nullptr_t>> children);
 	std::string toJson() const;
 
 	std::variant<Node, std::nullptr_t> getFirstByType(Type) const;
 	bool hasChildOfType(Type) const;
-	std::vector<Node> getChildren() const;
+	std::vector<std::variant<Node, std::nullptr_t>> getChildren() const;
 	int hasChildren() const;
 	Type getType() const;
 	auto setType(Type);
@@ -37,6 +37,7 @@ class Node
 
 Node::Node()
 {
+	std::cout << "NONONONO!!!!\n";
 }
 
 auto Node::setType(Type type)
@@ -47,28 +48,24 @@ auto Node::setType(Type type)
 
 auto Node::deleteChild(Node& child_to_remove)
 {
-	std::vector<Node> new_children;
-
-	for (auto child : children) {
-		if (&child != &child_to_remove) {
-			new_children.push_back(child);
+	for (auto& child : children) {
+		if (&std::get<Node>(child) == &child_to_remove) {
+			child = nullptr;
 		}
 	}
-
-	children = new_children;
 
 	return *this;
 }
 
 Node::Node(Type type)
 {
-	// std::cout << "(node " << type << ")";
+	//std::cout << "(node " << type << ")";
 	setType(type);
 }
 
 Node::~Node()
 {
-	// std::cout << "(~node " << type << ")";
+	//std::cout << "(~node " << type << ")";
 }
 
 auto Node::prependChild(Node child)
@@ -79,14 +76,22 @@ auto Node::prependChild(Node child)
 
 auto Node::appendChild(Node child)
 {
+	if (type == Type::UNION) {
+		std::cout << "Appending to UNION (" << this->toJson() << "): " << child.toJson() << "\n";
+	}
 	children.push_back(child);
+	if (type == Type::UNION) {
+		std::cout << "After Appending to UNION (" << this->toJson() << ")\n\n";
+	}
 	return *this;
 }
 
-auto Node::appendChildren(std::vector<Node> children)
+auto Node::appendChildren(std::vector<std::variant<Node, std::nullptr_t>> children)
 {
 	for (auto child : children) {
-		this->appendChild(child);
+		if (std::holds_alternative<Node>(child)) {
+			this->appendChild(std::get<Node>(child));
+		}
 	}
 	return *this;
 }
@@ -103,7 +108,7 @@ std::string Node::toJson() const
 
 		if (count) { result += '<'; }
 		for (auto child : children) {
-			result += child.toJson();
+			result += std::holds_alternative<Node>(child) ? std::get<Node>(child).toJson() : "~";
 			if (i < count) { result += ", "; }
 			i++;
 		}
@@ -113,7 +118,7 @@ std::string Node::toJson() const
 
 		if (count) { result += ",\"children\":["; }
 		for (auto child : children) {
-			result += child.toJson();
+			result += std::holds_alternative<Node>(child) ? std::get<Node>(child).toJson() : "~";
 			if (i < count) { result += ','; }
 			i++;
 		}
@@ -132,12 +137,12 @@ std::variant<Node, std::nullptr_t> Node::getFirstByType(Type type) const
 	}
 
 	for (auto child : children) {
-		if (child.getType() == type) {
+		if (std::get<Node>(child).getType() == type) {
 			return child;
 		}
 
-		if (child.hasChildren()) {
-			std::variant<Node, std::nullptr_t> result = child.getFirstByType(type);
+		if (std::get<Node>(child).hasChildren()) {
+			std::variant<Node, std::nullptr_t> result = std::get<Node>(child).getFirstByType(type);
 			if (std::holds_alternative<Node>(result)) {
 				return std::get<Node>(result);
 			}
@@ -150,7 +155,7 @@ std::variant<Node, std::nullptr_t> Node::getFirstByType(Type type) const
 bool Node::hasChildOfType(Type type) const
 {
 	for (auto child : children) {
-		if (child.getType() == type) {
+		if (std::get<Node>(child).getType() == type) {
 			return true;
 		}
 	}
@@ -158,7 +163,7 @@ bool Node::hasChildOfType(Type type) const
 	return false;
 }
 
-std::vector<Node> Node::getChildren() const
+std::vector<std::variant<Node, std::nullptr_t>> Node::getChildren() const
 {
 	return children;
 }
