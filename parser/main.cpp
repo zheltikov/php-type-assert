@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <functional>
 
 void yyerror(std::string str)
 {

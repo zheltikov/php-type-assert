@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <variant>
+#include <functional>
 
 #include "Type.cpp"
 #include "utils.cpp"
@@ -12,7 +13,7 @@ class Node
 {
  private:
 	Type type;
-	std::vector<std::variant<Node, std::nullptr_t>> children;
+	std::vector<std::variant<std::reference_wrapper < Node>, std::nullptr_t>> children;
 
  public:
 	Node();
@@ -20,7 +21,8 @@ class Node
 	~Node();
 	auto prependChild(Node child);
 	auto appendChild(Node child);
-	auto appendChildren(std::vector<std::variant<Node, std::nullptr_t>> children);
+	auto appendChildren(std::vector<std::variant<std::reference_wrapper < Node>, std::nullptr_t>>
+	children);
 	std::string toJson() const;
 
 	std::variant<Node, std::nullptr_t> getFirstByType(Type) const;
@@ -49,7 +51,7 @@ auto Node::setType(Type type)
 auto Node::deleteChild(Node& child_to_remove)
 {
 	for (auto& child : children) {
-		if (&std::get<Node>(child) == &child_to_remove) {
+		if (&std::get < std::reference_wrapper < Node >> (child).get() == &child_to_remove) {
 			child = nullptr;
 		}
 	}
@@ -86,11 +88,11 @@ auto Node::appendChild(Node child)
 	return *this;
 }
 
-auto Node::appendChildren(std::vector<std::variant<Node, std::nullptr_t>> children)
+auto Node::appendChildren(std::vector < std::variant < std::reference_wrapper < Node > , std::nullptr_t >> children)
 {
 	for (auto child : children) {
-		if (std::holds_alternative<Node>(child)) {
-			this->appendChild(std::get<Node>(child));
+		if (std::holds_alternative < std::reference_wrapper < Node >> (child)) {
+			this->appendChild(std::get < std::reference_wrapper < Node >> (child).get());
 		}
 	}
 	return *this;
@@ -108,7 +110,10 @@ std::string Node::toJson() const
 
 		if (count) { result += '<'; }
 		for (auto child : children) {
-			result += std::holds_alternative<Node>(child) ? std::get<Node>(child).toJson() : "~";
+			result +=
+				std::holds_alternative < std::reference_wrapper < Node >> (child) ? std::get < std::reference_wrapper
+																					< Node >> (child).get().toJson()
+																				  : "~";
 			if (i < count) { result += ", "; }
 			i++;
 		}
@@ -118,7 +123,10 @@ std::string Node::toJson() const
 
 		if (count) { result += ",\"children\":["; }
 		for (auto child : children) {
-			result += std::holds_alternative<Node>(child) ? std::get<Node>(child).toJson() : "~";
+			result +=
+				std::holds_alternative < std::reference_wrapper < Node >> (child) ? std::get < std::reference_wrapper
+																					< Node >> (child).get().toJson()
+																				  : "~";
 			if (i < count) { result += ','; }
 			i++;
 		}
@@ -137,14 +145,15 @@ std::variant<Node, std::nullptr_t> Node::getFirstByType(Type type) const
 	}
 
 	for (auto child : children) {
-		if (std::get<Node>(child).getType() == type) {
-			return child;
+		if (std::get < std::reference_wrapper < Node >> (child).get().getType() == type) {
+			return std::get < std::reference_wrapper < Node >> (child).get();
 		}
 
-		if (std::get<Node>(child).hasChildren()) {
-			std::variant<Node, std::nullptr_t> result = std::get<Node>(child).getFirstByType(type);
-			if (std::holds_alternative<Node>(result)) {
-				return std::get<Node>(result);
+		if (std::get < std::reference_wrapper < Node >> (child).get().hasChildren()) {
+			std::variant<Node, std::nullptr_t> result =
+				std::get < std::reference_wrapper < Node >> (child).get().getFirstByType(type);
+			if (std::holds_alternative < std::reference_wrapper < Node >> (result)) {
+				return std::get < std::reference_wrapper < Node >> (result).get();
 			}
 		}
 	}
@@ -155,7 +164,7 @@ std::variant<Node, std::nullptr_t> Node::getFirstByType(Type type) const
 bool Node::hasChildOfType(Type type) const
 {
 	for (auto child : children) {
-		if (std::get<Node>(child).getType() == type) {
+		if (std::get < std::reference_wrapper < Node >> (child).get().getType() == type) {
 			return true;
 		}
 	}
@@ -163,7 +172,8 @@ bool Node::hasChildOfType(Type type) const
 	return false;
 }
 
-std::vector<std::variant<Node, std::nullptr_t>> Node::getChildren() const
+std::vector<std::variant<Node, std::nullptr_t>>
+Node::getChildren() const
 {
 	return children;
 }
