@@ -200,7 +200,8 @@ class Types extends ParserAbstract
                  $this->semValue = $this->semStack[$stackPos-(1-1)];
             },
             2 => function ($stackPos) {
-                 $this->semValue = new Node(Type::UNION); $this->semValue->appendChild($this->semStack[$stackPos-(3-1)])->appendChild($this->semStack[$stackPos-(3-3)]);
+                 $this->semValue = new Node(Type::UNION());
+                                        $this->semValue->appendChild($this->semStack[$stackPos-(3-1)])->appendChild($this->semStack[$stackPos-(3-3)]);
             },
             3 => function ($stackPos) {
                  $this->semValue = $this->semStack[$stackPos-(1-1)];
@@ -212,7 +213,8 @@ class Types extends ParserAbstract
                  $this->semValue = $this->semStack[$stackPos-(1-1)];
             },
             6 => function ($stackPos) {
-                 $this->semValue = new Node(Type::NULLABLE); $this->semValue->appendChild($this->semStack[$stackPos-(2-2)]);
+                 $this->semValue = new Node(Type::NULLABLE());
+                                        $this->semValue->appendChild($this->semStack[$stackPos-(2-2)]);
             },
             7 => function ($stackPos) {
                  $this->semValue = $this->semStack[$stackPos-(3-2)];
@@ -221,43 +223,46 @@ class Types extends ParserAbstract
                  $this->semValue = $this->semStack[$stackPos-(1-1)];
             },
             9 => function ($stackPos) {
-                 $this->semValue = new Node(Type::TUPLE); $this->semValue->appendChildren($this->semStack[$stackPos-(4-3)]->getChildren());
+                 $this->semValue = new Node(Type::TUPLE());
+                                        $this->semValue->appendChildren($this->semStack[$stackPos-(4-3)]->getChildren());
             },
             10 => function ($stackPos) {
-                 $this->semValue = $this->semStack[$stackPos-(3-3)]; $this->semValue->prependChild($this->semStack[$stackPos-(3-1)]);
+                 $this->semValue = $this->semStack[$stackPos-(3-3)];
+                                                        $this->semValue->prependChild($this->semStack[$stackPos-(3-1)]);
             },
             11 => function ($stackPos) {
-                 $this->semValue = new Node(Type::LIST); $this->semValue->appendChild($this->semStack[$stackPos-(1-1)]);
+                 $this->semValue = new Node(Type::LIST());
+                                                        $this->semValue->appendChild($this->semStack[$stackPos-(1-1)]);
             },
             12 => function ($stackPos) {
-                 $this->semValue = new Node(Type::BOOL);
+                 $this->semValue = new Node(Type::BOOL());
             },
             13 => function ($stackPos) {
-                 $this->semValue = new Node(Type::INT);
+                 $this->semValue = new Node(Type::INT());
             },
             14 => function ($stackPos) {
-                 $this->semValue = new Node(Type::FLOAT);
+                 $this->semValue = new Node(Type::FLOAT());
             },
             15 => function ($stackPos) {
-                 $this->semValue = new Node(Type::STRING);
+                 $this->semValue = new Node(Type::STRING());
             },
             16 => function ($stackPos) {
-                 $this->semValue = new Node(Type::ARRAY);
+                 $this->semValue = new Node(Type::ARRAY());
             },
             17 => function ($stackPos) {
-                 $this->semValue = new Node(Type::OBJECT);
+                 $this->semValue = new Node(Type::OBJECT());
             },
             18 => function ($stackPos) {
-                 $this->semValue = new Node(Type::CALLABLE);
+                 $this->semValue = new Node(Type::CALLABLE());
             },
             19 => function ($stackPos) {
-                 $this->semValue = new Node(Type::ITERABLE);
+                 $this->semValue = new Node(Type::ITERABLE());
             },
             20 => function ($stackPos) {
-                 $this->semValue = new Node(Type::RESOURCE);
+                 $this->semValue = new Node(Type::RESOURCE());
             },
             21 => function ($stackPos) {
-                 $this->semValue = new Node(Type::_NULL);
+                 $this->semValue = new Node(Type::NULL());
             },
         ];
     }
