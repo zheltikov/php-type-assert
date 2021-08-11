@@ -13,7 +13,7 @@ class Node
 {
  private:
 	Type type;
-	std::vector<std::variant<std::reference_wrapper < Node>, std::nullptr_t>> children;
+	std::vector<std::variant<Node*, std::nullptr_t>> children;
 
  public:
 	Node();
@@ -27,7 +27,7 @@ class Node
 
 	std::variant<Node, std::nullptr_t> getFirstByType(Type) const;
 	bool hasChildOfType(Type) const;
-	std::vector<std::variant<Node, std::nullptr_t>> getChildren() const;
+	std::vector<std::variant<Node*, std::nullptr_t>> getChildren() const;
 	int hasChildren() const;
 	Type getType() const;
 	auto setType(Type);
@@ -48,15 +48,15 @@ auto Node::setType(Type type)
 	return *this;
 }
 
-auto Node::deleteChild(Node& child_to_remove)
+auto Node::deleteChild(Node* child_to_remove)
 {
-	for (auto& child : children) {
-		if (&std::get < std::reference_wrapper < Node >> (child).get() == &child_to_remove) {
+	for (auto* child : children) {
+		if (*std::get<Node*>(child) == *child_to_remove) {
 			child = nullptr;
 		}
 	}
 
-	return *this;
+	return this;
 }
 
 Node::Node(Type type)

@@ -36,10 +36,10 @@ int main(int argc, char** argv)
 
 	yyparse();
 
-	auto optimizer = Optimizer();
-	optimizer.setRoot(*std::get<Node*>(ast))
-		.execute();
-	*std::get<Node*>(ast) = optimizer.getRoot();
+	auto optimizer = new Optimizer();
+	optimizer->setRoot(*std::get<Node*>(ast))
+		->execute();
+	*std::get<Node*>(ast) = optimizer->getRoot();
 
 	std::string json = std::get<Node*>(ast)->toJson();
 	std::cout << json << "\n";

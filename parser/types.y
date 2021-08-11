@@ -70,7 +70,7 @@ root : type                 { ast = $1; return 0; }
      ;
 
 type : type TOKEN_UNION type          { $$ = new Node(Type::UNION);
-                                        $$->appendChild(*$1).appendChild(*$3); }
+                                        $$->appendChild(*$1)->appendChild(*$3); }
      | scalar_type                    { $$ = $1; }
      | compound_type                  { $$ = $1; }
      | special_type                   { $$ = $1; }

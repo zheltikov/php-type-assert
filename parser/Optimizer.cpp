@@ -9,13 +9,13 @@
 class Optimizer
 {
  private:
-	Node root;
+	std::variant<Node*, std::nullptr_t> root;
  public:
 	Optimizer();
-	Optimizer(Node&);
+	Optimizer(Node*);
 
-	Optimizer setRoot(Node&);
-	Node getRoot() const;
+	Optimizer setRoot(Node*);
+	Node* getRoot() const;
 
 	void execute();
  protected:
@@ -31,66 +31,65 @@ Optimizer::Optimizer()
 
 }
 
-Node Optimizer::getRoot() const
+Node* Optimizer::getRoot() const
 {
 	return root;
 }
 
 void Optimizer::execute()
 {
-	return;
-	std::cout << "Unoptimized:  " << root.toJson() << "\n";
+	std::cout << "Unoptimized:  " << root->toJson() << "\n";
 
 	std::string serialized;
 	auto i = 1;
 
-	while (serialized.compare(root.toJson()) != 0) {
-		serialized = root.toJson();
+	while (serialized.compare(root->toJson()) != 0) {
+		serialized = root->toJson();
 
 		unwrapUnions();
 		dedupeUnions();
 		nullableToUnion();
 
-		std::cout << "Intermediate: " << root.toJson() << "\n";
+		std::cout << "Intermediate: " << root->toJson() << "\n";
 		i++;
 	}
 
-	std::cout << "Optimized:    " << root.toJson() << "\n";
+	std::cout << "Optimized:    " << root->toJson() << "\n";
 	std::cout << i << " optimization iterations.\n";
 }
 
 void Optimizer::unwrapUnions()
 {
-	std::variant<Node, std::nullptr_t> node = root.getFirstByType(Type::UNION);
-	if (std::holds_alternative<Node>(node)) {
+	std::variant < Node * , std::nullptr_t > node = root->getFirstByType(Type::UNION);
+	if (std::holds_alternative<Node*>(node)) {
 
-		if (std::get<Node>(node).hasChildOfType(Type::UNION)) {
-			Node new_node = Node(Type::UNION);
+		if (std::get<Node*>(node)->hasChildOfType(Type::UNION)) {
+			Node* new_node = new Node(Type::UNION);
 
-			for (auto child: std::get<Node>(node).getChildren()) {
-				if (std::get<Node>(child).getType() == Type::UNION) {
-					new_node.appendChildren(std::get<Node>(child).getChildren());
-					std::get<Node>(node).deleteChild(std::get<Node>(child));
+			for (auto* child: std::get<Node*>(node)->getChildren()) {
+				if (std::get<Node*>(child)->getType() == Type::UNION) {
+					new_node->appendChildren(std::get<Node*>(child)->getChildren());
+					std::get<Node*>(node)->deleteChild(std::get<Node*>(child));
 				} else {
-					new_node.appendChild(std::get<Node>(child));
+					new_node->appendChild(std::get<Node*>(child));
 				}
 			}
 
-			node = new_node;
+			*node = *new_node;
 		}
 	}
 }
 
 void Optimizer::dedupeUnions()
 {
-	std::variant<Node, std::nullptr_t> node = root.getFirstByType(Type::UNION);
-	if (std::holds_alternative<Node>(node)) {
+	std::variant < Node * , std::nullptr_t > node = root->getFirstByType(Type::UNION);
+	if (std::holds_alternative<Node*>(node)) {
 
 		std::map<Type, int> counter;
 		bool needs_optimization = false;
 
-		for (auto child: std::get<Node>(node).getChildren()) {
-			auto child_count = std::get<Node>(child).getChildren().size();
+		for (auto* child: std::get<Node*>(node)->getChildren()) {
+			auto child_count = std::get<Node*>(child)->getChildren().size();
 			if (child_count > 0) { continue; }
 
 			auto type = std::get<Node>(child).getType();
