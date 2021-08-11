@@ -13,13 +13,18 @@ const LIB = '(?(DEFINE)
 )';
 
 const PARAMS = '\[(?<params>[^[\]]*+(?:\[(?&params)\][^[\]]*+)*+)\]';
-const ARGS   = '\((?<args>[^()]*+(?:\((?&args)\)[^()]*+)*+)\)';
+const ARGS = '\((?<args>[^()]*+(?:\((?&args)\)[^()]*+)*+)\)';
 
 ///////////////////////////////
 /// Preprocessing functions ///
 ///////////////////////////////
 
-function preprocessGrammar($code) {
+/**
+ * @param string $code
+ * @return string
+ */
+function preprocessGrammar(string $code): string
+{
     $code = resolveNodes($code);
     $code = resolveMacros($code);
     $code = resolveStackAccess($code);
@@ -27,10 +32,15 @@ function preprocessGrammar($code) {
     return $code;
 }
 
-function resolveNodes($code) {
+/**
+ * @param string $code
+ * @return string
+ */
+function resolveNodes(string $code): string
+{
     return preg_replace_callback(
         '~\b(?<name>[A-Z][a-zA-Z_\\\\]++)\s*' . PARAMS . '~',
-        function($matches) {
+        function ($matches) {
             // recurse
             $matches['params'] = resolveNodes($matches['params']);
 
@@ -50,10 +60,15 @@ function resolveNodes($code) {
     );
 }
 
-function resolveMacros($code) {
+/**
+ * @param string $code
+ * @return string
+ */
+function resolveMacros(string $code): string
+{
     return preg_replace_callback(
         '~\b(?<!::|->)(?!array\()(?<name>[a-z][A-Za-z]++)' . ARGS . '~',
-        function($matches) {
+        function ($matches) {
             // recurse
             $matches['args'] = resolveMacros($matches['args']);
 
@@ -107,7 +122,8 @@ function resolveMacros($code) {
                 assertArgs(3, $args, $name);
 
                 return 'foreach (' . $args[0] . ' as $s) { if ($s instanceof Node\Scalar\EncapsedStringPart) {'
-                       . ' $s->value = Node\Scalar\String_::parseEscapeSequences($s->value, ' . $args[1] . ', ' . $args[2] . '); } }';
+                       . ' $s->value = Node\Scalar\String_::parseEscapeSequences($s->value, ' . $args[1] . ', '
+                       . $args[2] . '); } }';
             }
 
             if ('makeNop' === $name) {
@@ -124,7 +140,8 @@ function resolveMacros($code) {
 
                 return '$startAttributes = ' . $args[1] . ';'
                        . ' if (isset($startAttributes[\'comments\']))'
-                       . ' { ' . $args[0] . ' = new Stmt\Nop($this->createCommentNopAttributes($startAttributes[\'comments\'])); }'
+                       . ' { ' . $args[0]
+                       . ' = new Stmt\Nop($this->createCommentNopAttributes($startAttributes[\'comments\'])); }'
                        . ' else { ' . $args[0] . ' = null; }';
             }
 
@@ -151,19 +168,35 @@ function resolveMacros($code) {
     );
 }
 
-function assertArgs($num, $args, $name) {
+/**
+ * @param int $num
+ * @param array $args
+ * @param string $name
+ */
+function assertArgs(int $num, array $args, string $name): void
+{
     if ($num != count($args)) {
         die('Wrong argument count for ' . $name . '().');
     }
 }
 
-function resolveStackAccess($code) {
+/**
+ * @param string $code
+ * @return string
+ */
+function resolveStackAccess(string $code): string
+{
     $code = preg_replace('/\$\d+/', '$this->semStack[$0]', $code);
     $code = preg_replace('/#(\d+)/', '$$1', $code);
     return $code;
 }
 
-function removeTrailingWhitespace($code) {
+/**
+ * @param string $code
+ * @return string
+ */
+function removeTrailingWhitespace(string $code): string
+{
     $lines = explode("\n", $code);
     $lines = array_map('rtrim', $lines);
     return implode("\n", $lines);
@@ -173,11 +206,22 @@ function removeTrailingWhitespace($code) {
 /// Regex helper functions ///
 //////////////////////////////
 
-function regex($regex) {
+/**
+ * @param string $regex
+ * @return string
+ */
+function regex(string $regex): string
+{
     return '~' . LIB . '(?:' . str_replace('~', '\~', $regex) . ')~';
 }
 
-function magicSplit($regex, $string) {
+/**
+ * @param string $regex
+ * @param string $string
+ * @return array
+ */
+function magicSplit(string $regex, string $string): array
+{
     $pieces = preg_split(regex('(?:(?&string)|(?&comment)|(?&code))(*SKIP)(*FAIL)|' . $regex), $string);
 
     foreach ($pieces as &$piece) {
@@ -190,4 +234,3 @@ function magicSplit($regex, $string) {
 
     return $pieces;
 }
-

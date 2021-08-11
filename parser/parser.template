@@ -14,7 +14,7 @@ namespace Zheltikov\TypeAssert\Parser;
  *  * the skeleton file parser/parser.template
  *  * the preprocessing script parser/rebuild_parser.php
  */
-class #(-p) extends \PhpParser\ParserAbstract
+class #(-p) extends ParserAbstract
 {
     protected $tokenToSymbolMapSize = #(YYMAXLEX);
     protected $actionTableSize = #(YYLAST);

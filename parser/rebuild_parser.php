@@ -7,12 +7,12 @@ $grammarFileToName = [
     __DIR__ . '/types.y' => 'Types',
 ];
 
-$tokensFile     = __DIR__ . '/tokens.y';
+$tokensFile = __DIR__ . '/tokens.y';
 $tokensTemplate = __DIR__ . '/tokens.template';
-$skeletonFile   = __DIR__ . '/parser.template';
+$skeletonFile = __DIR__ . '/parser.template';
 $tmpGrammarFile = __DIR__ . '/tmp_parser.phpy';
-$tmpResultFile  = __DIR__ . '/tmp_parser.php';
-$resultDir = __DIR__ . '/../lib/PhpParser/Parser';
+$tmpResultFile = __DIR__ . '/tmp_parser.php';
+$resultDir = __DIR__ . '/../src/Parser';
 $tokensResultsFile = $resultDir . '/Tokens.php';
 
 $kmyacc = getenv('KMYACC');
@@ -65,13 +65,22 @@ foreach ($grammarFileToName as $grammarFile => $name) {
 /// Utility helper functions ///
 ////////////////////////////////
 
-function ensureDirExists($dir) {
+/**
+ * @param string $dir
+ */
+function ensureDirExists(string $dir): void
+{
     if (!is_dir($dir)) {
         mkdir($dir, 0777, true);
     }
 }
 
-function execCmd($cmd) {
+/**
+ * @param string $cmd
+ * @return string
+ */
+function execCmd(string $cmd): string
+{
     $output = trim(shell_exec("$cmd 2>&1"));
     if ($output !== "") {
         echo "> " . $cmd . "\n";
