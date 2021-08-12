@@ -14,7 +14,8 @@
     "php": "^7.3",
     "zheltikov/php-exceptions": "^1.0",
     "zheltikov/php-invariant": "^1.1",
-    "myclabs/php-enum": "^1.8"
+    "myclabs/php-enum": "^1.8",
+    "tmilos/lexer": "^1.0"
   },
   "require-dev": {
     "nazar-pc/phpt-tests-runner": "^1.4",
