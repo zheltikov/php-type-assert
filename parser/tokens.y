@@ -1,4 +1,6 @@
 
+%token TOKEN_EOF
+
 %token TYPE_BOOL
 %token TYPE_INT
 %token TYPE_FLOAT
