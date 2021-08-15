@@ -10,10 +10,12 @@ $meta #
 namespace Zheltikov\TypeAssert\Parser;
 #include;
 
+use MyCLabs\Enum\Enum;
+
 /* GENERATED file based on parser/tokens.y */
-final class Tokens
+final class Tokens extends Enum
 {
 #tokenval
-    public const %s = %n;
+    private const %s = %n;
 #endtokenval
 }
