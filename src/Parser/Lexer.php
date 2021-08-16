@@ -108,6 +108,7 @@ class Lexer
             '>' => Tokens::GENERIC_LIST_END(),
             '\|' => Tokens::TOKEN_UNION(),
             '&' => Tokens::TOKEN_INTERSECTION(),
+            '\\\\' => Tokens::TOKEN_NS_SEPARATOR(),
         ];
     }
 

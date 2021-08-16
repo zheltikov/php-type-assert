@@ -15,11 +15,18 @@ class Node implements \JsonSerializable
     protected $children;
 
     /**
-     * @param \Zheltikov\TypeAssert\Parser\Type|null $type
+     * @var mixed
      */
-    public function __construct(?Type $type = null)
+    protected $value;
+
+    /**
+     * @param \Zheltikov\TypeAssert\Parser\Type|null $type
+     * @param null $value
+     */
+    public function __construct(?Type $type = null, $value = null)
     {
-        $this->setType($type);
+        $this->setType($type)
+            ->setValue($value);
         $this->children = [];
     }
 
@@ -79,6 +86,7 @@ class Node implements \JsonSerializable
     {
         return [
             'type' => $this->type->getKey(),
+            'value' => $this->value,
             'children' => $this->children,
         ];
         /*return [
@@ -188,8 +196,12 @@ class Node implements \JsonSerializable
     public function pretty(): string
     {
         $result = $this->type->getValue();
-        $child_count = $this->countChildren();
 
+        if ($this->value !== null) {
+            $result .= '(' . ((string) $this->value) . ')';
+        }
+
+        $child_count = $this->countChildren();
         if ($child_count > 0) {
             $result .= '<';
 
@@ -205,5 +217,23 @@ class Node implements \JsonSerializable
         }
 
         return $result;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param mixed $value
+     * @return $this
+     */
+    public function setValue($value): self
+    {
+        $this->value = $value;
+        return $this;
     }
 }

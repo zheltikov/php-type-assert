@@ -19,7 +19,19 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
      | tuple                          { $$ = $1; }
      | PREFIX_NEGATED type            { $$ = new Node(Type::NEGATED());
                                         $$->appendChild($2); }
+     | custom_type                    { $$ = $1; }
+     | user_defined_type              { $$ = $1; }
      ;
+
+user_defined_type : TYPE_USER_DEFINED TOKEN_NS_SEPARATOR user_defined_type
+                                        { $$ = $3; $$->setValue($1 . '\\' . $$->getValue()); }
+                  | TOKEN_NS_SEPARATOR user_defined_type
+                                        { $$ = $2; $$->setValue($1 . '\\' . $$->getValue()); }
+                  | TYPE_USER_DEFINED   { $$ = new Node(Type::USER_DEFINED(), $1); }
+                  ;
+
+custom_type : /* empty */
+            ;
 
 tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT
                                       { $$ = new Node(Type::TUPLE());

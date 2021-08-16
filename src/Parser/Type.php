@@ -25,6 +25,7 @@ use MyCLabs\Enum\Enum;
  * @method Type RESOURCE()
  * @method Type NULL()
  * @method Type NEGATED()
+ * @method Type USER_DEFINED()
  *
  */
 final class Type extends Enum
@@ -44,4 +45,5 @@ final class Type extends Enum
     private const RESOURCE = 'resource';
     private const NULL = 'null';
     private const NEGATED = 'negated';
+    private const USER_DEFINED = 'user_defined';
 }
