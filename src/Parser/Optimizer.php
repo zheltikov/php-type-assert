@@ -49,7 +49,7 @@ class Optimizer
             return $this->root_node->pretty();
         };
 
-        echo 'Unoptimized:  ', $serialize(), "\n";
+        echo 'Unoptimized: ', $serialize(), "\n";
 
         $serialized = '';
         $i = 0;
@@ -58,15 +58,14 @@ class Optimizer
             $serialized = $serialize();
 
             $this->unwrapNegations();
-            // $this->unwrapUnions();
-            // $this->dedupeUnions();
-            // $this->nullableToUnion();
+            $this->unwrapUnions();
+            $this->dedupeUnions();
+            $this->nullableToUnion();
 
-            echo 'Intermediate: ', $serialize(), "\n";
+            echo 'Optimized:   ', $serialize(), "\n";
             $i++;
         }
 
-        echo 'Optimized:    ', $serialize(), "\n";
         echo $i, " optimization iterations.\n";
     }
 
@@ -107,6 +106,9 @@ class Optimizer
         }
     }
 
+    /**
+     * Done.
+     */
     protected function unwrapUnions(): void
     {
         if ($this->root_node->getType()->equals(Type::UNION())) {
@@ -119,7 +121,6 @@ class Optimizer
             if ($node->hasChildOfType(Type::UNION())) {
                 $new_node = new Node(Type::UNION());
 
-                // $delete_children = [];
                 $children =& $node->getChildren();
                 foreach ($children as $child) {
                     if ($child->getType()->equals(Type::UNION())) {
@@ -131,20 +132,89 @@ class Optimizer
                     }
                 }
 
-                /*foreach ($delete_children as $child) {
-                    $node->deleteChild($child);
-                }*/
+                $node = $new_node;
+            }
+        }
+    }
+
+    /**
+     * Done.
+     */
+    protected function dedupeUnions(): void
+    {
+        if ($this->root_node->getType()->equals(Type::UNION())) {
+            $node =& $this->root_node;
+        } else {
+            $node =& $this->root_node->getFirstByType(Type::UNION());
+        }
+
+        if ($node !== null) {
+            $counter_map = [];
+            $needs_optimization = false;
+
+            $children =& $node->getChildren();
+            foreach ($children as &$child) {
+                $child_count = $child->countChildren();
+                if ($child_count > 0) {
+                    continue;
+                }
+
+                $type = $child->getType()->getKey();
+                if (array_key_exists($type, $counter_map)) {
+                    $counter_map[$type]++;
+                    $needs_optimization = true;
+                } else {
+                    $counter_map[$type] = 1;
+                }
+            }
+
+            if ($needs_optimization) {
+                $just_added = [];
+                $new_node = new Node(Type::UNION());
+
+                unset($child);
+                foreach ($children as &$child) {
+                    $child_count = $child->countChildren();
+                    if ($child_count > 0) {
+                        $new_node->appendChild($child);
+                    }
+
+                    $type = $child->getType()->getKey();
+                    if (array_key_exists($type, $counter_map)) {
+                        if (!array_key_exists($type, $just_added)) {
+                            $new_node->appendChild($child);
+                            $just_added[$type] = 1;
+                        }
+                    } else {
+                        $new_node->appendChild($child);
+                    }
+                }
 
                 $node = $new_node;
             }
         }
     }
 
-    protected function dedupeUnions(): void
-    {
-    }
-
+    /**
+     * Done.
+     */
     protected function nullableToUnion(): void
     {
+        if ($this->root_node->getType()->equals(Type::NULLABLE())) {
+            $node =& $this->root_node;
+        } else {
+            $node =& $this->root_node->getFirstByType(Type::NULLABLE());
+        }
+
+        if ($node !== null) {
+            $null = new Node(Type::NULL());
+            $children =& $node->getChildren();
+
+            $new_node = (new Node(Type::UNION()))
+                ->appendChild($null)
+                ->appendChildren($children);
+
+            $node = $new_node;
+        }
     }
 }

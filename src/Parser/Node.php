@@ -14,9 +14,12 @@ class Node implements \JsonSerializable
      */
     protected $children;
 
-    public function __construct(Type $type)
+    /**
+     * @param \Zheltikov\TypeAssert\Parser\Type|null $type
+     */
+    public function __construct(?Type $type = null)
     {
-        $this->type = $type;
+        $this->setType($type);
         $this->children = [];
     }
 
@@ -101,6 +104,19 @@ class Node implements \JsonSerializable
     public function getType(): Type
     {
         return $this->type;
+    }
+
+    /**
+     * @param \Zheltikov\TypeAssert\Parser\Type|null $type
+     * @return $this
+     */
+    public function setType(?Type $type = null): self
+    {
+        if ($type !== null) {
+            $this->type = $type;
+        }
+
+        return $this;
     }
 
     /**
