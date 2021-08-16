@@ -10,6 +10,8 @@ root : type                 { $$ = $1; }
 
 type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
                                         $$->appendChild($1)->appendChild($3); }
+     | type TOKEN_INTERSECTION type   { $$ = new Node(Type::INTERSECTION());
+                                        $$->appendChild($1)->appendChild($3); }
      | scalar_type                    { $$ = $1; }
      | compound_type                  { $$ = $1; }
      | special_type                   { $$ = $1; }
@@ -26,7 +28,7 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
 user_defined_type : TYPE_USER_DEFINED TOKEN_NS_SEPARATOR user_defined_type
                                         { $$ = $3; $$->setValue($1 . '\\' . $$->getValue()); }
                   | TOKEN_NS_SEPARATOR user_defined_type
-                                        { $$ = $2; $$->setValue($1 . '\\' . $$->getValue()); }
+                                        { $$ = $2; $$->setValue('\\' . $$->getValue()); }
                   | TYPE_USER_DEFINED   { $$ = new Node(Type::USER_DEFINED(), $1); }
                   ;
 

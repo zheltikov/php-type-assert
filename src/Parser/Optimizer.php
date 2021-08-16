@@ -166,6 +166,8 @@ class Optimizer
             $this->unwrapUnions();
             $this->dedupeUnions();
             $this->nullableToUnion();
+            $this->unwrapIntersections();
+            $this->dedupeIntersections();
 
             if ($this->isDebug()) {
                 echo 'Optimized:   ', $serialize(), "\n";
@@ -351,6 +353,95 @@ class Optimizer
                 ->appendChildren($children);
 
             $node = $new_node;
+        }
+    }
+
+    /**
+     * Done.
+     */
+    protected function unwrapIntersections(): void
+    {
+        if ($this->root_node->getType()->equals(Type::INTERSECTION())) {
+            $node =& $this->root_node;
+        } else {
+            $node =& $this->root_node->getFirstByType(Type::INTERSECTION());
+        }
+
+        if ($node !== null) {
+            if ($node->hasChildOfType(Type::INTERSECTION())) {
+                $new_node = new Node(Type::INTERSECTION());
+
+                $children =& $node->getChildren();
+                foreach ($children as $child) {
+                    if ($child->getType()->equals(Type::INTERSECTION())) {
+                        $sub_children =& $child->getChildren();
+                        $new_node->appendChildren($sub_children);
+                        // $delete_children[] = $child;
+                    } else {
+                        $new_node->appendChild($child);
+                    }
+                }
+
+                $node = $new_node;
+            }
+        }
+    }
+
+    /**
+     * Done.
+     */
+    protected function dedupeIntersections(): void
+    {
+        if ($this->root_node->getType()->equals(Type::INTERSECTION())) {
+            $node =& $this->root_node;
+        } else {
+            $node =& $this->root_node->getFirstByType(Type::INTERSECTION());
+        }
+
+        if ($node !== null) {
+            $counter_map = [];
+            $needs_optimization = false;
+
+            $children =& $node->getChildren();
+            foreach ($children as &$child) {
+                $child_count = $child->countChildren();
+                if ($child_count > 0) {
+                    continue;
+                }
+
+                $type = $child->getType()->getKey();
+                if (array_key_exists($type, $counter_map)) {
+                    $counter_map[$type]++;
+                    $needs_optimization = true;
+                } else {
+                    $counter_map[$type] = 1;
+                }
+            }
+
+            if ($needs_optimization) {
+                $just_added = [];
+                $new_node = new Node(Type::INTERSECTION());
+
+                unset($child);
+                foreach ($children as &$child) {
+                    $child_count = $child->countChildren();
+                    if ($child_count > 0) {
+                        $new_node->appendChild($child);
+                    }
+
+                    $type = $child->getType()->getKey();
+                    if (array_key_exists($type, $counter_map)) {
+                        if (!array_key_exists($type, $just_added)) {
+                            $new_node->appendChild($child);
+                            $just_added[$type] = 1;
+                        }
+                    } else {
+                        $new_node->appendChild($child);
+                    }
+                }
+
+                $node = $new_node;
+            }
         }
     }
 

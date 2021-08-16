@@ -11,6 +11,7 @@ use MyCLabs\Enum\Enum;
  * @extends Enum<Type>
  *
  * @method Type UNION()
+ * @method Type INTERSECTION()
  * @method Type NULLABLE()
  * @method Type TUPLE()
  * @method Type LIST()
@@ -51,6 +52,7 @@ use MyCLabs\Enum\Enum;
 final class Type extends Enum
 {
     private const UNION = 'union';
+    private const INTERSECTION = 'intersection';
     private const NULLABLE = 'nullable';
     private const TUPLE = 'tuple';
     private const LIST = 'list';
