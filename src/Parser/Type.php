@@ -49,6 +49,7 @@ use MyCLabs\Enum\Enum;
  * @method Type NOT_POSITIVE()
  * @method Type NOT_NEGATIVE()
  * @method Type RAW_STRING()
+ * @method Type KEY_VALUE_PAIR()
  *
  */
 final class Type extends Enum
@@ -88,4 +89,5 @@ final class Type extends Enum
     private const POSITIVE = 'positive';
     private const NEGATIVE = 'negative';
     private const RAW_STRING = 'raw_string';
+    private const KEY_VALUE_PAIR = 'key_value_pair';
 }

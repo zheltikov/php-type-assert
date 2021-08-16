@@ -24,8 +24,7 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
                                         $$->appendChild($2); }
      | custom_type                    { $$ = $1; }
      | user_defined_type              { $$ = $1; }
-     | raw_string                     { $$ = new Node(Type::RAW_STRING());
-                                        $$->setValue(substr($1, 1, -1)); }
+     | raw_string                     { $$ = $1; }
      ;
 
 user_defined_type : TYPE_USER_DEFINED TOKEN_NS_SEPARATOR user_defined_type
@@ -58,18 +57,27 @@ tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT
                                         $$->appendChildren($3->getChildren()); }
       ;
 
-shape : TYPE_SHAPE PAREN_LEFT PAREN_RIGHT
-                                      { $$ = new Node(Type::SHAPE()); }
+shape : TYPE_SHAPE PAREN_LEFT key_value_pair_list PAREN_RIGHT
+                                      { $$ = new Node(Type::SHAPE());
+                                        $$->appendChildren($3->getChildren()); }
       ;
 
 key_value_pair : raw_string TOKEN_ARROW type
-                                      { $$ = new Node(Type::KEY_VALUE_PAIR(), $1);
-                                        $$->appendChild($3); }
+                                      { $$ = new Node(Type::KEY_VALUE_PAIR());
+                                        $$->appendChild($1)->appendChild($3); }
                ;
 
-raw_string : TOKEN_STRING_DQ          { $$ = $1; }
-           | TOKEN_STRING_SQ          { $$ = $1; }
+raw_string : TOKEN_STRING_DQ          { $$ = new Node(Type::RAW_STRING());
+                                        $$->setValue(substr($1, 1, -1)); }
+           | TOKEN_STRING_SQ          { $$ = new Node(Type::RAW_STRING());
+                                        $$->setValue(substr($1, 1, -1)); }
            ;
+
+key_value_pair_list : key_value_pair TOKEN_COMMA key_value_pair_list    { $$ = $3;
+                                                                          $$->prependChild($1); }
+                    | key_value_pair                                { $$ = new Node(Type::LIST());
+                                                                      $$->appendChild($1); }
+                    ;
 
 type_comma_list : type TOKEN_COMMA type_comma_list    { $$ = $3;
                                                         $$->prependChild($1); }
