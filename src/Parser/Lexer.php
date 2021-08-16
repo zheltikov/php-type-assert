@@ -6,6 +6,7 @@ namespace Zheltikov\TypeAssert\Parser;
 
 use PhpYacc\Yacc\Token;
 use Tmilos\Lexer\Config\LexerArrayConfig;
+use Tmilos\Lexer\Config\TokenDefn;
 
 class Lexer
 {
@@ -113,6 +114,17 @@ class Lexer
             '\|' => Tokens::TOKEN_UNION(),
             '&' => Tokens::TOKEN_INTERSECTION(),
             '\\\\' => Tokens::TOKEN_NS_SEPARATOR(),
+
+            new TokenDefn(
+                Tokens::TOKEN_STRING_DQ()->getKey(),
+                '"(([^\\"]|\\["\\/bfnrt]|\\u[0-9a-f]{4})*)?"',
+                'iU'
+            ),
+            new TokenDefn(
+                Tokens::TOKEN_STRING_SQ()->getKey(),
+                "'(([^\\']|\\['\\])*)?'",
+                'iU'
+            ),
         ];
     }
 
@@ -219,7 +231,19 @@ class Lexer
         $defs = [];
         /** @var \Zheltikov\TypeAssert\Parser\Tokens $token */
         foreach (static::getTokenDefinitions() as $regex => $token) {
-            $defs['(?:' . $regex . ')'] = $token->getKey();
+            if ($token instanceof TokenDefn) {
+                $defs[] = $token;
+            } elseif (is_string($regex) && $token instanceof Tokens) {
+                $defs['(?:' . $regex . ')'] = $token->getKey();
+            } else {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Invalid token definition: %s => %s',
+                        var_export($regex, true),
+                        var_export($token, true),
+                    )
+                );
+            }
         }
         $config = new LexerArrayConfig($defs);
 

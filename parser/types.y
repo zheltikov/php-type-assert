@@ -6,6 +6,7 @@
 %%
 
 root : type                 { $$ = $1; }
+     | raw_string      { $$ = new Node(Type::RAW_STRING(), $1); }
      ;
 
 type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
@@ -19,6 +20,7 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
                                         $$->appendChild($2); }
      | PAREN_LEFT type PAREN_RIGHT    { $$ = $2; }
      | tuple                          { $$ = $1; }
+     | shape                          { $$ = $1; }
      | PREFIX_NEGATED type            { $$ = new Node(Type::NEGATED());
                                         $$->appendChild($2); }
      | custom_type                    { $$ = $1; }
@@ -54,6 +56,19 @@ tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT
                                       { $$ = new Node(Type::TUPLE());
                                         $$->appendChildren($3->getChildren()); }
       ;
+
+shape : TYPE_SHAPE PAREN_LEFT PAREN_RIGHT
+                                      { $$ = new Node(Type::SHAPE()); }
+      ;
+
+key_value_pair : raw_string TOKEN_ARROW type
+                                      { $$ = new Node(Type::KEY_VALUE_PAIR(), $1);
+                                        $$->appendChild($3); }
+               ;
+
+raw_string : TOKEN_STRING_DQ          { $$ = $1; }
+           | TOKEN_STRING_SQ          { $$ = $1; }
+           ;
 
 type_comma_list : type TOKEN_COMMA type_comma_list    { $$ = $3;
                                                         $$->prependChild($1); }

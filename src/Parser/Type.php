@@ -14,6 +14,7 @@ use MyCLabs\Enum\Enum;
  * @method Type INTERSECTION()
  * @method Type NULLABLE()
  * @method Type TUPLE()
+ * @method Type SHAPE()
  * @method Type LIST()
  * @method Type BOOL()
  * @method Type INT()
@@ -47,6 +48,7 @@ use MyCLabs\Enum\Enum;
  * @method Type NEGATIVE()
  * @method Type NOT_POSITIVE()
  * @method Type NOT_NEGATIVE()
+ * @method Type RAW_STRING()
  *
  */
 final class Type extends Enum
@@ -55,6 +57,7 @@ final class Type extends Enum
     private const INTERSECTION = 'intersection';
     private const NULLABLE = 'nullable';
     private const TUPLE = 'tuple';
+    private const SHAPE = 'shape';
     private const LIST = 'list';
     private const BOOL = 'bool';
     private const INT = 'int';
@@ -84,4 +87,5 @@ final class Type extends Enum
     private const FALSE = 'false';
     private const POSITIVE = 'positive';
     private const NEGATIVE = 'negative';
+    private const RAW_STRING = 'raw_string';
 }
