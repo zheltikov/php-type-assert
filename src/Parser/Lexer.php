@@ -84,6 +84,10 @@ class Lexer
     public static function getTypeTokenDefinitions(): array
     {
         return array_merge(
+            [
+
+                'arraykey' => Tokens::TYPE_ARRAYKEY(),
+            ],
             static::getBuiltInTypeTokenDefinitions(),
             static::getCustomTokenDefinitions(),
             [
@@ -145,7 +149,6 @@ class Lexer
             'num(?:ber)?' => Tokens::TYPE_NUMBER(),
             'mixed|dynamic|any' => Tokens::TYPE_MIXED(),
             'void|nothing' => Tokens::TYPE_VOID(),
-            'arraykey' => Tokens::TYPE_ARRAYKEY(),
             'classname' => Tokens::TYPE_CLASSNAME(),
             'interfacename' => Tokens::TYPE_INTERFACENAME(),
             'traitname' => Tokens::TYPE_TRAITNAME(),
@@ -213,11 +216,12 @@ class Lexer
     protected function token_get_all(
         string $code
     ): array {
-        $config = new LexerArrayConfig(
-            array_map(function (Tokens $token): string {
-                return $token->getKey();
-            }, static::getTokenDefinitions())
-        );
+        $defs = [];
+        /** @var \Zheltikov\TypeAssert\Parser\Tokens $token */
+        foreach (static::getTokenDefinitions() as $regex => $token) {
+            $defs['(?:' . $regex . ')'] = $token->getKey();
+        }
+        $config = new LexerArrayConfig($defs);
 
         $tokens = \Tmilos\Lexer\Lexer::scan($config, $code);
 

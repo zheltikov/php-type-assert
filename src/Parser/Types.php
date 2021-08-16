@@ -16,7 +16,7 @@ class Types extends ParserAbstract
     protected $semValue;
 
     protected $tokenToSymbolMapSize = 310;
-    protected $actionTableSize = 27;
+    protected $actionTableSize = 28;
     protected $gotoTableSize = 8;
 
     protected $invalidSymbol = 55;
@@ -40,6 +40,7 @@ class Types extends ParserAbstract
         "TYPE_ITERABLE",
         "TYPE_RESOURCE",
         "TYPE_NULL",
+        "TYPE_ARRAYKEY",
         "TYPE_TUPLE",
         "TYPE_USER_DEFINED",
         "TOKEN_NS_SEPARATOR",
@@ -57,7 +58,6 @@ class Types extends ParserAbstract
         "TYPE_NUMBER",
         "TYPE_MIXED",
         "TYPE_VOID",
-        "TYPE_ARRAYKEY",
         "TYPE_CLASSNAME",
         "TYPE_INTERFACENAME",
         "TYPE_TRAITNAME",
@@ -111,34 +111,34 @@ class Types extends ParserAbstract
            55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
            55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
            55,   55,   55,   55,   55,   55,   55,   55,   55,   55,
-           55,   55,   55,   55,   55,   55,    1,   21,    2,    3,
-            4,    5,    6,    7,    8,    9,   10,   11,   22,   23,
-           24,   25,   26,   27,   28,   29,   30,   31,   32,   33,
-           12,   34,   35,   36,   37,   38,   39,   40,   41,   42,
-           43,   44,   45,   46,   47,   13,   48,   14,   15,   16,
-           17,   18,   19,   49,   50,   51,   20,   52,   53,   54
+           55,   55,   55,   55,   55,   55,    1,   22,    2,    3,
+            4,    5,    6,    7,    8,    9,   10,   11,   23,   24,
+           25,   26,   27,   28,   29,   12,   30,   31,   32,   33,
+           13,   34,   35,   36,   37,   38,   39,   40,   41,   42,
+           43,   44,   45,   46,   47,   14,   48,   15,   16,   17,
+           18,   19,   20,   49,   50,   51,   21,   52,   53,   54
     ];
 
     protected $action = [
            38,   39,   40,   41,   42,   43,   44,   45,   46,   47,
-           11,    0,    1,    3,    4,    5,   12,    7,    8,   26,
-           35,    0,    0,    0,    2,    0,    6
+           34,   11,    0,    1,    3,    4,    5,   12,    7,    8,
+           26,   35,    0,    0,    0,    2,    0,    6
     ];
 
     protected $actionCheck = [
             2,    3,    4,    5,    6,    7,    8,    9,   10,   11,
-           12,    0,   17,   15,   16,   17,   13,   14,   14,   18,
-           18,   -1,   -1,   -1,   19,   -1,   20
+           12,   13,    0,   18,   16,   17,   18,   14,   15,   15,
+           19,   19,   -1,   -1,   -1,   20,   -1,   21
     ];
 
     protected $actionBase = [
            -2,   -2,   -2,   -2,   -2,   -2,   -2,    3,    3,    1,
-            5,   -5,    4,   11,    6,    6,    6,    2,    6,    3,
+            5,   -5,    4,   12,    6,    6,    6,    2,    6,    3,
             3,    3,    3,    3,    3,    3,    0,    0,    6,    6
     ];
 
     protected $actionDefault = [
-           15,   15,   15,   15,   15,   15,   15,32767,32767,32767,
+        32767,32767,32767,32767,32767,32767,32767,32767,32767,32767,
            18,32767,   14,32767,    1,    6,    9,32767,    2
     ];
 
@@ -166,7 +166,7 @@ class Types extends ParserAbstract
 
     protected $ruleToLength = [
             1,    1,    3,    1,    1,    1,    2,    3,    1,    2,
-            1,    1,    3,    2,    1,    0,    4,    3,    1,    1,
+            1,    1,    3,    2,    1,    1,    4,    3,    1,    1,
             1,    1,    1,    1,    1,    1,    1,    1,    1
     ];
 
@@ -186,7 +186,7 @@ class Types extends ParserAbstract
         "user_defined_type : TYPE_USER_DEFINED TOKEN_NS_SEPARATOR user_defined_type",
         "user_defined_type : TOKEN_NS_SEPARATOR user_defined_type",
         "user_defined_type : TYPE_USER_DEFINED",
-        "custom_type : /* empty */",
+        "custom_type : TYPE_ARRAYKEY",
         "tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT",
         "type_comma_list : type TOKEN_COMMA type_comma_list",
         "type_comma_list : type",
@@ -254,7 +254,7 @@ class Types extends ParserAbstract
                  $this->semValue = new Node(Type::USER_DEFINED(), $this->semStack[$stackPos-(1-1)]);
             },
             15 => function ($stackPos) {
-                $this->semValue = $this->semStack[$stackPos];
+                 $this->semValue = new Node(Type::ARRAYKEY());
             },
             16 => function ($stackPos) {
                  $this->semValue = new Node(Type::TUPLE());

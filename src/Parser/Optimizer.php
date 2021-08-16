@@ -5,6 +5,11 @@ namespace Zheltikov\TypeAssert\Parser;
 class Optimizer
 {
     /**
+     * @var array|null
+     */
+    protected static $aliases = null;
+
+    /**
      * @var \Zheltikov\TypeAssert\Parser\Node
      */
     protected $root_node;
@@ -24,6 +29,36 @@ class Optimizer
             $this->setRootNode($root_node);
         }
         $this->debug = $debug;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAliases(): array
+    {
+        if (static::$aliases === null) {
+            static::$aliases = static::initAliases();
+        }
+        return static::$aliases;
+    }
+
+    /**
+     * @return array
+     */
+    protected static function initAliases(): array
+    {
+        return [
+            Type::ARRAYKEY()->getKey() => function (Node &$node): void {
+                $new_node = new Node(Type::UNION());
+                $new_node->appendChildren(
+                    [
+                        new Node(Type::STRING()),
+                        new Node(Type::INT()),
+                    ]
+                );
+                $node = $new_node;
+            },
+        ];
     }
 
     /**
@@ -67,6 +102,7 @@ class Optimizer
         while ($serialized !== $serialize()) {
             $serialized = $serialize();
 
+            $this->unwrapAliases();
             $this->unwrapNegations();
             $this->unwrapUnions();
             $this->dedupeUnions();
@@ -85,6 +121,31 @@ class Optimizer
     }
 
     // -------------------------------------------------------------------------
+
+    /**
+     * Done.
+     */
+    protected function unwrapAliases(): void
+    {
+        $types = Type::values();
+
+        /** @var callable $resolver */
+        foreach (static::getAliases() as $alias => $resolver) {
+            $type = $types[$alias];
+
+            if ($this->root_node->getType()->equals($type)) {
+                $node =& $this->root_node;
+            } else {
+                $node =& $this->root_node->getFirstByType($type);
+            }
+
+            if ($node !== null) {
+                $resolver($node);
+            }
+
+            unset($node);
+        }
+    }
 
     /**
      * Done.
@@ -233,6 +294,8 @@ class Optimizer
             $node = $new_node;
         }
     }
+
+    // -------------------------------------------------------------------------
 
     /**
      * @return bool

@@ -26,6 +26,7 @@ use MyCLabs\Enum\Enum;
  * @method Type NULL()
  * @method Type NEGATED()
  * @method Type USER_DEFINED()
+ * @method Type ARRAYKEY()
  *
  */
 final class Type extends Enum
@@ -46,4 +47,5 @@ final class Type extends Enum
     private const NULL = 'null';
     private const NEGATED = 'negated';
     private const USER_DEFINED = 'user_defined';
+    private const ARRAYKEY = 'arraykey';
 }

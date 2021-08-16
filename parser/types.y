@@ -30,7 +30,7 @@ user_defined_type : TYPE_USER_DEFINED TOKEN_NS_SEPARATOR user_defined_type
                   | TYPE_USER_DEFINED   { $$ = new Node(Type::USER_DEFINED(), $1); }
                   ;
 
-custom_type : /* empty */
+custom_type : TYPE_ARRAYKEY    { $$ = new Node(Type::ARRAYKEY()); }
             ;
 
 tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT
