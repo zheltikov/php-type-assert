@@ -17,6 +17,8 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
                                         $$->appendChild($2); }
      | PAREN_LEFT type PAREN_RIGHT    { $$ = $2; }
      | tuple                          { $$ = $1; }
+     | PREFIX_NEGATED type            { $$ = new Node(Type::NEGATED());
+                                        $$->appendChild($2); }
      ;
 
 tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT

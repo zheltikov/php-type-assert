@@ -24,6 +24,7 @@ use MyCLabs\Enum\Enum;
  * @method Type ITERABLE()
  * @method Type RESOURCE()
  * @method Type NULL()
+ * @method Type NEGATED()
  *
  */
 final class Type extends Enum
@@ -42,4 +43,5 @@ final class Type extends Enum
     private const ITERABLE = 'iterable';
     private const RESOURCE = 'resource';
     private const NULL = 'null';
+    private const NEGATED = 'negated';
 }
