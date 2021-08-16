@@ -6,8 +6,6 @@
 %%
 
 root : type                 { $$ = $1; }
-     | raw_string           { $$ = new Node(Type::RAW_STRING());
-                              $$->setValue(substr($1, 1, -1)); }
      ;
 
 type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
@@ -26,6 +24,8 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
                                         $$->appendChild($2); }
      | custom_type                    { $$ = $1; }
      | user_defined_type              { $$ = $1; }
+     | raw_string                     { $$ = new Node(Type::RAW_STRING());
+                                        $$->setValue(substr($1, 1, -1)); }
      ;
 
 user_defined_type : TYPE_USER_DEFINED TOKEN_NS_SEPARATOR user_defined_type

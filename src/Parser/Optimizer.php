@@ -161,6 +161,8 @@ class Optimizer
         while ($serialized !== $serialize()) {
             $serialized = $serialize();
 
+            // TODO: add correct handling of child-less Nodes, but with a value set
+
             $this->unwrapAliases();
             $this->unwrapNegations();
             $this->unwrapUnions();
@@ -293,7 +295,10 @@ class Optimizer
             $children =& $node->getChildren();
             foreach ($children as &$child) {
                 $child_count = $child->countChildren();
-                if ($child_count > 0) {
+                if (
+                    $child_count > 0
+                    || $child->getValue() !== null
+                ) {
                     continue;
                 }
 
@@ -313,7 +318,10 @@ class Optimizer
                 unset($child);
                 foreach ($children as &$child) {
                     $child_count = $child->countChildren();
-                    if ($child_count > 0) {
+                    if (
+                        $child_count > 0
+                        || $child->getValue() !== null
+                    ) {
                         $new_node->appendChild($child);
                     }
 
@@ -405,7 +413,10 @@ class Optimizer
             $children =& $node->getChildren();
             foreach ($children as &$child) {
                 $child_count = $child->countChildren();
-                if ($child_count > 0) {
+                if (
+                    $child_count > 0
+                    || $child->getValue() !== null
+                ) {
                     continue;
                 }
 
@@ -425,7 +436,10 @@ class Optimizer
                 unset($child);
                 foreach ($children as &$child) {
                     $child_count = $child->countChildren();
-                    if ($child_count > 0) {
+                    if (
+                        $child_count > 0
+                        || $child->getValue() !== null
+                    ) {
                         $new_node->appendChild($child);
                     }
 
