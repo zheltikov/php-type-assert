@@ -154,6 +154,7 @@ class Optimizer
 
     /**
      * Done.
+     * FIXME: Test with: ??tuple(string, int)
      */
     protected function dedupeUnions(): void
     {

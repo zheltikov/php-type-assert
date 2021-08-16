@@ -37,6 +37,19 @@ class Node implements \JsonSerializable
     }
 
     /**
+     * @param \Zheltikov\TypeAssert\Parser\Node|null $child
+     * @return $this
+     */
+    public function prependChild(?Node $child = null): self
+    {
+        if ($child !== null) {
+            array_unshift($this->children, $child);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param iterable|null $children
      * @return $this
      */
