@@ -27,6 +27,25 @@ use MyCLabs\Enum\Enum;
  * @method Type NEGATED()
  * @method Type USER_DEFINED()
  * @method Type ARRAYKEY()
+ * @method Type NOT_NULL()
+ * @method Type SCALAR()
+ * @method Type NUMBER()
+ * @method Type MIXED()
+ * @method Type VOID()
+ * @method Type VEC_OR_DICT()
+ * @method Type VEC()
+ * @method Type DICT()
+ * @method Type KEYSET()
+ * @method Type NOT_EMPTY()
+ * @method Type EMPTY()
+ * @method Type TRUE()
+ * @method Type FALSE()
+ * @method Type NOT_TRUE()
+ * @method Type NOT_FALSE()
+ * @method Type POSITIVE()
+ * @method Type NEGATIVE()
+ * @method Type NOT_POSITIVE()
+ * @method Type NOT_NEGATIVE()
  *
  */
 final class Type extends Enum
@@ -48,4 +67,19 @@ final class Type extends Enum
     private const NEGATED = 'negated';
     private const USER_DEFINED = 'user_defined';
     private const ARRAYKEY = 'arraykey';
+    private const NOT_NULL = 'not_null';
+    private const SCALAR = 'scalar';
+    private const NUMBER = 'number';
+    private const MIXED = 'mixed';
+    private const VOID = 'void';
+    private const VEC_OR_DICT = 'vec_or_dict';
+    private const VEC = 'vec';
+    private const DICT = 'dict';
+    private const KEYSET = 'keyset';
+    private const NOT_EMPTY = 'not_empty';
+    private const EMPTY = 'empty';
+    private const TRUE = 'true';
+    private const FALSE = 'false';
+    private const POSITIVE = 'positive';
+    private const NEGATIVE = 'negative';
 }

@@ -52,10 +52,69 @@ class Optimizer
                 $new_node = new Node(Type::UNION());
                 $new_node->appendChildren(
                     [
-                        new Node(Type::STRING()),
                         new Node(Type::INT()),
+                        new Node(Type::STRING()),
                     ]
                 );
+                $node = $new_node;
+            },
+
+            Type::NOT_NULL()->getKey() => function (Node &$node): void {
+                $new_node = new Node(Type::NEGATED());
+                $new_node->appendChild(new Node(Type::NULL()));
+                $node = $new_node;
+            },
+
+            Type::SCALAR()->getKey() => function (Node &$node): void {
+                $new_node = new Node(Type::UNION());
+                $new_node->appendChildren(
+                    [
+                        new Node(Type::INT()),
+                        new Node(Type::FLOAT()),
+                        new Node(Type::STRING()),
+                        new Node(Type::BOOL()),
+                    ]
+                );
+                $node = $new_node;
+            },
+
+            Type::NUMBER()->getKey() => function (Node &$node): void {
+                $new_node = new Node(Type::UNION());
+                $new_node->appendChildren(
+                    [
+                        new Node(Type::INT()),
+                        new Node(Type::FLOAT()),
+                    ]
+                );
+                $node = $new_node;
+            },
+
+            Type::MIXED()->getKey() => function (Node &$node): void {
+                $new_node = new Node(Type::NEGATED());
+                $new_node->appendChild(new Node(Type::VOID()));
+                $node = $new_node;
+            },
+
+            Type::VOID()->getKey() => function (Node &$node): void {
+                $new_node = new Node(Type::NEGATED());
+                $new_node->appendChild(new Node(Type::MIXED()));
+                $node = $new_node;
+            },
+
+            Type::VEC_OR_DICT()->getKey() => function (Node &$node): void {
+                $new_node = new Node(Type::UNION());
+                $new_node->appendChildren(
+                    [
+                        new Node(Type::VEC()),
+                        new Node(Type::DICT()),
+                    ]
+                );
+                $node = $new_node;
+            },
+
+            Type::NOT_EMPTY()->getKey() => function (Node &$node): void {
+                $new_node = new Node(Type::NEGATED());
+                $new_node->appendChild(new Node(Type::EMPTY()));
                 $node = $new_node;
             },
         ];

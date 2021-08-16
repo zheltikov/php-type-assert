@@ -30,7 +30,22 @@ user_defined_type : TYPE_USER_DEFINED TOKEN_NS_SEPARATOR user_defined_type
                   | TYPE_USER_DEFINED   { $$ = new Node(Type::USER_DEFINED(), $1); }
                   ;
 
-custom_type : TYPE_ARRAYKEY    { $$ = new Node(Type::ARRAYKEY()); }
+custom_type : TYPE_ARRAYKEY             { $$ = new Node(Type::ARRAYKEY()); }
+            | TYPE_NOT_NULL             { $$ = new Node(Type::NOT_NULL()); }
+            | TYPE_SCALAR               { $$ = new Node(Type::SCALAR()); }
+            | TYPE_NUMBER               { $$ = new Node(Type::NUMBER()); }
+            | TYPE_MIXED                { $$ = new Node(Type::MIXED()); }
+            | TYPE_VOID                 { $$ = new Node(Type::VOID()); }
+            | TYPE_VEC_OR_DICT          { $$ = new Node(Type::VEC_OR_DICT()); }
+            | TYPE_VEC                  { $$ = new Node(Type::VEC()); }
+            | TYPE_DICT                 { $$ = new Node(Type::DICT()); }
+            | TYPE_KEYSET               { $$ = new Node(Type::KEYSET()); }
+            | TYPE_NOT_EMPTY            { $$ = new Node(Type::NOT_EMPTY()); }
+            | TYPE_EMPTY                { $$ = new Node(Type::EMPTY()); }
+            | TYPE_TRUE                 { $$ = new Node(Type::TRUE()); }
+            | TYPE_FALSE                { $$ = new Node(Type::FALSE()); }
+            | TYPE_POSITIVE             { $$ = new Node(Type::POSITIVE()); }
+            | TYPE_NEGATIVE             { $$ = new Node(Type::NEGATIVE()); }
             ;
 
 tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT
