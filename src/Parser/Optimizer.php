@@ -10,13 +10,20 @@ class Optimizer
     protected $root_node;
 
     /**
-     * @param \Zheltikov\TypeAssert\Parser\Node|null $root_node
+     * @var bool
      */
-    public function __construct(?Node $root_node = null)
+    protected $debug = false;
+
+    /**
+     * @param \Zheltikov\TypeAssert\Parser\Node|null $root_node
+     * @param bool $debug
+     */
+    public function __construct(?Node $root_node = null, bool $debug = false)
     {
         if ($root_node !== null) {
             $this->setRootNode($root_node);
         }
+        $this->debug = $debug;
     }
 
     /**
@@ -45,11 +52,14 @@ class Optimizer
         // return;
 
         $serialize = function () {
-            // return json_encode($this->root_node);
-            return $this->root_node->pretty();
+            return $this->isDebug()
+                ? $this->root_node->pretty()
+                : json_encode($this->root_node);
         };
 
-        echo 'Unoptimized: ', $serialize(), "\n";
+        if ($this->isDebug()) {
+            echo 'Unoptimized: ', $serialize(), "\n";
+        }
 
         $serialized = '';
         $i = 0;
@@ -62,11 +72,16 @@ class Optimizer
             $this->dedupeUnions();
             $this->nullableToUnion();
 
-            echo 'Optimized:   ', $serialize(), "\n";
+            if ($this->isDebug()) {
+                echo 'Optimized:   ', $serialize(), "\n";
+            }
+
             $i++;
         }
 
-        echo $i, " optimization iterations.\n";
+        if ($this->isDebug()) {
+            echo $i, " optimization iterations.\n";
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -216,5 +231,23 @@ class Optimizer
 
             $node = $new_node;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDebug(): bool
+    {
+        return $this->debug;
+    }
+
+    /**
+     * @param bool $debug
+     * @return $this
+     */
+    public function setDebug(bool $debug): self
+    {
+        $this->debug = $debug;
+        return $this;
     }
 }
