@@ -6,7 +6,10 @@
 %%
 
 root : type                 { $$ = $1; }
-     | raw_string      { $$ = new Node(Type::RAW_STRING(), $1); }
+     | raw_string           { $$ = new Node(
+                                Type::RAW_STRING(),
+                                eval(sprintf('return (string) %s;', $1))
+                            ); /* FIXME: This string parsing method is not quite good */ }
      ;
 
 type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());

@@ -115,16 +115,9 @@ class Lexer
             '&' => Tokens::TOKEN_INTERSECTION(),
             '\\\\' => Tokens::TOKEN_NS_SEPARATOR(),
 
-            new TokenDefn(
-                Tokens::TOKEN_STRING_DQ()->getKey(),
-                '"(([^\\"]|\\["\\/bfnrt]|\\u[0-9a-f]{4})*)?"',
-                'iU'
-            ),
-            new TokenDefn(
-                Tokens::TOKEN_STRING_SQ()->getKey(),
-                "'(([^\\']|\\['\\])*)?'",
-                'iU'
-            ),
+            // FIXME: this string implementation is somewhat limited
+            '"([^"]*)"' => Tokens::TOKEN_STRING_DQ(),
+            "'([^']*)'" => Tokens::TOKEN_STRING_SQ(),
         ];
     }
 

@@ -251,7 +251,10 @@ class Types extends ParserAbstract
                  $this->semValue = $this->semStack[$stackPos-(1-1)];
             },
             2 => function ($stackPos) {
-                 $this->semValue = new Node(Type::RAW_STRING(), $this->semStack[$stackPos-(1-1)]);
+                 $this->semValue = new Node(
+                                Type::RAW_STRING(),
+                                eval(sprintf('return (string) %s;', $this->semStack[$stackPos-(1-1)]))
+                            ); /* FIXME: This string parsing method is not quite good */
             },
             3 => function ($stackPos) {
                  $this->semValue = new Node(Type::UNION());
