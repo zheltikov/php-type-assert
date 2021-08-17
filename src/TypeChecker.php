@@ -382,22 +382,6 @@ final class TypeChecker
                     return $value === false;
                 };
 
-            case Type::NOT_TRUE()->getKey():
-                $new_ast = (new Node(Type::NEGATED()))
-                    ->appendChild(
-                        new Node(Type::TRUE()),
-                    );
-
-                return self::astToCheckerFn($new_ast);
-
-            case Type::NOT_FALSE()->getKey():
-                $new_ast = (new Node(Type::NEGATED()))
-                    ->appendChild(
-                        new Node(Type::FALSE()),
-                    );
-
-                return self::astToCheckerFn($new_ast);
-
             case Type::POSITIVE()->getKey():
                 return function ($value): bool {
                     return $value > 0;
@@ -407,22 +391,6 @@ final class TypeChecker
                 return function ($value): bool {
                     return $value < 0;
                 };
-
-            case Type::NOT_POSITIVE()->getKey():
-                $new_ast = (new Node(Type::NEGATED()))
-                    ->appendChild(
-                        new Node(Type::POSITIVE()),
-                    );
-
-                return self::astToCheckerFn($new_ast);
-
-            case Type::NOT_NEGATIVE()->getKey():
-                $new_ast = (new Node(Type::NEGATED()))
-                    ->appendChild(
-                        new Node(Type::NEGATIVE()),
-                    );
-
-                return self::astToCheckerFn($new_ast);
 
             case Type::RAW_STRING()->getKey():
                 $raw_string = $ast->getValue();

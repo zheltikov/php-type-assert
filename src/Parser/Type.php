@@ -42,12 +42,8 @@ use MyCLabs\Enum\Enum;
  * @method Type EMPTY()
  * @method Type TRUE()
  * @method Type FALSE()
- * @method Type NOT_TRUE()
- * @method Type NOT_FALSE()
  * @method Type POSITIVE()
  * @method Type NEGATIVE()
- * @method Type NOT_POSITIVE()
- * @method Type NOT_NEGATIVE()
  * @method Type RAW_STRING()
  * @method Type KEY_VALUE_PAIR()
  *
