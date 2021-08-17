@@ -80,6 +80,25 @@ class Node implements \JsonSerializable
     }
 
     /**
+     * @param int $index
+     * @return \Zheltikov\TypeAssert\Parser\Node|null
+     */
+    public function &getChildAt(int $index): ?Node
+    {
+        $i = 0;
+        foreach ($this->getChildren() as &$child) {
+            if ($index === $i) {
+                return $child;
+            }
+            $i++;
+        }
+        unset($child);
+
+        $child = null;
+        return $child;
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize(): array

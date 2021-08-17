@@ -2,7 +2,13 @@
 
 namespace Zheltikov\TypeAssert;
 
-use function Zheltikov\Invariant\{invariant, invariant_violation};
+use InvalidArgumentException;
+use RuntimeException;
+use Throwable;
+use Zheltikov\Memoize;
+use Zheltikov\TypeAssert\Parser\{Lexer, Node, Optimizer, Type, Types};
+
+use function Zheltikov\Invariant\invariant;
 
 /**
  * Class TypeChecker
@@ -10,6 +16,8 @@ use function Zheltikov\Invariant\{invariant, invariant_violation};
  */
 final class TypeChecker
 {
+    use Memoize\Helper;
+
     private function __construct()
     {
     }
@@ -21,307 +29,118 @@ final class TypeChecker
      */
     public static function getCheckerFn(string $type): callable
     {
-        $type = trim($type);
-        $strlen = strlen($type);
+        invariant(strlen(trim($type)), 'Type must not be empty.');
 
-        invariant($strlen, 'Type must not be empty.');
+        $ast = self::parseType($type);
+        $fn = self::astToCheckerFn($ast);
 
-        if ($type === 'bool' || $type === 'boolean') {
-            return function ($value): bool {
-                return is_bool($value);
-            };
-        }
+        // invariant_violation('Unknown type %s provided.', $type);
 
-        if ($type === 'int' || $type === 'integer' || $type === 'long') {
-            return function ($value): bool {
-                return is_int($value);
-            };
-        }
+        return $fn;
+    }
 
-        if ($type === 'float' || $type === 'double' || $type === 'real') {
-            return function ($value): bool {
-                return is_float($value);
-            };
-        }
+    /**
+     * @param string $type
+     * @return \Zheltikov\TypeAssert\Parser\Node
+     * @throws \Zheltikov\Exceptions\InvariantException
+     */
+    protected static function parseType(string $type): Node
+    {
+        /** @var callable|null $fn */
+        static $fn = null;
 
-        if ($type === 'string') {
-            return function ($value): bool {
-                return is_string($value);
-            };
-        }
+        return self::memoize(
+            $fn,
+            function (string $type): Node {
+                $lexer = new Lexer();
+                $parser = new Types($lexer);
 
-        if ($type === 'array') {
-            return function ($value): bool {
-                return is_array($value);
-            };
-        }
+                try {
+                    $ast = $parser->parse($type);
+                } catch (Throwable $error) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Parse Error%s: %s',
+                            $error->getCode() ? ' ' . $error->getCode() : '',
+                            $error->getMessage()
+                        )
+                    );
+                }
 
-        if ($type === 'object') {
-            return function ($value): bool {
-                return is_object($value);
-            };
-        }
+                $optimizer = (new Optimizer())
+                    ->setDebug(true) // TODO: remove debug
+                    ->setRootNode($ast);
 
-        if ($type === 'callable') {
-            return function ($value): bool {
-                return is_callable($value);
-            };
-        }
+                $optimizer->execute();
 
-        if ($type === 'iterable') {
-            return function ($value): bool {
-                return is_iterable($value);
-            };
-        }
+                return $optimizer->getRootNode();
+            },
+            $type
+        );
+    }
 
-        if ($type === 'resource') {
-            return function ($value): bool {
-                return is_resource($value);
-            };
-        }
+    /**
+     * @param \Zheltikov\TypeAssert\Parser\Node $ast
+     * @return callable
+     * @throws \Zheltikov\Exceptions\InvariantException
+     */
+    protected static function astToCheckerFn(Node $ast): callable
+    {
+        switch ($ast->getType()->getKey()) {
+            case Type::UNION()->getKey():
+                invariant($ast->hasChildren(), 'Union Node must have children.');
 
-        if ($type === 'null') {
-            return function ($value): bool {
-                return $value === null;
-            };
-        }
+                $sub_fns = array_map(
+                    function (Node $x): callable {
+                        return self::astToCheckerFn($x);
+                    },
+                    $ast->getChildren()
+                );
 
-        // A value that is not null
-        if ($type === 'nonnull' || $type === 'notnull') {
-            return function ($value): bool {
-                return $value !== null;
-            };
-        }
-
-        if ($type === 'countable') {
-            return function ($value): bool {
-                return is_countable($value);
-            };
-        }
-
-        if ($type === 'numeric') {
-            return function ($value): bool {
-                return is_numeric($value);
-            };
-        }
-
-        if ($type === 'scalar') {
-            return function ($value): bool {
-                return is_scalar($value);
-            };
-        }
-
-        // A number: int or float
-        if ($type === 'num' || $type === 'number') {
-            return function ($value): bool {
-                return is_($value, 'int') || is_($value, 'float');
-            };
-        }
-
-        // Everything
-        if ($type === 'mixed' || $type === 'dynamic' || $type === 'any') {
-            return function (): bool {
-                return true;
-            };
-        }
-
-        // Noting
-        if ($type === 'void' || $type === 'nothing') {
-            return function (): bool {
-                return false;
-            };
-        }
-
-        // A valid array key: int or string
-        if ($type === 'arraykey') {
-            return function ($value): bool {
-                return is_($value, 'int') || is_($value, 'string');
-            };
-        }
-
-        // Nullable type
-        if (
-            $type[0] === '?'
-            && $strlen > 1
-        ) {
-            $other_type = substr($type, 1);
-            return function ($value) use ($other_type): bool {
-                return is_($value, 'null') || is_($value, $other_type);
-            };
-        }
-
-        // Negated type
-        if (
-            $type[0] === '!'
-            && $strlen > 1
-        ) {
-            $other_type = substr($type, 1);
-            return function ($value) use ($other_type): bool {
-                return !is_($value, $other_type);
-            };
-        }
-
-        if ($type === 'classname') {
-            return function ($value): bool {
-                return is_($value, 'string') && class_exists($value);
-            };
-        }
-
-        if ($type === 'interfacename') {
-            return function ($value): bool {
-                return is_($value, 'string') && interface_exists($value);
-            };
-        }
-
-        if ($type === 'traitname') {
-            return function ($value): bool {
-                return is_($value, 'string') && trait_exists($value);
-            };
-        }
-
-        // Tuple
-        if (
-            $type[0] === '('
-            && $strlen > 2
-            && $type[$strlen - 1] === ')'
-        ) {
-            // TODO: divide into type vec, count and check
-        }
-
-        // Shape
-        if (
-            substr($type, 0, strlen('shape(')) === 'shape('
-            && $strlen > strlen('shape(') + 1
-            && $type[$strlen - 1] === ')'
-        ) {
-            // TODO: divide into type dict, count and check
-            // TODO: check if open/closed
-        }
-
-        // Vec or Varray
-        if ($type === 'vec' || $type === 'varray') {
-            // TODO: ...
-        }
-
-        // Dict or Darray
-        if ($type === 'dict' || $type === 'darray') {
-            // TODO: ...
-        }
-
-        // Keyset
-        if ($type === 'keyset') {
-            // TODO: ...
-        }
-
-        // Varray or Darray
-        if ($type === 'varray_or_darray') {
-            return function ($value): bool {
-                return is_($value, 'varray') || is_($value, 'darray');
-            };
-        }
-
-        // Empty
-        if ($type === 'empty') {
-            return function ($value): bool {
-                return empty($value);
-            };
-        }
-
-        // Not empty
-        if ($type === 'nonempty' || $type === 'notempty') {
-            return function ($value): bool {
-                return !empty($value);
-            };
-        }
-
-        // Single character
-        if ($type === 'char') {
-            return function ($value): bool {
-                return is_($value, 'string') && strlen($value) === 1;
-            };
-        }
-
-        // Stringish
-        if ($type === 'Stringish') {
-            return function ($value): bool {
-                if (is_($value, 'string')) { return true; }
-
-                // TODO: maybe add a check for `PHP_VERSION_ID >= 80000`?
-                if (interface_exists('\Stringable')) {
-                    if ($value instanceof \Stringable) {
-                        return true;
+                return function ($value) use ($sub_fns): bool {
+                    foreach ($sub_fns as $sub_fn) {
+                        if ($sub_fn($value)) {
+                            return true;
+                        }
                     }
-                }
+                    return false;
+                };
 
-                if (is_object($value) && method_exists($value, '__toString')) {
+            case Type::INTERSECTION()->getKey():
+                invariant($ast->hasChildren(), 'Intersection Node must have children.');
+
+                $sub_fns = array_map(
+                    function (Node $x): callable {
+                        return self::astToCheckerFn($x);
+                    },
+                    $ast->getChildren()
+                );
+
+                return function ($value) use ($sub_fns): bool {
+                    foreach ($sub_fns as $sub_fn) {
+                        if (!$sub_fn($value)) {
+                            return false;
+                        }
+                    }
                     return true;
-                }
+                };
 
-                return false;
-            };
+            case Type::NULLABLE()->getKey():
+                invariant($ast->countChildren() === 1, 'Nullable Node must have exactly 1 child.');
+
+                $new_ast = (new Node(Type::UNION()))
+                    ->appendChild(new Node(Type::NULL()))
+                    ->appendChild($ast->getChildAt(0));
+
+                return self::astToCheckerFn($new_ast);
+
+            default:
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Unknown Node type: %s',
+                        $ast->getType()->getKey()
+                    )
+                );
         }
-
-        // True
-        if ($type === 'true') {
-            return function ($value): bool {
-                return $value === true;
-            };
-        }
-
-        // False
-        if ($type === 'false') {
-            return function ($value): bool {
-                return $value === false;
-            };
-        }
-
-        // Positive
-        if ($type === 'positive') {
-            return function ($value): bool {
-                return $value > 0;
-            };
-        }
-
-        // Not Positive
-        if ($type === 'nonpositive' || $type === 'notpositive') {
-            return function ($value): bool {
-                return !is_($value, 'positive');
-            };
-        }
-
-        // Negative
-        if ($type === 'negative') {
-            return function ($value): bool {
-                return $value < 0;
-            };
-        }
-
-        // Not Negative
-        if ($type === 'nonnegative' || $type === 'notnegative') {
-            return function ($value): bool {
-                return !is_($value, 'negative');
-            };
-        }
-
-        // Class/Interface type
-        // TODO: instanceof doesn't work with traits
-        if (class_exists($type) || interface_exists($type)) {
-            return function ($value) use ($type): bool {
-                return $value instanceof $type;
-            };
-        }
-
-        // positive, negative
-        // this
-        // classname<_>
-        // interfacename<_>
-        // traitname<_>
-        // varray<_>, vec<_>
-        // darray<_, _>, dict<_, _>
-
-        // Vector, ImmVector, Map, ImmMap, Set, ImmSet and Pair
-        // Container interfaces
-
-        invariant_violation('Unknown type %s provided.', $type);
     }
 }
