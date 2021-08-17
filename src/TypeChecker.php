@@ -68,7 +68,7 @@ final class TypeChecker
                 }
 
                 $optimizer = (new Optimizer())
-                    ->setDebug(true) // TODO: remove debug
+                    // ->setDebug(true) // TODO: remove debug
                     ->setRootNode($ast);
 
                 $optimizer->execute();
