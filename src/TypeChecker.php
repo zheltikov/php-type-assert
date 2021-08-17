@@ -169,6 +169,74 @@ final class TypeChecker
                 };
 
             case Type::SHAPE()->getKey():
+                invariant($ast->hasChildren(), 'Shape Node must have children.');
+
+                $children = $ast->getChildren();
+                $count = 0;
+                $sub_fns = [];
+
+                foreach ($children as $child) {
+                    invariant(
+                        $child->getType()->equals(Type::KEY_VALUE_PAIR()),
+                        'Shape Node child must bs of type key-value pair.'
+                    );
+
+                    invariant(
+                        $child->countChildren() === 2,
+                        'Shape Node key-value pair must have exactly 2 children.'
+                    );
+
+                    $raw_string = $child->getChildAt(0);
+                    $type = $child->getChildAt(1);
+
+                    invariant(
+                        $raw_string->getType()->equals(Type::RAW_STRING()),
+                        'Shape Node key type must be a raw string.'
+                    );
+
+                    $key = $raw_string->getValue();
+
+                    invariant(
+                        $key !== null,
+                        'Shape Node key node must have a value.'
+                    );
+
+                    // Check that key is not duplicated
+                    invariant(
+                        !array_key_exists($key, $sub_fns),
+                        'Shape Node key must not be duplicated.'
+                    );
+
+                    $sub_fns[$key] = self::astToCheckerFn($type);
+                    $count++;
+                }
+
+                return function ($value) use ($sub_fns, $count): bool {
+                    if (!is_array($value)) {
+                        return false;
+                    }
+
+                    if (count($value) !== $count) {
+                        return false;
+                    }
+
+                    $keys = array_keys($sub_fns);
+
+                    for ($i = 0; $i < $count; $i++) {
+                        $key = $keys[$i];
+
+                        if (!array_key_exists($key, $value)) {
+                            return false;
+                        }
+
+                        if (!$sub_fns[$key]($value[$key])) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                };
+
             case Type::LIST()->getKey():
                 break;
 
