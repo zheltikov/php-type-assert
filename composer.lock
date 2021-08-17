@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6695eaccc32a4508270b3d96b19b4a79",
+    "content-hash": "0700e6d34f065210cbbd07d661d5940e",
     "packages": [
         {
             "name": "myclabs/php-enum",
@@ -205,6 +205,55 @@
                 "source": "https://github.com/zheltikov/php-invariant/tree/1.2.2"
             },
             "time": "2021-07-19T08:58:03+00:00"
+        },
+        {
+            "name": "zheltikov/php-memoize",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zheltikov/php-memoize.git",
+                "reference": "23b7f5c0f03f9a5805d7e7fe99493b0fdf0fa1c3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zheltikov/php-memoize/zipball/23b7f5c0f03f9a5805d7e7fe99493b0fdf0fa1c3",
+                "reference": "23b7f5c0f03f9a5805d7e7fe99493b0fdf0fa1c3",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4",
+                "zheltikov/php-invariant": "^1.0"
+            },
+            "require-dev": {
+                "nazar-pc/phpt-tests-runner": "^1.4"
+            },
+            "suggest": {
+                "zheltikov/php-memoize-redis": "An inter-process cache backed by Redis."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zheltikov\\Memoize\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Max Zheltikov",
+                    "homepage": "https://github.com/zheltikov"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/zheltikov/php-memoize/issues",
+                "source": "https://github.com/zheltikov/php-memoize/tree/2.0.1"
+            },
+            "time": "2021-07-19T12:59:12+00:00"
         }
     ],
     "packages-dev": [
