@@ -139,6 +139,35 @@ final class TypeChecker
                 return self::astToCheckerFn($new_ast);
 
             case Type::TUPLE()->getKey():
+                invariant($ast->hasChildren(), 'Tuple Node must have children.');
+
+                $count = $ast->countChildren();
+
+                $sub_fns = array_map(
+                    function (Node $x): callable {
+                        return self::astToCheckerFn($x);
+                    },
+                    $ast->getChildren()
+                );
+
+                return function ($value) use ($sub_fns, $count): bool {
+                    if (!is_array($value)) {
+                        return false;
+                    }
+
+                    if (count($value) !== $count) {
+                        return false;
+                    }
+
+                    for ($i = 0; $i < $count; $i++) {
+                        if (!$sub_fns[$i]($value[$i])) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                };
+
             case Type::SHAPE()->getKey():
             case Type::LIST()->getKey():
                 break;
