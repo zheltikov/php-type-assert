@@ -159,10 +159,17 @@ final class TypeChecker
                         return false;
                     }
 
-                    for ($i = 0; $i < $count; $i++) {
-                        if (!$sub_fns[$i]($value[$i])) {
+                    $i = 0;
+                    foreach ($value as $index => $item) {
+                        if ($index !== $i) {
                             return false;
                         }
+
+                        if (!$sub_fns[$i]($item)) {
+                            return false;
+                        }
+
+                        $i++;
                     }
 
                     return true;
