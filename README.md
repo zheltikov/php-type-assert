@@ -77,6 +77,7 @@ Below comes a simple explanation for each function:
 ### `is_(mixed, string): bool`
 
 Parameters:
+
 - `mixed $value`
 - `string $type`
 
@@ -85,16 +86,17 @@ Checks whether the value in `$value` has the type specified in `$type`, and retu
 ### `as_(mixed, string): mixed`
 
 Parameters:
+
 - `mixed $value`
 - `string $expected`
 
-Performs the same checks as `is_`.
-However, it throws `TypeAssertionException` if the value has a different type.
-If the type matches, it returns the original value.
+Performs the same checks as `is_`. However, it throws `TypeAssertionException` if the value has a different type. If the
+type matches, it returns the original value.
 
 ### `null_as_(mixed, string): mixed|null`
 
 Parameters:
+
 - `mixed $value`
 - `string $expected`
 
@@ -163,14 +165,21 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for open shapes. For example: `shape('id' => int, 'name' => string, ...)`
 - [ ] Support for optional shape fields. For example: `shape('id' => int, ?'name' => string)`
 - [ ] Support for enums:
-  - [ ] Check by enum type
-  - [ ] Check by enum field name
+    - [ ] Check by enum type
+    - [ ] Check by enum field name
 - [ ] Support for array generics
-  - [ ] By value. For example: `array<User>`
-  - [ ] By key and value. For example: `array<string, int>`
+    - [ ] By value. For example: `array<User>`
+    - [ ] By key and value. For example: `array<string, int>`
 - [ ] Support for unions. For example: `int|string|null`
 - [ ] Support for intersections. For example: `Exception&Throwable`
 - [ ] Modularity, ability to define custom checker functions and types
 - [ ] Memoize some checker functions
 - [ ] Support for type alias definitions
 - [ ] Support for type precedence checking definition
+
+## Rationale
+
+|ms.|PHP 7.4|PHP 8.0 (with JIT)|
+|---|---|---|
+|`if`s|0.15|0.0001|
+|parser|5|0.1|
