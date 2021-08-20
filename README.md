@@ -177,9 +177,28 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for type alias definitions
 - [ ] Support for type precedence checking definition
 
-## Rationale
+## Performance
 
-|ms.|PHP 7.4|PHP 8.0 (with JIT)|
+You may ask about the performance impact of this parsing process on the overall request. You will be surprised hearing
+that the performance of the parser included in this library is actually pretty good.
+
+Some tests were made, in which the following type string was being parsed:
+
+```
+shape(
+    'id' => int & positive,
+    'name' => string,
+    'price' => float & positive,
+    'score' => null | (int & positive),
+    'description' => string,
+    'photo_id' => int & positive,
+    'category_id' => int & positive
+)
+```
+
+This test was performed on PHP v7.4 and PHP v8.0 with JIT compilation enabled, and the result aren't bad at all!:
+
+|ms. taken to parse|PHP v7.4|PHP v8.0 (with JIT)|
 |---|---|---|
-|`if`s|0.15|0.0001|
-|parser|5|0.1|
+|type parser checks|5|0.1|
+|equivalent checks with `if`s|0.15|0.0001|
