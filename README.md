@@ -202,3 +202,6 @@ This test was performed on PHP v7.4 and PHP v8.0 with JIT compilation enabled, a
 |---|---|---|
 |type parser checks|5|0.1|
 |equivalent checks with `if`s|0.15|0.0001|
+
+Note: these performance tests were made at `commit d9fedd23...`, therefore they may not be accurate for the latest
+library version.
