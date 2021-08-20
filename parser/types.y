@@ -3,6 +3,9 @@
 
 %tokens
 
+%left TOKEN_UNION TOKEN_INTERSECTION
+%right PREFIX_NULLABLE PREFIX_NEGATED
+
 %%
 
 root : type                 { $$ = $1; }
