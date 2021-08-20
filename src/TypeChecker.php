@@ -67,13 +67,24 @@ final class TypeChecker
                     );
                 }
 
+                $debug = true; // TODO: disable debug
+
+                if ($debug) {
+                    echo '<b>&gt;&gt;&gt;</b> ', $ast->prettyHtml(), "\n";
+                }
+
                 $optimizer = (new Optimizer())
-                    // ->setDebug(true) // TODO: remove debug
+                    // ->setDebug($debug) // TODO: disable debug
                     ->setRootNode($ast);
 
                 $optimizer->execute();
+                $ast = $optimizer->getRootNode();
 
-                return $optimizer->getRootNode();
+                if ($debug) {
+                    echo '<b>&gt;&gt;&gt;</b> ', $ast->prettyHtml(), "\n";
+                }
+
+                return $ast;
             },
             $type
         );

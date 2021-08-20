@@ -239,6 +239,14 @@ class Node implements \JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function prettyHtml(): string
+    {
+        return htmlspecialchars($this->pretty());
+    }
+
+    /**
      * @return mixed
      */
     public function getValue()
