@@ -160,8 +160,8 @@ Here comes a list of the supported types and how they are checked internally:
 - [X] Support for `true` and `false`
 - [X] Support for `positive`, `nonpositive` and `notpositive`
 - [X] Support for `negative`, `nonnegative` and `notnegative`
-- [ ] Support for tuples. For example: `(int, ?DateTime, bool)`
-- [ ] Support for closed shapes. For example: `shape('id' => int, 'name' => string)`
+- [X] Support for tuples. For example: `(int, ?DateTime, bool)`
+- [X] Support for closed shapes. For example: `shape('id' => int, 'name' => string)`
 - [ ] Support for open shapes. For example: `shape('id' => int, 'name' => string, ...)`
 - [ ] Support for optional shape fields. For example: `shape('id' => int, ?'name' => string)`
 - [ ] Support for enums:
@@ -170,8 +170,8 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for array generics
     - [ ] By value. For example: `array<User>`
     - [ ] By key and value. For example: `array<string, int>`
-- [ ] Support for unions. For example: `int|string|null`
-- [ ] Support for intersections. For example: `Exception&Throwable`
+- [X] Support for unions. For example: `int|string|null`
+- [X] Support for intersections. For example: `Exception&Throwable`
 - [ ] Modularity, ability to define custom checker functions and types
 - [ ] Memoize some checker functions
 - [ ] Support for type alias definitions
