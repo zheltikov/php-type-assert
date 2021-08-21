@@ -70,15 +70,27 @@ key_value_pair : raw_string TOKEN_ARROW type
                                         $$->appendChild($1)->appendChild($3); }
                ;
 
+optional_key_value_pair : PREFIX_NULLABLE raw_string TOKEN_ARROW type
+                                      { $$ = new Node(Type::KEY_VALUE_PAIR());
+                                        $$->appendChild(
+                                            (new Node(Type::OPTIONAL()))
+                                                ->appendChild($2)
+                                        )->appendChild($4); }
+                        ;
+
+any_key_value_pair : key_value_pair             { $$ = $1; }
+                   | optional_key_value_pair    { $$ = $1; }
+                   ;
+
 raw_string : TOKEN_STRING_DQ          { $$ = new Node(Type::RAW_STRING());
                                         $$->setValue(substr($1, 1, -1)); }
            | TOKEN_STRING_SQ          { $$ = new Node(Type::RAW_STRING());
                                         $$->setValue(substr($1, 1, -1)); }
            ;
 
-key_value_pair_list : key_value_pair TOKEN_COMMA key_value_pair_list    { $$ = $3;
+key_value_pair_list : any_key_value_pair TOKEN_COMMA key_value_pair_list    { $$ = $3;
                                                                           $$->prependChild($1); }
-                    | key_value_pair                                { $$ = new Node(Type::LIST());
+                    | any_key_value_pair                                { $$ = new Node(Type::LIST());
                                                                       $$->appendChild($1); }
                     ;
 

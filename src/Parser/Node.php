@@ -222,17 +222,25 @@ class Node implements \JsonSerializable
 
         $child_count = $this->countChildren();
         if ($child_count > 0) {
-            $result .= '<';
+            $result .= '<' . "\n";
 
             foreach ($this->children as $index => $child) {
-                $result .= $child->pretty();
+                $result .= implode(
+                    "\n",
+                    array_map(
+                        function (string $line): string {
+                            return "\t" . $line;
+                        },
+                        explode("\n", $child->pretty())
+                    )
+                );
 
                 if ($index + 1 < $child_count) {
-                    $result .= ', ';
+                    $result .= ', ' . "\n";
                 }
             }
 
-            $result .= '>';
+            $result .= "\n" . '>';
         }
 
         return $result;

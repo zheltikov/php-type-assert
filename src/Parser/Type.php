@@ -46,6 +46,7 @@ use MyCLabs\Enum\Enum;
  * @method Type NEGATIVE()
  * @method Type RAW_STRING()
  * @method Type KEY_VALUE_PAIR()
+ * @method Type OPTIONAL()
  *
  */
 final class Type extends Enum
@@ -86,4 +87,5 @@ final class Type extends Enum
     private const NEGATIVE = 'negative';
     private const RAW_STRING = 'raw_string';
     private const KEY_VALUE_PAIR = 'key_value_pair';
+    private const OPTIONAL = 'optional';
 }

@@ -70,7 +70,7 @@ final class TypeChecker
                 $debug = true; // TODO: disable debug
 
                 if ($debug) {
-                    echo '<b>&gt;&gt;&gt;</b> ', $ast->prettyHtml(), "\n";
+                    echo '<b>&gt;&gt;&gt;</b> ', $ast->prettyHtml(), "\n\n";
                 }
 
                 $optimizer = (new Optimizer())
@@ -81,7 +81,7 @@ final class TypeChecker
                 $ast = $optimizer->getRootNode();
 
                 if ($debug) {
-                    echo '<b>&gt;&gt;&gt;</b> ', $ast->prettyHtml(), "\n";
+                    echo '<b>&gt;&gt;&gt;</b> ', $ast->prettyHtml(), "\n\n";
                 }
 
                 return $ast;
@@ -207,6 +207,7 @@ final class TypeChecker
                     $raw_string = $child->getChildAt(0);
                     $type = $child->getChildAt(1);
 
+                    // TODO: add support for optional shape fields
                     invariant(
                         $raw_string->getType()->equals(Type::RAW_STRING()),
                         'Shape Node key type must be a raw string.'
@@ -420,6 +421,9 @@ final class TypeChecker
                 };
 
             case Type::KEY_VALUE_PAIR()->getKey():
+                break;
+
+            case Type::OPTIONAL()->getKey():
                 break;
 
             default:
