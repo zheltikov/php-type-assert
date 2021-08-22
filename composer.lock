@@ -208,16 +208,16 @@
         },
         {
             "name": "zheltikov/php-memoize",
-            "version": "2.0.1",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zheltikov/php-memoize.git",
-                "reference": "23b7f5c0f03f9a5805d7e7fe99493b0fdf0fa1c3"
+                "reference": "3686b93dc2e51e809ea2501151158f78c5c6fedf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zheltikov/php-memoize/zipball/23b7f5c0f03f9a5805d7e7fe99493b0fdf0fa1c3",
-                "reference": "23b7f5c0f03f9a5805d7e7fe99493b0fdf0fa1c3",
+                "url": "https://api.github.com/repos/zheltikov/php-memoize/zipball/3686b93dc2e51e809ea2501151158f78c5c6fedf",
+                "reference": "3686b93dc2e51e809ea2501151158f78c5c6fedf",
                 "shasum": ""
             },
             "require": {
@@ -236,7 +236,8 @@
                     "Zheltikov\\Memoize\\": "src/"
                 },
                 "files": [
-                    "src/functions.php"
+                    "src/functions.php",
+                    "src/_Private/functions.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -251,9 +252,9 @@
             ],
             "support": {
                 "issues": "https://github.com/zheltikov/php-memoize/issues",
-                "source": "https://github.com/zheltikov/php-memoize/tree/2.0.1"
+                "source": "https://github.com/zheltikov/php-memoize/tree/2.1.1"
             },
-            "time": "2021-07-19T12:59:12+00:00"
+            "time": "2021-08-22T18:44:51+00:00"
         }
     ],
     "packages-dev": [
