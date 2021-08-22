@@ -5,10 +5,10 @@ namespace Zheltikov\TypeAssert;
 use InvalidArgumentException;
 use RuntimeException;
 use Throwable;
-use Zheltikov\Memoize;
 use Zheltikov\TypeAssert\Parser\{Lexer, Node, Optimizer, Type, Types};
 
 use function Zheltikov\Invariant\invariant;
+use function Zheltikov\Memoize\wrap;
 
 /**
  * Class TypeChecker
@@ -16,8 +16,6 @@ use function Zheltikov\Invariant\invariant;
  */
 final class TypeChecker
 {
-    use Memoize\Helper;
-
     private function __construct()
     {
     }
@@ -46,11 +44,7 @@ final class TypeChecker
      */
     protected static function parseType(string $type): Node
     {
-        /** @var callable|null $fn */
-        static $fn = null;
-
-        return self::memoize(
-            $fn,
+        return wrap(
             function (string $type): Node {
                 $lexer = new Lexer();
                 $parser = new Types($lexer);
@@ -85,9 +79,9 @@ final class TypeChecker
                 }
 
                 return $ast;
-            },
-            $type
-        );
+            }
+        )
+            ->call($type);
     }
 
     /**
