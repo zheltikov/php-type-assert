@@ -114,6 +114,7 @@ class Lexer
             '\|' => Tokens::TOKEN_UNION(),
             '&' => Tokens::TOKEN_INTERSECTION(),
             '\\\\' => Tokens::TOKEN_NS_SEPARATOR(),
+            '\.\.\.' => Tokens::TOKEN_ELLIPSIS(),
 
             // FIXME: this string implementation is somewhat limited
             '"([^"]*)"' => Tokens::TOKEN_STRING_DQ(),

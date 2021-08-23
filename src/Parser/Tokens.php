@@ -65,4 +65,5 @@ final class Tokens extends Enum
     private const TOKEN_ERROR = 309;
     private const TOKEN_STRING_DQ = 310;
     private const TOKEN_STRING_SQ = 311;
+    private const TOKEN_ELLIPSIS = 312;
 }

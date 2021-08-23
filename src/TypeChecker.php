@@ -189,11 +189,18 @@ final class TypeChecker
                 $count_optional = 0;
                 $sub_fns = [];
                 $optional = [];
+                $open_shape = false;
 
                 foreach ($children as $child) {
+                    if ($child->getType()->equals(Type::ELLIPSIS())) {
+                        // Shape is open
+                        $open_shape = true;
+                        continue;
+                    }
+
                     invariant(
                         $child->getType()->equals(Type::KEY_VALUE_PAIR()),
-                        'Shape Node child must bs of type key-value pair.'
+                        'Shape Node child must be of type key-value pair.'
                     );
 
                     invariant(
@@ -258,13 +265,18 @@ final class TypeChecker
                 }
 
                 if ($count_optional === 0) {
-                    return function ($value) use ($sub_fns, $count): bool {
+                    return function ($value) use ($sub_fns, $count, $open_shape): bool {
                         if (!is_array($value)) {
                             // TODO: add support for Dicts
                             return false;
                         }
 
-                        if (count($value) !== $count) {
+                        if (!$open_shape) {
+                            if (count($value) !== $count) {
+                                // Length does not match
+                                return false;
+                            }
+                        } elseif (count($value) < $count) {
                             // Length does not match
                             return false;
                         }
@@ -288,7 +300,7 @@ final class TypeChecker
                         return true;
                     };
                 } else {
-                    return function ($value) use ($sub_fns, $optional, $count, $count_optional) {
+                    return function ($value) use ($sub_fns, $optional, $count, $count_optional, $open_shape) {
                         // throw new RuntimeException('Shapes with optional fields are not yet implemented! Sorry :)');
 
                         if (!is_array($value)) {
@@ -298,12 +310,17 @@ final class TypeChecker
 
                         $actual_count = count($value);
 
-                        if (
-                            !(
-                                $count <= $actual_count
-                                && $actual_count <= $count + $count_optional
-                            )
-                        ) {
+                        if (!$open_shape) {
+                            if (
+                                !(
+                                    $count <= $actual_count
+                                    && $actual_count <= $count + $count_optional
+                                )
+                            ) {
+                                // Length is not valid
+                                return false;
+                            }
+                        } elseif ($count > $actual_count) {
                             // Length is not valid
                             return false;
                         }
@@ -325,9 +342,11 @@ final class TypeChecker
                                 continue;
                             }
 
-                            // Key is invalid as it is not either in required
-                            // nor in optional keys
-                            return false;
+                            if (!$open_shape) {
+                                // Key is invalid as it is not either in required
+                                // nor in optional keys
+                                return false;
+                            }
                         }
 
                         return true;

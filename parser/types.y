@@ -80,6 +80,7 @@ optional_key_value_pair : PREFIX_NULLABLE raw_string TOKEN_ARROW type
 
 any_key_value_pair : key_value_pair             { $$ = $1; }
                    | optional_key_value_pair    { $$ = $1; }
+                   | TOKEN_ELLIPSIS             { $$ = new Node(Type::ELLIPSIS()); }
                    ;
 
 raw_string : TOKEN_STRING_DQ          { $$ = new Node(Type::RAW_STRING());

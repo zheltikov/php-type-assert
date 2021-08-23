@@ -56,4 +56,5 @@
 %token TOKEN_ERROR
 %token TOKEN_STRING_DQ
 %token TOKEN_STRING_SQ
+%token TOKEN_ELLIPSIS
 
