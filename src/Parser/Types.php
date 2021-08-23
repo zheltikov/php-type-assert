@@ -123,7 +123,7 @@ class Types extends ParserAbstract
     ];
 
     protected $action = [
-           75,   76,   77,   78,   79,   80,   81,   82,   83,   84,
+           77,   78,   79,   80,   81,   82,   83,   84,   85,   86,
            48,   49,   50,   51,   52,   47,   20,   21,   54,   55,
            56,   53,   58,   57,   59,   60,   61,   62,   22,   14,
             3,    4,    5,   22,   14,    6,    7,    0,   15,   69,
@@ -149,13 +149,13 @@ class Types extends ParserAbstract
     ];
 
     protected $actionDefault = [
-        32767,32767,32767,32767,32767,32767,32767,32767,32767,32767,
-        32767,32767,32767,   45,32767,32767,32767,    1,   36,   37,
+        32767,32767,   47,32767,32767,32767,32767,32767,32767,32767,
+        32767,   44,32767,   46,32767,32767,32767,    1,   36,   37,
         32767,32767,   17,32767,32767,32767,   43,32767,32767
     ];
 
     protected $goto = [
-           73,   17,   45,   44,   36,   40,   12,   31,   32,   18,
+           74,   17,   45,   44,   36,   40,   12,   31,   32,   18,
            19,    0,   24,   24,   71,    0,    0,    0,   28
     ];
 
@@ -179,8 +179,8 @@ class Types extends ParserAbstract
             2,    2,    2,    2,    2,    9,    9,    9,    8,    8,
             8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
             8,    8,    8,    8,    6,    7,   13,   14,   15,   15,
-           10,   10,   12,   12,   11,   11,    3,    3,    3,    3,
-            4,    4,    4,    4,    5,    5
+           10,   10,   12,   12,   12,   11,   11,   11,    3,    3,
+            3,    3,    4,    4,    4,    4,    5,    5
     ];
 
     protected $ruleToLength = [
@@ -188,8 +188,8 @@ class Types extends ParserAbstract
             1,    2,    1,    1,    1,    3,    2,    1,    1,    1,
             1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
             1,    1,    1,    1,    4,    4,    3,    4,    1,    1,
-            1,    1,    3,    1,    3,    1,    1,    1,    1,    1,
-            1,    1,    1,    1,    1,    1
+            1,    1,    3,    1,    2,    3,    1,    2,    1,    1,
+            1,    1,    1,    1,    1,    1,    1,    1
     ];
 
     protected $productions = [
@@ -237,8 +237,10 @@ class Types extends ParserAbstract
         "raw_string : TOKEN_STRING_SQ",
         "key_value_pair_list : any_key_value_pair TOKEN_COMMA key_value_pair_list",
         "key_value_pair_list : any_key_value_pair",
+        "key_value_pair_list : any_key_value_pair TOKEN_COMMA",
         "type_comma_list : type TOKEN_COMMA type_comma_list",
         "type_comma_list : type",
+        "type_comma_list : type TOKEN_COMMA",
         "scalar_type : TYPE_BOOL",
         "scalar_type : TYPE_INT",
         "scalar_type : TYPE_FLOAT",
@@ -402,41 +404,49 @@ class Types extends ParserAbstract
                                                                       $this->semValue->appendChild($this->semStack[$stackPos-(1-1)]);
             },
             44 => function ($stackPos) {
+                 $this->semValue = new Node(Type::LIST());
+                                                                      $this->semValue->appendChild($this->semStack[$stackPos-(2-1)]);
+            },
+            45 => function ($stackPos) {
                  $this->semValue = $this->semStack[$stackPos-(3-3)];
                                                         $this->semValue->prependChild($this->semStack[$stackPos-(3-1)]);
             },
-            45 => function ($stackPos) {
+            46 => function ($stackPos) {
                  $this->semValue = new Node(Type::LIST());
                                                         $this->semValue->appendChild($this->semStack[$stackPos-(1-1)]);
             },
-            46 => function ($stackPos) {
-                 $this->semValue = new Node(Type::BOOL());
-            },
             47 => function ($stackPos) {
-                 $this->semValue = new Node(Type::INT());
+                 $this->semValue = new Node(Type::LIST());
+                                                        $this->semValue->appendChild($this->semStack[$stackPos-(2-1)]);
             },
             48 => function ($stackPos) {
-                 $this->semValue = new Node(Type::FLOAT());
+                 $this->semValue = new Node(Type::BOOL());
             },
             49 => function ($stackPos) {
-                 $this->semValue = new Node(Type::STRING());
+                 $this->semValue = new Node(Type::INT());
             },
             50 => function ($stackPos) {
-                 $this->semValue = new Node(Type::ARRAY());
+                 $this->semValue = new Node(Type::FLOAT());
             },
             51 => function ($stackPos) {
-                 $this->semValue = new Node(Type::OBJECT());
+                 $this->semValue = new Node(Type::STRING());
             },
             52 => function ($stackPos) {
-                 $this->semValue = new Node(Type::CALLABLE());
+                 $this->semValue = new Node(Type::ARRAY());
             },
             53 => function ($stackPos) {
-                 $this->semValue = new Node(Type::ITERABLE());
+                 $this->semValue = new Node(Type::OBJECT());
             },
             54 => function ($stackPos) {
-                 $this->semValue = new Node(Type::RESOURCE());
+                 $this->semValue = new Node(Type::CALLABLE());
             },
             55 => function ($stackPos) {
+                 $this->semValue = new Node(Type::ITERABLE());
+            },
+            56 => function ($stackPos) {
+                 $this->semValue = new Node(Type::RESOURCE());
+            },
+            57 => function ($stackPos) {
                  $this->semValue = new Node(Type::NULL());
             },
         ];

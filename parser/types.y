@@ -92,11 +92,15 @@ key_value_pair_list : any_key_value_pair TOKEN_COMMA key_value_pair_list    { $$
                                                                           $$->prependChild($1); }
                     | any_key_value_pair                                { $$ = new Node(Type::LIST());
                                                                       $$->appendChild($1); }
+                    | any_key_value_pair TOKEN_COMMA                    { $$ = new Node(Type::LIST());
+                                                                      $$->appendChild($1); }
                     ;
 
 type_comma_list : type TOKEN_COMMA type_comma_list    { $$ = $3;
                                                         $$->prependChild($1); }
                 | type                                { $$ = new Node(Type::LIST());
+                                                        $$->appendChild($1); }
+                | type TOKEN_COMMA                    { $$ = new Node(Type::LIST());
                                                         $$->appendChild($1); }
                 ;
 
