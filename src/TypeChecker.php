@@ -13,6 +13,11 @@ use function Zheltikov\Memoize\wrap;
 
 /**
  * TODO: add support for messages and expected types/values, to let the user know what is wrong with his data
+ * TODO: add support for open tuples: there cannot be a defined type between two ellipsis nodes. For example:
+ * tuple(int, ...) // valid
+ * tuple(..., int) // valid
+ * tuple(int, ..., int) // valid
+ * tuple(..., int, ...) // invalid
  *
  * Class TypeChecker
  * @package Zheltikov\Invariant\TypeAssert
