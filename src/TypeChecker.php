@@ -260,10 +260,12 @@ final class TypeChecker
                 if ($count_optional === 0) {
                     return function ($value) use ($sub_fns, $count): bool {
                         if (!is_array($value)) {
+                            // TODO: add support for Dicts
                             return false;
                         }
 
                         if (count($value) !== $count) {
+                            // Length does not match
                             return false;
                         }
 
@@ -273,10 +275,12 @@ final class TypeChecker
                             $key = $keys[$i];
 
                             if (!array_key_exists($key, $value)) {
+                                // Required key is not set
                                 return false;
                             }
 
                             if (!$sub_fns[$key]($value[$key])) {
+                                // Required type does not match
                                 return false;
                             }
                         }
@@ -284,8 +288,49 @@ final class TypeChecker
                         return true;
                     };
                 } else {
-                    return function () {
-                        throw new RuntimeException('Shapes with optional fields are not yet implemented! Sorry :)');
+                    return function ($value) use ($sub_fns, $optional, $count, $count_optional) {
+                        // throw new RuntimeException('Shapes with optional fields are not yet implemented! Sorry :)');
+
+                        if (!is_array($value)) {
+                            // TODO: add support for Dicts
+                            return false;
+                        }
+
+                        $actual_count = count($value);
+
+                        if (
+                            !(
+                                $count <= $actual_count
+                                && $actual_count <= $count + $count_optional
+                            )
+                        ) {
+                            // Length is not valid
+                            return false;
+                        }
+
+                        foreach ($value as $key => $sub_value) {
+                            if (array_key_exists($key, $sub_fns)) {
+                                if (!$sub_fns[$key]($sub_value)) {
+                                    // Required type does not match
+                                    return false;
+                                }
+                                continue;
+                            }
+
+                            if (array_key_exists($key, $optional)) {
+                                if (!$optional[$key]($sub_value)) {
+                                    // Optional type does not match
+                                    return false;
+                                }
+                                continue;
+                            }
+
+                            // Key is invalid as it is not either in required
+                            // nor in optional keys
+                            return false;
+                        }
+
+                        return true;
                     };
                 }
 
