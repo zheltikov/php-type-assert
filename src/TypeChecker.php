@@ -192,7 +192,7 @@ final class TypeChecker
                 $open_shape = false;
 
                 foreach ($children as $child) {
-                    if ($child->getType()->equals(Type::ELLIPSIS())) {
+                    if (!$open_shape && $child->getType()->equals(Type::ELLIPSIS())) {
                         // Shape is open
                         $open_shape = true;
                         continue;
