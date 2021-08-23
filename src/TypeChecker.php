@@ -8,6 +8,7 @@ use Throwable;
 use Zheltikov\TypeAssert\Parser\{Lexer, Node, Optimizer, Type, Types};
 
 use function Zheltikov\Invariant\invariant;
+use function Zheltikov\Invariant\invariant_violation;
 use function Zheltikov\Memoize\wrap;
 
 /**
@@ -185,7 +186,9 @@ final class TypeChecker
 
                 $children = $ast->getChildren();
                 $count = 0;
+                $count_optional = 0;
                 $sub_fns = [];
+                $optional = [];
 
                 foreach ($children as $child) {
                     invariant(
@@ -201,54 +204,90 @@ final class TypeChecker
                     $raw_string = $child->getChildAt(0);
                     $type = $child->getChildAt(1);
 
-                    // TODO: add support for optional shape fields
-                    invariant(
-                        $raw_string->getType()->equals(Type::RAW_STRING()),
-                        'Shape Node key type must be a raw string.'
-                    );
+                    if ($raw_string->getType()->equals(Type::RAW_STRING())) {
+                        $key = $raw_string->getValue();
 
-                    $key = $raw_string->getValue();
+                        invariant(
+                            $key !== null,
+                            'Shape Node key node must have a value.'
+                        );
 
-                    invariant(
-                        $key !== null,
-                        'Shape Node key node must have a value.'
-                    );
+                        // Check that key is not duplicated
+                        invariant(
+                            !array_key_exists($key, $sub_fns),
+                            'Shape Node key must not be duplicated.'
+                        );
 
-                    // Check that key is not duplicated
-                    invariant(
-                        !array_key_exists($key, $sub_fns),
-                        'Shape Node key must not be duplicated.'
-                    );
 
-                    $sub_fns[$key] = self::astToCheckerFn($type);
-                    $count++;
+                        $sub_fns[$key] = self::astToCheckerFn($type);
+                        $count++;
+                    } elseif ($raw_string->getType()->equals(Type::OPTIONAL())) {
+                        invariant(
+                            $raw_string->countChildren() === 1,
+                            'Shape Node optional key must have exactly 1 child.'
+                        );
+
+                        $inner = $raw_string->getChildAt(0);
+
+                        invariant(
+                            $inner->getType()->equals(Type::RAW_STRING()),
+                            'Shape Node optional key type must be a raw string.'
+                        );
+
+                        $key = $inner->getValue();
+
+                        invariant(
+                            $key !== null,
+                            'Shape Node optional key node must have a value.'
+                        );
+
+                        // Check that key is not duplicated
+                        invariant(
+                            !array_key_exists($key, $optional),
+                            'Shape Node optional key must not be duplicated.'
+                        );
+
+
+                        $optional[$key] = self::astToCheckerFn($type);
+                        $count_optional++;
+                    } else {
+                        invariant_violation(
+                            'Shape Node key type must be a, maybe optional, raw string.'
+                        );
+                    }
                 }
 
-                return function ($value) use ($sub_fns, $count): bool {
-                    if (!is_array($value)) {
-                        return false;
-                    }
-
-                    if (count($value) !== $count) {
-                        return false;
-                    }
-
-                    $keys = array_keys($sub_fns);
-
-                    for ($i = 0; $i < $count; $i++) {
-                        $key = $keys[$i];
-
-                        if (!array_key_exists($key, $value)) {
+                if ($count_optional === 0) {
+                    return function ($value) use ($sub_fns, $count): bool {
+                        if (!is_array($value)) {
                             return false;
                         }
 
-                        if (!$sub_fns[$key]($value[$key])) {
+                        if (count($value) !== $count) {
                             return false;
                         }
-                    }
 
-                    return true;
-                };
+                        $keys = array_keys($sub_fns);
+
+                        for ($i = 0; $i < $count; $i++) {
+                            $key = $keys[$i];
+
+                            if (!array_key_exists($key, $value)) {
+                                return false;
+                            }
+
+                            if (!$sub_fns[$key]($value[$key])) {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    };
+                } else {
+                    return function () {
+                        throw new RuntimeException('Shapes with optional fields are not yet implemented! Sorry :)');
+                    };
+                }
 
             case Type::LIST()->getKey():
                 break;
