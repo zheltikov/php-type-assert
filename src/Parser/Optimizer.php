@@ -2,6 +2,11 @@
 
 namespace Zheltikov\TypeAssert\Parser;
 
+/**
+ * TODO: optimize open shapes, deduplicate ellipsis, and make them them first child
+ * TODO: shapes with optional fields, must have these children before any required children
+ * TODO: shapes with all optional fields, must be included into a union of some kind...??
+ */
 class Optimizer
 {
     /**
