@@ -12,6 +12,8 @@ use function Zheltikov\Invariant\invariant_violation;
 use function Zheltikov\Memoize\wrap;
 
 /**
+ * TODO: add support for messages and expected types/values, to let the user know what is wrong with his data
+ *
  * Class TypeChecker
  * @package Zheltikov\Invariant\TypeAssert
  */
