@@ -220,7 +220,7 @@ class Lexer
     protected function postprocessTokens(): void
     {
         $tokens = [];
-        $in_comment = false;
+        $comment_stack = 0;
 
         /*
         [
@@ -234,16 +234,16 @@ class Lexer
 
         foreach ($this->tokens as $token) {
             if ($token['name'] === Tokens::TOKEN_COMMENT_START()->getKey()) {
-                $in_comment = true;
+                $comment_stack++;
                 continue;
             }
 
             if ($token['name'] === Tokens::TOKEN_COMMENT_END()->getKey()) {
-                $in_comment = false;
+                $comment_stack--;
                 continue;
             }
 
-            if (!$in_comment) {
+            if ($comment_stack === 0) {
                 $tokens[] = $token;
             }
         }
