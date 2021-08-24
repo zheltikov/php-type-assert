@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Zheltikov\TypeAssert\Parser\ErrorHandler;
 
 use Zheltikov\TypeAssert\Parser\{Error, ErrorHandler};
