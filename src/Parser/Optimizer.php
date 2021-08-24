@@ -12,17 +12,17 @@ class Optimizer
     /**
      * @var array|null
      */
-    protected static $aliases = null;
+    protected static ?array $aliases = null;
 
     /**
      * @var \Zheltikov\TypeAssert\Parser\Node
      */
-    protected $root_node;
+    protected Node $root_node;
 
     /**
      * @var bool
      */
-    protected $debug = false;
+    protected bool $debug = false;
 
     /**
      * @param \Zheltikov\TypeAssert\Parser\Node|null $root_node

@@ -8,8 +8,8 @@ use RuntimeException;
 
 class Error extends RuntimeException
 {
-    protected $rawMessage;
-    protected $attributes;
+    protected string $rawMessage;
+    protected array $attributes;
 
     /**
      * Creates an Exception signifying a parse error.

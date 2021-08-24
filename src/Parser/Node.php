@@ -9,12 +9,12 @@ class Node implements JsonSerializable
     /**
      * @var Type
      */
-    protected $type;
+    protected Type $type;
 
     /**
      * @var \Zheltikov\TypeAssert\Parser\Node[]
      */
-    protected $children;
+    protected array $children;
 
     /**
      * @var mixed

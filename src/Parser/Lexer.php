@@ -12,28 +12,26 @@ use Tmilos\Lexer\Token;
 
 class Lexer
 {
-    protected $code;
+    protected string $code;
 
     /**
      * @var \Tmilos\Lexer\Token[]
      */
-    protected $tokens;
+    protected array $tokens;
 
-    protected $pos;
-    protected $line;
-    protected $filePos;
-    protected $prevCloseTagHasNewline;
+    protected int $pos;
+    protected int $line;
+    protected int $filePos;
+    protected bool $prevCloseTagHasNewline;
 
-    protected $tokenMap;
-    protected $dropTokens;
-    protected $identifierTokens;
+    protected array $dropTokens;
 
-    private $attributeStartLineUsed;
-    private $attributeEndLineUsed;
-    private $attributeStartTokenPosUsed;
-    private $attributeEndTokenPosUsed;
-    private $attributeStartFilePosUsed;
-    private $attributeEndFilePosUsed;
+    private bool $attributeStartLineUsed;
+    private bool $attributeEndLineUsed;
+    private bool $attributeStartTokenPosUsed;
+    private bool $attributeEndTokenPosUsed;
+    private bool $attributeStartFilePosUsed;
+    private bool $attributeEndFilePosUsed;
 
     /**
      * Creates a Lexer.
@@ -187,17 +185,10 @@ class Lexer
      * the getErrors() method.
      *
      * @param string $code The source code to lex
-     * @param ErrorHandler|null $errorHandler Error handler to use for lexing errors. Defaults to
-     *                                        ErrorHandler\Throwing
      */
     public function startLexing(
-        string $code,
-        ErrorHandler $errorHandler = null
+        string $code
     ) {
-        if (null === $errorHandler) {
-            $errorHandler = new ErrorHandler\Throwing();
-        }
-
         $this->code = $code; // keep the code around for __halt_compiler() handling
         $this->pos = -1;
         $this->line = 1;
@@ -371,8 +362,6 @@ class Lexer
                 $this->line += substr_count($value, "\n");
                 $this->filePos += strlen($value);
             } else {
-                $origLine = $this->line;
-                $origFilePos = $this->filePos;
                 $this->line += substr_count($token['value'], "\n");
                 $this->filePos += strlen($token['value']);
 

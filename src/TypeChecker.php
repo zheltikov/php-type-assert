@@ -36,13 +36,8 @@ final class TypeChecker
     public static function getCheckerFn(string $type): callable
     {
         invariant(strlen(trim($type)), 'Type must not be empty.');
-
         $ast = self::parseType($type);
-        $fn = self::astToCheckerFn($ast);
-
-        // invariant_violation('Unknown type %s provided.', $type);
-
-        return $fn;
+        return self::astToCheckerFn($ast);
     }
 
     /**
