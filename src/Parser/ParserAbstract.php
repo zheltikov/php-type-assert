@@ -95,8 +95,6 @@ abstract class ParserAbstract implements Parser
     /** @var array Start attributes of last *read* token */
     protected array $lookaheadStartAttributes;
 
-    /** @var ErrorHandler Error handler */
-    protected ErrorHandler $errorHandler;
     /** @var int Error state, used to avoid error floods */
     protected int $errorState;
 
@@ -125,16 +123,12 @@ abstract class ParserAbstract implements Parser
      * occurred and attempt to build a partial AST.
      *
      * @param string $code The source code to parse
-     * @param ErrorHandler|null $errorHandler Error handler to use for lexer/parser errors, defaults
-     *                                        to ErrorHandler\Throwing.
      *
      * @return \Zheltikov\TypeAssert\Parser\Node|null Array of statements (or null non-throwing error handler is used and
      *                          the parser was unable to recover from an error).
      */
-    public function parse(string $code, ErrorHandler $errorHandler = null): ?Node
+    public function parse(string $code): ?Node
     {
-        $this->errorHandler = $errorHandler ?: new ErrorHandler\Throwing();
-
         $this->lexer->startLexing($code);
         $result = $this->doParse();
 
@@ -365,7 +359,8 @@ abstract class ParserAbstract implements Parser
 
     protected function emitError(Error $error)
     {
-        $this->errorHandler->handleError($error);
+        // FIXME: maybe throwing is not always the best option
+        throw $error;
     }
 
     /**
