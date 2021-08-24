@@ -167,9 +167,9 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for enums:
     - [ ] Check by enum type
     - [ ] Check by enum field name
-- [ ] Support for array generics
-    - [ ] By value. For example: `array<User>`
-    - [ ] By key and value. For example: `array<string, int>`
+- [X] Support for array generics
+    - [X] By value. For example: `array<User>`
+    - [X] By key and value. For example: `array<string, int>`
 - [X] Support for unions. For example: `int|string|null`
 - [X] Support for intersections. For example: `Exception&Throwable`
 - [ ] Modularity, ability to define custom checker functions and types
