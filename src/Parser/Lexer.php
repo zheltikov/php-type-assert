@@ -109,12 +109,12 @@ class Lexer
             '\)' => Tokens::PAREN_RIGHT(),
             ',' => Tokens::TOKEN_COMMA(),
             '=>' => Tokens::TOKEN_ARROW(),
-            '<' => Tokens::GENERIC_LIST_START(),
-            '>' => Tokens::GENERIC_LIST_END(),
             '\|' => Tokens::TOKEN_UNION(),
             '&' => Tokens::TOKEN_INTERSECTION(),
             '\\\\' => Tokens::TOKEN_NS_SEPARATOR(),
             '\.\.\.' => Tokens::TOKEN_ELLIPSIS(),
+            '<' => Tokens::TOKEN_ANGLE_LEFT(),
+            '>' => Tokens::TOKEN_ANGLE_RIGHT(),
 
             // FIXME: this string implementation is somewhat limited
             '"([^"]*)"' => Tokens::TOKEN_STRING_DQ(),

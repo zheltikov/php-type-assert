@@ -384,9 +384,73 @@ final class TypeChecker
                 };
 
             case Type::ARRAY()->getKey():
-                return function ($value): bool {
-                    return is_array($value);
-                };
+                $child_count = $ast->countChildren();
+
+                if ($child_count === 0) {
+                    return function ($value): bool {
+                        return is_array($value);
+                    };
+                } elseif ($child_count === 1) {
+                    $child = $ast->getChildAt(0);
+
+                    invariant(
+                        $child->getType()->equals(Type::GENERIC_LIST()),
+                        'Array child must be a generic list.'
+                    );
+
+                    $generic_count = $child->countChildren();
+
+                    if ($generic_count === 0) {
+                        return function ($value): bool {
+                            return is_array($value);
+                        };
+                    } elseif ($generic_count === 1) {
+                        // value check
+                        $value_fn = self::astToCheckerFn($child->getChildAt(0));
+
+                        return function ($value) use ($value_fn): bool {
+                            if (!is_array($value)) {
+                                return false;
+                            }
+
+                            foreach ($value as $item) {
+                                if (!$value_fn($item)) {
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        };
+                    } elseif ($generic_count === 2) {
+                        // key-value check
+                        $key_fn = self::astToCheckerFn($child->getChildAt(0));
+                        $value_fn = self::astToCheckerFn($child->getChildAt(1));
+
+                        return function ($value) use ($key_fn, $value_fn): bool {
+                            if (!is_array($value)) {
+                                return false;
+                            }
+
+                            foreach ($value as $key => $item) {
+                                if (
+                                    !$key_fn($key)
+                                    || !$value_fn($item)
+                                ) {
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        };
+                    }
+
+                    invariant_violation(
+                        'Array generic list can have 0, 1 or 2 children; got %d children.',
+                        $generic_count
+                    );
+                }
+
+                invariant_violation('Array type can have 0 or 1 children.');
 
             case Type::OBJECT()->getKey():
                 return function ($value): bool {
@@ -528,6 +592,12 @@ final class TypeChecker
                 break;
 
             case Type::OPTIONAL()->getKey():
+                break;
+
+            case Type::ELLIPSIS()->getKey():
+                break;
+
+            case Type::GENERIC_LIST()->getKey():
                 break;
 
             default:

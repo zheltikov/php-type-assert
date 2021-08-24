@@ -57,13 +57,13 @@ final class Tokens extends Enum
     private const PAREN_RIGHT = 301;
     private const TOKEN_COMMA = 302;
     private const TOKEN_ARROW = 303;
-    private const GENERIC_LIST_START = 304;
-    private const GENERIC_LIST_END = 305;
-    private const TOKEN_UNION = 306;
-    private const TOKEN_INTERSECTION = 307;
-    private const TOKEN_WHITESPACE = 308;
-    private const TOKEN_ERROR = 309;
-    private const TOKEN_STRING_DQ = 310;
-    private const TOKEN_STRING_SQ = 311;
-    private const TOKEN_ELLIPSIS = 312;
+    private const TOKEN_UNION = 304;
+    private const TOKEN_INTERSECTION = 305;
+    private const TOKEN_WHITESPACE = 306;
+    private const TOKEN_ERROR = 307;
+    private const TOKEN_STRING_DQ = 308;
+    private const TOKEN_STRING_SQ = 309;
+    private const TOKEN_ELLIPSIS = 310;
+    private const TOKEN_ANGLE_LEFT = 311;
+    private const TOKEN_ANGLE_RIGHT = 312;
 }

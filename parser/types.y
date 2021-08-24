@@ -28,7 +28,13 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
      | custom_type                    { $$ = $1; }
      | user_defined_type              { $$ = $1; }
      | raw_string                     { $$ = $1; }
+     | generic_array                  { $$ = $1; }
      ;
+
+generic_array : TYPE_ARRAY generic_list
+                                      { $$ = $$ = new Node(Type::ARRAY());
+                                        $$->appendChild($2); }
+              ;
 
 user_defined_type : TYPE_USER_DEFINED TOKEN_NS_SEPARATOR user_defined_type
                                         { $$ = $3; $$->setValue($1 . '\\' . $$->getValue()); }
@@ -119,6 +125,13 @@ compound_type : TYPE_ARRAY       { $$ = new Node(Type::ARRAY()); }
 
 special_type : TYPE_RESOURCE    { $$ = new Node(Type::RESOURCE()); }
              | TYPE_NULL        { $$ = new Node(Type::NULL()); }
+             ;
+
+generic_list : TOKEN_ANGLE_LEFT type_comma_list TOKEN_ANGLE_RIGHT
+                                      { $$ = new Node(Type::GENERIC_LIST());
+                                        $$->appendChildren($2->getChildren()); }
+             | TOKEN_ANGLE_LEFT TOKEN_ANGLE_RIGHT
+                                      { $$ = new Node(Type::GENERIC_LIST()); }
              ;
 
 %%

@@ -48,6 +48,7 @@ use MyCLabs\Enum\Enum;
  * @method Type KEY_VALUE_PAIR()
  * @method Type OPTIONAL()
  * @method Type ELLIPSIS()
+ * @method Type GENERIC_LIST()
  *
  */
 final class Type extends Enum
@@ -90,4 +91,5 @@ final class Type extends Enum
     private const KEY_VALUE_PAIR = 'key_value_pair';
     private const OPTIONAL = 'optional';
     private const ELLIPSIS = 'ellipsis';
+    private const GENERIC_LIST = 'generic_list';
 }
