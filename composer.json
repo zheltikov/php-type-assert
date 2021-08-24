@@ -1,14 +1,14 @@
 {
-  "version": "1.0.2",
+  "version": "2.0.0",
   "name": "zheltikov/php-type-assert",
   "type": "library",
   "autoload": {
     "psr-4": {
       "Zheltikov\\TypeAssert\\": "src/"
     },
-	"files": [
-		"src/functions.php"
-	]
+    "files": [
+      "src/functions.php"
+    ]
   },
   "require": {
     "php": "^7.4",
