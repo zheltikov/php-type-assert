@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Zheltikov\TypeAssert\Parser;
 
-/*
+use RangeException;
+use RuntimeException;
+
+/**
  * This parser is based on a skeleton written by Moriyoshi Koizumi, which in
  * turn is based on work by Masato Bito.
  */
-
 abstract class ParserAbstract implements Parser
 {
     public const SYMBOL_NONE = -1;
@@ -134,7 +136,7 @@ abstract class ParserAbstract implements Parser
      */
     public function parse(string $code, ErrorHandler $errorHandler = null)
     {
-        $this->errorHandler = $errorHandler ?: new ErrorHandler\Throwing;
+        $this->errorHandler = $errorHandler ?: new ErrorHandler\Throwing();
 
         $this->lexer->startLexing($code, $this->errorHandler);
         $result = $this->doParse();
@@ -196,7 +198,7 @@ abstract class ParserAbstract implements Parser
                         : $this->invalidSymbol;
 
                     if ($symbol === $this->invalidSymbol) {
-                        throw new \RangeException(
+                        throw new RangeException(
                             sprintf(
                                 'The lexer returned an invalid token (id=%d, value=%s)',
                                 $tokenId,
@@ -361,7 +363,7 @@ abstract class ParserAbstract implements Parser
             }
         }
 
-        throw new \RuntimeException('Reached end of parser loop');
+        throw new RuntimeException('Reached end of parser loop');
     }
 
     protected function emitError(Error $error)

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Zheltikov\TypeAssert\Parser;
 
-class Error extends \RuntimeException
+use RuntimeException;
+
+class Error extends RuntimeException
 {
     protected $rawMessage;
     protected $attributes;
@@ -121,7 +123,7 @@ class Error extends \RuntimeException
     public function getStartColumn(string $code): int
     {
         if (!$this->hasColumnInfo()) {
-            throw new \RuntimeException('Error does not have column information');
+            throw new RuntimeException('Error does not have column information');
         }
 
         return $this->toColumn($code, $this->attributes['startFilePos']);
@@ -136,7 +138,7 @@ class Error extends \RuntimeException
     public function getEndColumn(string $code): int
     {
         if (!$this->hasColumnInfo()) {
-            throw new \RuntimeException('Error does not have column information');
+            throw new RuntimeException('Error does not have column information');
         }
 
         return $this->toColumn($code, $this->attributes['endFilePos']);
@@ -172,7 +174,7 @@ class Error extends \RuntimeException
     private function toColumn(string $code, int $pos): int
     {
         if ($pos > strlen($code)) {
-            throw new \RuntimeException('Invalid position information');
+            throw new RuntimeException('Invalid position information');
         }
 
         $lineStartPos = strrpos($code, "\n", $pos - strlen($code));

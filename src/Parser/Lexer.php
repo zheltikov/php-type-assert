@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Zheltikov\TypeAssert\Parser;
 
-use PhpYacc\Yacc\Token;
+use InvalidArgumentException;
+use RuntimeException;
 use Tmilos\Lexer\Config\LexerArrayConfig;
 use Tmilos\Lexer\Config\TokenDefn;
+use Tmilos\Lexer\Token;
 
 class Lexer
 {
@@ -266,7 +268,7 @@ class Lexer
             } elseif (is_string($regex) && $token instanceof Tokens) {
                 $defs['(?:' . $regex . ')'] = $token->getKey();
             } else {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     sprintf(
                         'Invalid token definition: %s => %s',
                         var_export($regex, true),
@@ -281,7 +283,7 @@ class Lexer
 
         $valid_tokens = Tokens::values();
 
-        return array_map(function (\Tmilos\Lexer\Token $token) use ($valid_tokens): array {
+        return array_map(function (Token $token) use ($valid_tokens): array {
             return [
                 'code' => $valid_tokens[$token->getName()]->getValue(),
                 'name' => $token->getName(),
@@ -348,7 +350,7 @@ class Lexer
                 $startAttributes['startFilePos'] = $this->filePos;
             }
 
-            if (\is_string($token)) {
+            if (is_string($token)) {
                 $value = $token;
                 if (isset($token[1])) {
                     // bug in token_get_all
@@ -369,12 +371,12 @@ class Lexer
                 }*/
 
                 $this->line += substr_count($value, "\n");
-                $this->filePos += \strlen($value);
+                $this->filePos += strlen($value);
             } else {
                 $origLine = $this->line;
                 $origFilePos = $this->filePos;
                 $this->line += substr_count($token['value'], "\n");
-                $this->filePos += \strlen($token['value']);
+                $this->filePos += strlen($token['value']);
 
                 /*if (\T_COMMENT === $token[0] || \T_DOC_COMMENT === $token[0]) {
                     if ($this->attributeCommentsUsed) {
@@ -409,7 +411,7 @@ class Lexer
         }
 
         // This should never occur! :)
-        throw new \RuntimeException('Reached end of lexer loop');
+        throw new RuntimeException('Reached end of lexer loop');
     }
 
     /**

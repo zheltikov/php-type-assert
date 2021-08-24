@@ -2,7 +2,9 @@
 
 namespace Zheltikov\TypeAssert\Parser;
 
-class Node implements \JsonSerializable
+use JsonSerializable;
+
+class Node implements JsonSerializable
 {
     /**
      * @var Type
