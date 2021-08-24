@@ -101,7 +101,7 @@ abstract class ParserAbstract implements Parser
     /**
      * Initialize $reduceCallbacks map.
      */
-    abstract protected function initReduceCallbacks();
+    abstract protected function initReduceCallbacks(): void;
 
     /**
      * Creates a parser instance.

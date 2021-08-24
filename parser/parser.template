@@ -19,75 +19,75 @@ namespace Zheltikov\TypeAssert\Parser;
 class #(-p) extends ParserAbstract
 {
     /** @var Node|null */
-    protected $semValue;
+    protected ?Node $semValue;
 
-    protected $tokenToSymbolMapSize = #(YYMAXLEX);
-    protected $actionTableSize = #(YYLAST);
-    protected $gotoTableSize = #(YYGLAST);
+    protected int $tokenToSymbolMapSize = #(YYMAXLEX);
+    protected int $actionTableSize = #(YYLAST);
+    protected int $gotoTableSize = #(YYGLAST);
 
-    protected $invalidSymbol = #(YYBADCH);
-    protected $errorSymbol = #(YYINTERRTOK);
-    protected $defaultAction = #(YYDEFAULT);
-    protected $unexpectedTokenRule = #(YYUNEXPECTED);
+    protected int $invalidSymbol = #(YYBADCH);
+    protected int $errorSymbol = #(YYINTERRTOK);
+    protected int $defaultAction = #(YYDEFAULT);
+    protected int $unexpectedTokenRule = #(YYUNEXPECTED);
 
-    protected $YY2TBLSTATE = #(YY2TBLSTATE);
-    protected $numNonLeafStates = #(YYNLSTATES);
+    protected int $YY2TBLSTATE = #(YY2TBLSTATE);
+    protected int $numNonLeafStates = #(YYNLSTATES);
 
-    protected $symbolToName = [
+    protected array $symbolToName = [
         #listvar terminals
     ];
 
-    protected $tokenToSymbol = [
+    protected array $tokenToSymbol = [
         #listvar yytranslate
     ];
 
-    protected $action = [
+    protected array $action = [
         #listvar yyaction
     ];
 
-    protected $actionCheck = [
+    protected array $actionCheck = [
         #listvar yycheck
     ];
 
-    protected $actionBase = [
+    protected array $actionBase = [
         #listvar yybase
     ];
 
-    protected $actionDefault = [
+    protected array $actionDefault = [
         #listvar yydefault
     ];
 
-    protected $goto = [
+    protected array $goto = [
         #listvar yygoto
     ];
 
-    protected $gotoCheck = [
+    protected array $gotoCheck = [
         #listvar yygcheck
     ];
 
-    protected $gotoBase = [
+    protected array $gotoBase = [
         #listvar yygbase
     ];
 
-    protected $gotoDefault = [
+    protected array $gotoDefault = [
         #listvar yygdefault
     ];
 
-    protected $ruleToNonTerminal = [
+    protected array $ruleToNonTerminal = [
         #listvar yylhs
     ];
 
-    protected $ruleToLength = [
+    protected array $ruleToLength = [
         #listvar yylen
     ];
 #if -t
 
-    protected $productions = [
+    protected array $productions = [
         #production-strings;
     ];
 #endif
 
-    protected function initReduceCallbacks()
+    protected function initReduceCallbacks(): void
     {
         $this->reduceCallbacks = [
 #reduce
