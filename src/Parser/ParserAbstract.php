@@ -233,7 +233,7 @@ abstract class ParserAbstract implements Parser
 
                         ++$stackPos;
                         $stateStack[$stackPos] = $state = $action;
-                        $this->semStack[$stackPos] = $tokenValue;
+                        $this->semStack[$stackPos] = $tokenValue; // FIXME: Variable is probably undefined
                         $this->startAttributeStack[$stackPos] = $startAttributes;
                         $this->endAttributeStack[$stackPos] = $endAttributes;
                         $this->endAttributes = $endAttributes;
