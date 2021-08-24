@@ -1,0 +1,21 @@
+<?php
+
+/* @generated */
+$meta #
+#semval($) $this->semValue
+#semval($,%t) $this->semValue
+#semval(%n) $this->stackPos-(%l-%n)
+#semval(%n,%t) $this->stackPos-(%l-%n)
+
+namespace Zheltikov\TypeAssert\Parser;
+#include;
+
+use MyCLabs\Enum\Enum;
+
+/* GENERATED file based on parser/tokens.y */
+final class Tokens extends Enum
+{
+#tokenval
+    private const %s = %n;
+#endtokenval
+}

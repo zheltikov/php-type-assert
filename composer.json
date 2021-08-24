@@ -1,22 +1,27 @@
 {
-  "version": "1.0.2",
+  "version": "2.0.0",
   "name": "zheltikov/php-type-assert",
   "type": "library",
   "autoload": {
     "psr-4": {
       "Zheltikov\\TypeAssert\\": "src/"
     },
-	"files": [
-		"src/functions.php"
-	]
+    "files": [
+      "src/functions.php"
+    ]
   },
   "require": {
-    "php": "^7.3",
+    "php": "^7.4",
     "zheltikov/php-exceptions": "^1.0",
-    "zheltikov/php-invariant": "^1.1"
+    "zheltikov/php-invariant": "^1.1",
+    "myclabs/php-enum": "^1.8",
+    "tmilos/lexer": "^1.0",
+    "zheltikov/php-memoize": "^2.0",
+    "ext-json": "*"
   },
   "require-dev": {
-    "nazar-pc/phpt-tests-runner": "^1.4"
+    "nazar-pc/phpt-tests-runner": "^1.4",
+    "ircmaxell/php-yacc": "^0.0.7"
   },
   "authors": [
     {

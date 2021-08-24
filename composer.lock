@@ -4,8 +4,117 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0be435cddd9b53e2b3a126fe0874579b",
+    "content-hash": "c538e5d67084447c7a2f8cf2762815f0",
     "packages": [
+        {
+            "name": "myclabs/php-enum",
+            "version": "1.8.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/myclabs/php-enum.git",
+                "reference": "b942d263c641ddb5190929ff840c68f78713e937"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/myclabs/php-enum/zipball/b942d263c641ddb5190929ff840c68f78713e937",
+                "reference": "b942d263c641ddb5190929ff840c68f78713e937",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.3 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "squizlabs/php_codesniffer": "1.*",
+                "vimeo/psalm": "^4.6.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MyCLabs\\Enum\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP Enum contributors",
+                    "homepage": "https://github.com/myclabs/php-enum/graphs/contributors"
+                }
+            ],
+            "description": "PHP Enum implementation",
+            "homepage": "http://github.com/myclabs/php-enum",
+            "keywords": [
+                "enum"
+            ],
+            "support": {
+                "issues": "https://github.com/myclabs/php-enum/issues",
+                "source": "https://github.com/myclabs/php-enum/tree/1.8.3"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/mnapoli",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/myclabs/php-enum",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-07-05T08:18:36+00:00"
+        },
+        {
+            "name": "tmilos/lexer",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tmilos/lexer.git",
+                "reference": "e7885595614759f1da2ff79b66e3fb26d7f875fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tmilos/lexer/zipball/e7885595614759f1da2ff79b66e3fb26d7f875fa",
+                "reference": "e7885595614759f1da2ff79b66e3fb26d7f875fa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.6",
+                "satooshi/php-coveralls": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Tmilos\\Lexer\\": "src/",
+                    "Tests\\Tmilos\\Lexer\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Milos Tomic",
+                    "email": "tmilos@gmail.com"
+                }
+            ],
+            "description": "Lexical analyzer with individual token definition with regular expressions",
+            "keywords": [
+                "lexer",
+                "parser"
+            ],
+            "support": {
+                "issues": "https://github.com/tmilos/lexer/issues",
+                "source": "https://github.com/tmilos/lexer/tree/master"
+            },
+            "time": "2016-12-21T11:22:39+00:00"
+        },
         {
             "name": "zheltikov/php-exceptions",
             "version": "1.0.0",
@@ -50,25 +159,27 @@
         },
         {
             "name": "zheltikov/php-invariant",
-            "version": "1.2.0",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zheltikov/php-invariant.git",
-                "reference": "c704b777a4e319e79eee68e279298144c88f26dc"
+                "reference": "ef265ac63a8a2f85a3f259e745f2334dffdccf63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zheltikov/php-invariant/zipball/c704b777a4e319e79eee68e279298144c88f26dc",
-                "reference": "c704b777a4e319e79eee68e279298144c88f26dc",
+                "url": "https://api.github.com/repos/zheltikov/php-invariant/zipball/ef265ac63a8a2f85a3f259e745f2334dffdccf63",
+                "reference": "ef265ac63a8a2f85a3f259e745f2334dffdccf63",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4",
-                "zheltikov/php-exceptions": "^1.0",
-                "zheltikov/php-type-assert": "^1.0"
+                "zheltikov/php-exceptions": "^1.0"
             },
             "require-dev": {
                 "nazar-pc/phpt-tests-runner": "^1.4"
+            },
+            "suggest": {
+                "zheltikov/php-type-assert": "Provides type checking/assertion functionality."
             },
             "type": "library",
             "autoload": {
@@ -76,8 +187,7 @@
                     "Zheltikov\\Invariant\\": "src/"
                 },
                 "files": [
-                    "src/functions.php",
-                    "src/TypeAssert/functions.php"
+                    "src/functions.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -92,12 +202,112 @@
             ],
             "support": {
                 "issues": "https://github.com/zheltikov/php-invariant/issues",
-                "source": "https://github.com/zheltikov/php-invariant/tree/1.2.0"
+                "source": "https://github.com/zheltikov/php-invariant/tree/1.2.2"
             },
-            "time": "2021-07-14T06:48:11+00:00"
+            "time": "2021-07-19T08:58:03+00:00"
+        },
+        {
+            "name": "zheltikov/php-memoize",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zheltikov/php-memoize.git",
+                "reference": "3686b93dc2e51e809ea2501151158f78c5c6fedf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zheltikov/php-memoize/zipball/3686b93dc2e51e809ea2501151158f78c5c6fedf",
+                "reference": "3686b93dc2e51e809ea2501151158f78c5c6fedf",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4",
+                "zheltikov/php-invariant": "^1.0"
+            },
+            "require-dev": {
+                "nazar-pc/phpt-tests-runner": "^1.4"
+            },
+            "suggest": {
+                "zheltikov/php-memoize-redis": "An inter-process cache backed by Redis."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zheltikov\\Memoize\\": "src/"
+                },
+                "files": [
+                    "src/functions.php",
+                    "src/_Private/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Max Zheltikov",
+                    "homepage": "https://github.com/zheltikov"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/zheltikov/php-memoize/issues",
+                "source": "https://github.com/zheltikov/php-memoize/tree/2.1.1"
+            },
+            "time": "2021-08-22T18:44:51+00:00"
         }
     ],
     "packages-dev": [
+        {
+            "name": "ircmaxell/php-yacc",
+            "version": "v0.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ircmaxell/PHP-Yacc.git",
+                "reference": "c1525792be8f477a33f1466dfe8ad8eb09242b16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ircmaxell/PHP-Yacc/zipball/c1525792be8f477a33f1466dfe8ad8eb09242b16",
+                "reference": "c1525792be8f477a33f1466dfe8ad8eb09242b16",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": ">=0.8",
+                "phpunit/phpunit": ">=6.3"
+            },
+            "bin": [
+                "bin/phpyacc"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpYacc\\": "lib/"
+                },
+                "files": [
+                    "lib/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Anthony Ferrara",
+                    "email": "ircmaxell@php.net"
+                }
+            ],
+            "description": "A PHP YACC Parser-Generator library",
+            "support": {
+                "issues": "https://github.com/ircmaxell/PHP-Yacc/issues",
+                "source": "https://github.com/ircmaxell/PHP-Yacc/tree/master"
+            },
+            "time": "2020-08-09T18:42:33+00:00"
+        },
         {
             "name": "nazar-pc/phpt-tests-runner",
             "version": "1.4.1",
@@ -155,7 +365,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.3"
+        "php": "^7.4",
+        "ext-json": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"
