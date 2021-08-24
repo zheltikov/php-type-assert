@@ -176,7 +176,7 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Memoize some checker functions
 - [ ] Support for type alias definitions
 - [ ] Support for type precedence checking definition
-- [ ] Support for comments
+- [X] Support for comments
 - [ ] Support for format strings (like for `sprintf` and `sscanf`)
 - [ ] Support for regular expressions
 - [ ] Support for named parameters
