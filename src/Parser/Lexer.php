@@ -115,6 +115,8 @@ class Lexer
             '\.\.\.' => Tokens::TOKEN_ELLIPSIS(),
             '<' => Tokens::TOKEN_ANGLE_LEFT(),
             '>' => Tokens::TOKEN_ANGLE_RIGHT(),
+            '/\*' => Tokens::TOKEN_COMMENT_START(),
+            '\*/' => Tokens::TOKEN_COMMENT_END(),
 
             // FIXME: this string implementation is somewhat limited
             '"([^"]*)"' => Tokens::TOKEN_STRING_DQ(),
@@ -208,11 +210,45 @@ class Lexer
         /// $scream = ini_set('xdebug.scream', '0');
 
         $this->tokens = $this->token_get_all($code); /// FIXME: need a real lexer
-        // $this->postprocessTokens($errorHandler);
+        $this->postprocessTokens();
 
         /// if (false !== $scream) {
         ///     ini_set('xdebug.scream', $scream);
         /// }
+    }
+
+    protected function postprocessTokens(): void
+    {
+        $tokens = [];
+        $in_comment = false;
+
+        /*
+        [
+                'code' => $valid_tokens[$token->getName()]->getValue(),
+                'name' => $token->getName(),
+                'offset' => $token->getOffset(),
+                'position' => $token->getPosition(),
+                'value' => $token->getValue(),
+            ]
+        */
+
+        foreach ($this->tokens as $token) {
+            if ($token['name'] === Tokens::TOKEN_COMMENT_START()->getKey()) {
+                $in_comment = true;
+                continue;
+            }
+
+            if ($token['name'] === Tokens::TOKEN_COMMENT_END()->getKey()) {
+                $in_comment = false;
+                continue;
+            }
+
+            if (!$in_comment) {
+                $tokens[] = $token;
+            }
+        }
+
+        $this->tokens = $tokens;
     }
 
     /**

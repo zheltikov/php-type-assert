@@ -66,4 +66,6 @@ final class Tokens extends Enum
     private const TOKEN_ELLIPSIS = 310;
     private const TOKEN_ANGLE_LEFT = 311;
     private const TOKEN_ANGLE_RIGHT = 312;
+    private const TOKEN_COMMENT_START = 313;
+    private const TOKEN_COMMENT_END = 314;
 }
