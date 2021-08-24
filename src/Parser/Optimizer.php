@@ -315,12 +315,12 @@ class Optimizer
                     $counter_map[$type] = 1;
                 }
             }
+            unset($child);
 
             if ($needs_optimization) {
                 $just_added = [];
                 $new_node = new Node(Type::UNION());
 
-                unset($child);
                 foreach ($children as &$child) {
                     $child_count = $child->countChildren();
                     if (
@@ -340,6 +340,7 @@ class Optimizer
                         $new_node->appendChild($child);
                     }
                 }
+                unset($child);
 
                 $node = $new_node;
             }
@@ -433,12 +434,12 @@ class Optimizer
                     $counter_map[$type] = 1;
                 }
             }
+            unset($child);
 
             if ($needs_optimization) {
                 $just_added = [];
                 $new_node = new Node(Type::INTERSECTION());
 
-                unset($child);
                 foreach ($children as &$child) {
                     $child_count = $child->countChildren();
                     if (
@@ -458,6 +459,7 @@ class Optimizer
                         $new_node->appendChild($child);
                     }
                 }
+                unset($child);
 
                 $node = $new_node;
             }

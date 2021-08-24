@@ -34,7 +34,6 @@ class Lexer
     private $attributeEndTokenPosUsed;
     private $attributeStartFilePosUsed;
     private $attributeEndFilePosUsed;
-    private $attributeCommentsUsed;
 
     /**
      * Creates a Lexer.
@@ -64,7 +63,6 @@ class Lexer
         $this->attributeEndTokenPosUsed = isset($usedAttributes['endTokenPos']);
         $this->attributeStartFilePosUsed = isset($usedAttributes['startFilePos']);
         $this->attributeEndFilePosUsed = isset($usedAttributes['endFilePos']);
-        $this->attributeCommentsUsed = isset($usedAttributes['comments']);
     }
 
     /**

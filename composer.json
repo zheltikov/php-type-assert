@@ -16,7 +16,8 @@
     "zheltikov/php-invariant": "^1.1",
     "myclabs/php-enum": "^1.8",
     "tmilos/lexer": "^1.0",
-    "zheltikov/php-memoize": "^2.0"
+    "zheltikov/php-memoize": "^2.0",
+    "ext-json": "*"
   },
   "require-dev": {
     "nazar-pc/phpt-tests-runner": "^1.4",

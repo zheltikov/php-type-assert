@@ -27,7 +27,7 @@ class VoidCache implements Cache
 
     /**
      * @param string $key
-     * @return mixed
+     * @return void
      */
     public function get(string $key)
     {

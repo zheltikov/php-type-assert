@@ -360,6 +360,10 @@ final class TypeChecker
                     };
                 }
 
+            case Type::KEY_VALUE_PAIR()->getKey():
+            case Type::OPTIONAL()->getKey():
+            case Type::ELLIPSIS()->getKey():
+            case Type::GENERIC_LIST()->getKey():
             case Type::LIST()->getKey():
                 break;
 
@@ -451,6 +455,7 @@ final class TypeChecker
                 }
 
                 invariant_violation('Array type can have 0 or 1 children.');
+                break; // this break is unnecessary
 
             case Type::OBJECT()->getKey():
                 return function ($value): bool {
@@ -587,18 +592,6 @@ final class TypeChecker
                 return function ($value) use ($raw_string): bool {
                     return $value === $raw_string;
                 };
-
-            case Type::KEY_VALUE_PAIR()->getKey():
-                break;
-
-            case Type::OPTIONAL()->getKey():
-                break;
-
-            case Type::ELLIPSIS()->getKey():
-                break;
-
-            case Type::GENERIC_LIST()->getKey():
-                break;
 
             default:
                 throw new InvalidArgumentException(
