@@ -15,8 +15,8 @@ use Zheltikov\Exceptions\TypeAssertionException;
  */
 function is_($value, string $type, array &$report_stack = []): bool
 {
-    $checker = TypeChecker::getCheckerFn($type, $report_stack);
-    return $checker($value);
+    $checker = TypeChecker::getCheckerFn($type);
+    return $checker($value, $report_stack);
 }
 
 /**

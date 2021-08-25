@@ -30,15 +30,14 @@ final class TypeChecker
 
     /**
      * @param string $type
-     * @param array $report_stack
      * @return callable
      * @throws \Zheltikov\Exceptions\InvariantException
      */
-    public static function getCheckerFn(string $type, array &$report_stack = []): callable
+    public static function getCheckerFn(string $type): callable
     {
         invariant(strlen(trim($type)), 'Type must not be empty.');
         $ast = self::parseType($type);
-        return self::astToCheckerFn($ast, $report_stack);
+        return self::astToCheckerFn($ast);
     }
 
     /**
@@ -90,11 +89,10 @@ final class TypeChecker
 
     /**
      * @param \Zheltikov\TypeAssert\Parser\Node $ast
-     * @param array $report_stack
      * @return callable
      * @throws \Zheltikov\Exceptions\InvariantException
      */
-    protected static function astToCheckerFn(Node $ast, array &$report_stack = []): callable
+    protected static function astToCheckerFn(Node $ast): callable
     {
         switch ($ast->getType()->getKey()) {
             case Type::UNION()->getKey():
@@ -107,12 +105,14 @@ final class TypeChecker
                     $ast->getChildren()
                 );
 
-                return function ($value) use ($sub_fns): bool {
+                return function ($value, array &$report_stack = []) use ($sub_fns): bool {
                     foreach ($sub_fns as $sub_fn) {
-                        if ($sub_fn($value)) {
+                        if ($sub_fn($value, $report_stack)) {
                             return true;
                         }
                     }
+
+                    $report_stack[] = 'Value does not satisfy any of the types in the Union';
                     return false;
                 };
 
@@ -126,9 +126,10 @@ final class TypeChecker
                     $ast->getChildren()
                 );
 
-                return function ($value) use ($sub_fns): bool {
+                return function ($value, array &$report_stack = []) use ($sub_fns): bool {
                     foreach ($sub_fns as $sub_fn) {
-                        if (!$sub_fn($value)) {
+                        if (!$sub_fn($value, $report_stack)) {
+                            $report_stack[] = 'Value does not satisfy type in Intersection';
                             return false;
                         }
                     }
@@ -160,22 +161,26 @@ final class TypeChecker
                     $ast->getChildren()
                 );
 
-                return function ($value) use ($sub_fns, $count): bool {
+                return function ($value, array &$report_stack = []) use ($sub_fns, $count): bool {
                     if (!is_array($value)) {
+                        $report_stack[] = 'Value is not an array';
                         return false;
                     }
 
                     if (count($value) !== $count) {
+                        $report_stack[] = 'Tuple has wrong length';
                         return false;
                     }
 
                     $i = 0;
                     foreach ($value as $index => $item) {
                         if ($index !== $i) {
+                            $report_stack[] = 'Tuple has a key mismatch (probably not 0-indexed)';
                             return false;
                         }
 
-                        if (!$sub_fns[$i]($item)) {
+                        if (!$sub_fns[$i]($item, $report_stack)) {
+                            $report_stack[] = 'Tuple has a type mismatch in child element';
                             return false;
                         }
 
@@ -269,19 +274,22 @@ final class TypeChecker
                 }
 
                 if ($count_optional === 0) {
-                    return function ($value) use ($sub_fns, $count, $open_shape): bool {
+                    return function ($value, array &$report_stack = []) use ($sub_fns, $count, $open_shape): bool {
                         if (!is_array($value)) {
                             // TODO: add support for Dicts
+                            $report_stack[] = 'Value is not an array';
                             return false;
                         }
 
                         if (!$open_shape) {
                             if (count($value) !== $count) {
                                 // Length does not match
+                                $report_stack[] = 'Shape element count mismatch';
                                 return false;
                             }
                         } elseif (count($value) < $count) {
                             // Length does not match
+                            $report_stack[] = 'Open shape element count mismatch';
                             return false;
                         }
 
@@ -292,11 +300,13 @@ final class TypeChecker
 
                             if (!array_key_exists($key, $value)) {
                                 // Required key is not set
+                                $report_stack[] = 'Required shape key is not set';
                                 return false;
                             }
 
                             if (!$sub_fns[$key]($value[$key])) {
                                 // Required type does not match
+                                $report_stack[] = 'Shape value type mismatch';
                                 return false;
                             }
                         }
@@ -304,11 +314,16 @@ final class TypeChecker
                         return true;
                     };
                 } else {
-                    return function ($value) use ($sub_fns, $optional, $count, $count_optional, $open_shape) {
-                        // throw new RuntimeException('Shapes with optional fields are not yet implemented! Sorry :)');
-
+                    return function ($value, array &$report_stack = []) use (
+                        $sub_fns,
+                        $optional,
+                        $count,
+                        $count_optional,
+                        $open_shape
+                    ): bool {
                         if (!is_array($value)) {
                             // TODO: add support for Dicts
+                            $report_stack[] = 'Value is not an array';
                             return false;
                         }
 
@@ -322,10 +337,12 @@ final class TypeChecker
                                 )
                             ) {
                                 // Length is not valid
+                                $report_stack[] = 'Shape element count mismatch';
                                 return false;
                             }
                         } elseif ($count > $actual_count) {
                             // Length is not valid
+                            $report_stack[] = 'Shape has too much elements';
                             return false;
                         }
 
@@ -333,6 +350,7 @@ final class TypeChecker
                             if (array_key_exists($key, $sub_fns)) {
                                 if (!$sub_fns[$key]($sub_value)) {
                                     // Required type does not match
+                                    $report_stack[] = 'Shape required value type mismatch';
                                     return false;
                                 }
                                 continue;
@@ -341,6 +359,7 @@ final class TypeChecker
                             if (array_key_exists($key, $optional)) {
                                 if (!$optional[$key]($sub_value)) {
                                     // Optional type does not match
+                                    $report_stack[] = 'Shape optional value type mismatch';
                                     return false;
                                 }
                                 continue;
@@ -349,6 +368,7 @@ final class TypeChecker
                             if (!$open_shape) {
                                 // Key is invalid as it is not either in required
                                 // nor in optional keys
+                                $report_stack[] = 'Shape has invalid key (probably an open shape would fix this)';
                                 return false;
                             }
                         }
@@ -365,31 +385,56 @@ final class TypeChecker
                 break;
 
             case Type::BOOL()->getKey():
-                return function ($value): bool {
-                    return is_bool($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (is_bool($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be bool';
+                        return false;
+                    }
                 };
 
             case Type::INT()->getKey():
-                return function ($value): bool {
-                    return is_int($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (is_int($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be int';
+                        return false;
+                    }
                 };
 
             case Type::FLOAT()->getKey():
-                return function ($value): bool {
-                    return is_float($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (is_float($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be float';
+                        return false;
+                    }
                 };
 
             case Type::STRING()->getKey():
-                return function ($value): bool {
-                    return is_string($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (is_string($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be string';
+                        return false;
+                    }
                 };
 
             case Type::ARRAY()->getKey():
                 $child_count = $ast->countChildren();
 
                 if ($child_count === 0) {
-                    return function ($value): bool {
-                        return is_array($value);
+                    return function ($value, array &$report_stack = []): bool {
+                        if (is_array($value)) {
+                            return true;
+                        } else {
+                            $report_stack[] = 'Value expected to be array';
+                            return false;
+                        }
                     };
                 } elseif ($child_count === 1) {
                     $child = $ast->getChildAt(0);
@@ -402,20 +447,27 @@ final class TypeChecker
                     $generic_count = $child->countChildren();
 
                     if ($generic_count === 0) {
-                        return function ($value): bool {
-                            return is_array($value);
+                        return function ($value, array &$report_stack = []): bool {
+                            if (is_array($value)) {
+                                return true;
+                            } else {
+                                $report_stack[] = 'Value expected to be array';
+                                return false;
+                            }
                         };
                     } elseif ($generic_count === 1) {
                         // value check
                         $value_fn = self::astToCheckerFn($child->getChildAt(0));
 
-                        return function ($value) use ($value_fn): bool {
+                        return function ($value, array &$report_stack = []) use ($value_fn): bool {
                             if (!is_array($value)) {
+                                $report_stack[] = 'Value is not an array';
                                 return false;
                             }
 
                             foreach ($value as $item) {
                                 if (!$value_fn($item)) {
+                                    $report_stack[] = 'Array value type mismatch';
                                     return false;
                                 }
                             }
@@ -427,16 +479,19 @@ final class TypeChecker
                         $key_fn = self::astToCheckerFn($child->getChildAt(0));
                         $value_fn = self::astToCheckerFn($child->getChildAt(1));
 
-                        return function ($value) use ($key_fn, $value_fn): bool {
+                        return function ($value, array &$report_stack = []) use ($key_fn, $value_fn): bool {
                             if (!is_array($value)) {
+                                $report_stack[] = 'Value is not an array';
                                 return false;
                             }
 
                             foreach ($value as $key => $item) {
-                                if (
-                                    !$key_fn($key)
-                                    || !$value_fn($item)
-                                ) {
+                                if (!$key_fn($key)) {
+                                    $report_stack[] = 'Array key type mismatch';
+                                    return false;
+                                }
+                                if (!$value_fn($item)) {
+                                    $report_stack[] = 'Array value type mismatch';
                                     return false;
                                 }
                             }
@@ -455,28 +510,53 @@ final class TypeChecker
                 break; // this break is unnecessary
 
             case Type::OBJECT()->getKey():
-                return function ($value): bool {
-                    return is_object($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (is_object($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be object';
+                        return false;
+                    }
                 };
 
             case Type::CALLABLE()->getKey():
-                return function ($value): bool {
-                    return is_callable($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (is_callable($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be callable';
+                        return false;
+                    }
                 };
 
             case Type::ITERABLE()->getKey():
-                return function ($value): bool {
-                    return is_iterable($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (is_iterable($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be iterable';
+                        return false;
+                    }
                 };
 
             case Type::RESOURCE()->getKey():
-                return function ($value): bool {
-                    return is_resource($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (is_resource($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be resource';
+                        return false;
+                    }
                 };
 
             case Type::NULL()->getKey():
-                return function ($value): bool {
-                    return $value === null;
+                return function ($value, array &$report_stack = []): bool {
+                    if ($value === null) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be null';
+                        return false;
+                    }
                 };
 
             case Type::NEGATED()->getKey():
@@ -484,8 +564,13 @@ final class TypeChecker
 
                 $fn = self::astToCheckerFn($ast->getChildAt(0));
 
-                return function ($value) use ($fn): bool {
-                    return !$fn($value);
+                return function ($value, array &$report_stack = []) use ($fn): bool {
+                    if (!$fn($value, $report_stack)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value type mismatch (negated type)';
+                        return false;
+                    }
                 };
 
             case Type::USER_DEFINED()->getKey():
@@ -496,9 +581,14 @@ final class TypeChecker
                     'User-defined type must exist.'
                 );
 
-                return function ($value) use ($type): bool {
+                return function ($value, array &$report_stack = []) use ($type): bool {
                     // TODO: instanceof doesn't work with traits :(
-                    return $value instanceof $type;
+                    if ($value instanceof $type) {
+                        return true;
+                    } else {
+                        $report_stack[] = sprintf('Value is not instanceof %s', $type);
+                        return false;
+                    }
                 };
 
             case Type::ARRAYKEY()->getKey():
@@ -521,8 +611,13 @@ final class TypeChecker
                 return self::astToCheckerFn($new_ast);
 
             case Type::SCALAR()->getKey():
-                return function ($value): bool {
-                    return is_scalar($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (is_scalar($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be scalar';
+                        return false;
+                    }
                 };
 
             case Type::NUMBER()->getKey():
@@ -557,28 +652,53 @@ final class TypeChecker
                 return self::astToCheckerFn($new_ast);
 
             case Type::EMPTY()->getKey():
-                return function ($value): bool {
-                    return empty($value);
+                return function ($value, array &$report_stack = []): bool {
+                    if (empty($value)) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be empty';
+                        return false;
+                    }
                 };
 
             case Type::TRUE()->getKey():
-                return function ($value): bool {
-                    return $value === true;
+                return function ($value, array &$report_stack = []): bool {
+                    if ($value === true) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be true';
+                        return false;
+                    }
                 };
 
             case Type::FALSE()->getKey():
-                return function ($value): bool {
-                    return $value === false;
+                return function ($value, array &$report_stack = []): bool {
+                    if ($value === false) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be false';
+                        return false;
+                    }
                 };
 
             case Type::POSITIVE()->getKey():
-                return function ($value): bool {
-                    return $value > 0;
+                return function ($value, array &$report_stack = []): bool {
+                    if ($value > 0) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be positive';
+                        return false;
+                    }
                 };
 
             case Type::NEGATIVE()->getKey():
-                return function ($value): bool {
-                    return $value < 0;
+                return function ($value, array &$report_stack = []): bool {
+                    if ($value < 0) {
+                        return true;
+                    } else {
+                        $report_stack[] = 'Value expected to be negative';
+                        return false;
+                    }
                 };
 
             case Type::RAW_STRING()->getKey():
@@ -586,8 +706,13 @@ final class TypeChecker
 
                 invariant($raw_string !== null, 'Raw string Node must have a value.');
 
-                return function ($value) use ($raw_string): bool {
-                    return $value === $raw_string;
+                return function ($value, array &$report_stack = []) use ($raw_string): bool {
+                    if ($value === $raw_string) {
+                        return true;
+                    } else {
+                        $report_stack[] = sprintf('Value expected to be exactly %s', $raw_string);
+                        return false;
+                    }
                 };
 
             default:
