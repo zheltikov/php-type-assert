@@ -9,12 +9,13 @@ use Zheltikov\Exceptions\TypeAssertionException;
  *
  * @param mixed $value
  * @param string $type
+ * @param array $report_stack
  * @return bool
  * @throws \Zheltikov\Exceptions\InvariantException
  */
-function is_($value, string $type): bool
+function is_($value, string $type, array &$report_stack = []): bool
 {
-    $checker = TypeChecker::getCheckerFn($type);
+    $checker = TypeChecker::getCheckerFn($type, $report_stack);
     return $checker($value);
 }
 
@@ -25,13 +26,14 @@ function is_($value, string $type): bool
  *
  * @param mixed $value
  * @param string $expected
+ * @param array $report_stack
  * @return mixed
- * @throws \Zheltikov\Exceptions\TypeAssertionException
  * @throws \Zheltikov\Exceptions\InvariantException
+ * @throws \Zheltikov\Exceptions\TypeAssertionException
  */
-function as_($value, string $expected)
+function as_($value, string $expected, array &$report_stack = [])
 {
-    if (!is_($value, $expected)) {
+    if (!is_($value, $expected, $report_stack)) {
         // FIXME: gettype may not be as good as we need
         $actual = gettype($value);
         $message = sprintf('Expected %s, got %s', $expected, $actual);
@@ -46,13 +48,14 @@ function as_($value, string $expected)
  *
  * @param mixed $value
  * @param string $expected
+ * @param array $report_stack
  * @return mixed|null
  * @throws \Zheltikov\Exceptions\InvariantException
  */
-function null_as_($value, string $expected)
+function null_as_($value, string $expected, array &$report_stack = [])
 {
     try {
-        return as_($value, $expected);
+        return as_($value, $expected, $report_stack);
     } catch (TypeAssertionException $e) {
     }
 

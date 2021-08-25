@@ -30,14 +30,15 @@ final class TypeChecker
 
     /**
      * @param string $type
+     * @param array $report_stack
      * @return callable
      * @throws \Zheltikov\Exceptions\InvariantException
      */
-    public static function getCheckerFn(string $type): callable
+    public static function getCheckerFn(string $type, array &$report_stack = []): callable
     {
         invariant(strlen(trim($type)), 'Type must not be empty.');
         $ast = self::parseType($type);
-        return self::astToCheckerFn($ast);
+        return self::astToCheckerFn($ast, $report_stack);
     }
 
     /**
@@ -89,10 +90,11 @@ final class TypeChecker
 
     /**
      * @param \Zheltikov\TypeAssert\Parser\Node $ast
+     * @param array $report_stack
      * @return callable
      * @throws \Zheltikov\Exceptions\InvariantException
      */
-    protected static function astToCheckerFn(Node $ast): callable
+    protected static function astToCheckerFn(Node $ast, array &$report_stack = []): callable
     {
         switch ($ast->getType()->getKey()) {
             case Type::UNION()->getKey():
