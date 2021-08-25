@@ -77,6 +77,7 @@ Below comes a simple explanation for each function:
 ### `is_(mixed, string): bool`
 
 Parameters:
+
 - `mixed $value`
 - `string $type`
 
@@ -85,16 +86,17 @@ Checks whether the value in `$value` has the type specified in `$type`, and retu
 ### `as_(mixed, string): mixed`
 
 Parameters:
+
 - `mixed $value`
 - `string $expected`
 
-Performs the same checks as `is_`.
-However, it throws `TypeAssertionException` if the value has a different type.
-If the type matches, it returns the original value.
+Performs the same checks as `is_`. However, it throws `TypeAssertionException` if the value has a different type. If the
+type matches, it returns the original value.
 
 ### `null_as_(mixed, string): mixed|null`
 
 Parameters:
+
 - `mixed $value`
 - `string $expected`
 
@@ -158,19 +160,52 @@ Here comes a list of the supported types and how they are checked internally:
 - [X] Support for `true` and `false`
 - [X] Support for `positive`, `nonpositive` and `notpositive`
 - [X] Support for `negative`, `nonnegative` and `notnegative`
-- [ ] Support for tuples. For example: `(int, ?DateTime, bool)`
-- [ ] Support for closed shapes. For example: `shape('id' => int, 'name' => string)`
-- [ ] Support for open shapes. For example: `shape('id' => int, 'name' => string, ...)`
-- [ ] Support for optional shape fields. For example: `shape('id' => int, ?'name' => string)`
+- [X] Support for tuples. For example: `(int, ?DateTime, bool)`
+- [X] Support for closed shapes. For example: `shape('id' => int, 'name' => string)`
+- [X] Support for open shapes. For example: `shape('id' => int, 'name' => string, ...)`
+- [X] Support for optional shape fields. For example: `shape('id' => int, ?'name' => string)`
 - [ ] Support for enums:
-  - [ ] Check by enum type
-  - [ ] Check by enum field name
-- [ ] Support for array generics
-  - [ ] By value. For example: `array<User>`
-  - [ ] By key and value. For example: `array<string, int>`
-- [ ] Support for unions. For example: `int|string|null`
-- [ ] Support for intersections. For example: `Exception&Throwable`
+    - [ ] Check by enum type
+    - [ ] Check by enum field name
+- [X] Support for array generics
+    - [X] By value. For example: `array<User>`
+    - [X] By key and value. For example: `array<string, int>`
+- [X] Support for unions. For example: `int|string|null`
+- [X] Support for intersections. For example: `Exception&Throwable`
 - [ ] Modularity, ability to define custom checker functions and types
 - [ ] Memoize some checker functions
 - [ ] Support for type alias definitions
 - [ ] Support for type precedence checking definition
+- [X] Support for comments
+- [ ] Support for format strings (like for `sprintf` and `sscanf`)
+- [ ] Support for regular expressions
+- [ ] Support for named parameters
+
+## Performance
+
+You may ask about the performance impact of this parsing process on the overall request. You will be surprised hearing
+that the performance of the parser included in this library is actually pretty good.
+
+Some tests were made, in which the following type string was being parsed:
+
+```
+shape(
+    'id' => int & positive,
+    'name' => string,
+    'price' => float & positive,
+    'score' => null | (int & positive),
+    'description' => string,
+    'photo_id' => int & positive,
+    'category_id' => int & positive
+)
+```
+
+This test was performed on PHP v7.4 and PHP v8.0 with JIT compilation enabled, and the result aren't bad at all!:
+
+|ms. taken to parse|PHP v7.4|PHP v8.0 (with JIT)|
+|---|---|---|
+|type parser checks|5|0.1|
+|equivalent checks with `if`s|0.15|0.0001|
+
+Note: these performance tests were made at `commit d9fedd23...`, therefore they may not be accurate for the latest
+library version.

@@ -1,0 +1,105 @@
+<?php
+
+/* @generated */
+$meta #
+#semval($) $this->semValue
+#semval($,%t) $this->semValue
+#semval(%n) $stackPos-(%l-%n)
+#semval(%n,%t) $stackPos-(%l-%n)
+
+namespace Zheltikov\TypeAssert\Parser;
+#include;
+
+/* This is an automatically GENERATED file, which should not be manually edited.
+ * Instead edit one of the following:
+ *  * the grammar files parser/types.y
+ *  * the skeleton file parser/parser.template
+ *  * the preprocessing script parser/rebuild_parser.php
+ */
+class #(-p) extends ParserAbstract
+{
+    /** @var Node|null */
+    protected ?Node $semValue;
+
+    protected int $tokenToSymbolMapSize = #(YYMAXLEX);
+    protected int $actionTableSize = #(YYLAST);
+    protected int $gotoTableSize = #(YYGLAST);
+
+    protected int $invalidSymbol = #(YYBADCH);
+    protected int $errorSymbol = #(YYINTERRTOK);
+    protected int $defaultAction = #(YYDEFAULT);
+    protected int $unexpectedTokenRule = #(YYUNEXPECTED);
+
+    protected int $YY2TBLSTATE = #(YY2TBLSTATE);
+    protected int $numNonLeafStates = #(YYNLSTATES);
+
+    protected array $symbolToName = [
+        #listvar terminals
+    ];
+
+    protected array $tokenToSymbol = [
+        #listvar yytranslate
+    ];
+
+    protected array $action = [
+        #listvar yyaction
+    ];
+
+    protected array $actionCheck = [
+        #listvar yycheck
+    ];
+
+    protected array $actionBase = [
+        #listvar yybase
+    ];
+
+    protected array $actionDefault = [
+        #listvar yydefault
+    ];
+
+    protected array $goto = [
+        #listvar yygoto
+    ];
+
+    protected array $gotoCheck = [
+        #listvar yygcheck
+    ];
+
+    protected array $gotoBase = [
+        #listvar yygbase
+    ];
+
+    protected array $gotoDefault = [
+        #listvar yygdefault
+    ];
+
+    protected array $ruleToNonTerminal = [
+        #listvar yylhs
+    ];
+
+    protected array $ruleToLength = [
+        #listvar yylen
+    ];
+#if -t
+
+    protected array $productions = [
+        #production-strings;
+    ];
+#endif
+
+    protected function initReduceCallbacks(): void
+    {
+        $this->reduceCallbacks = [
+#reduce
+            %n => function ($stackPos) {
+                %b
+            },
+#noact
+            %n => function ($stackPos) {
+                $this->semValue = $this->semStack[$stackPos];
+            },
+#endreduce
+        ];
+    }
+}
+#tailcode;
