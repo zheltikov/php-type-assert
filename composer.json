@@ -1,5 +1,5 @@
 {
-  "version": "2.0.1",
+  "version": "2.0.2",
   "name": "zheltikov/php-type-assert",
   "type": "library",
   "autoload": {
@@ -11,7 +11,7 @@
     ]
   },
   "require": {
-    "php": "^7.4",
+    "php": ">=7.4",
     "zheltikov/php-exceptions": "^1.0",
     "zheltikov/php-invariant": "^1.1",
     "myclabs/php-enum": "^1.8",
