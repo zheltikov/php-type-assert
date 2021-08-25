@@ -180,6 +180,8 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for format strings (like for `sprintf` and `sscanf`)
 - [ ] Support for regular expressions
 - [ ] Support for named parameters
+- [ ] Support for open tuples: `tuple(int, ...)`, `tuple(..., int)`, `tuple(int, ..., int)`
+- [ ] Support for error (type mismatch) reporting, for humans :)
 
 ## Performance
 
