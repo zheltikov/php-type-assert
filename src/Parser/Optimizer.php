@@ -363,8 +363,8 @@ class Optimizer
             $children =& $node->getChildren();
 
             $new_node = (new Node(Type::UNION()))
-                ->appendChild($null)
-                ->appendChildren($children);
+                ->appendChildren($children)
+                ->appendChild($null);
 
             $node = $new_node;
         }

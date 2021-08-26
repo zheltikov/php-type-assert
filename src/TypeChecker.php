@@ -109,8 +109,10 @@ final class TypeChecker
                 return function (State $state, $value) use ($sub_fns): bool {
                     foreach ($sub_fns as $sub_fn) {
                         if ($sub_fn($state, $value)) {
+                            // $state->shiftReportStack();
                             return true;
                         }
+                        // $state->shiftReportStack();
                     }
 
                     $state->appendReportStack('Value does not match any of the Union types');

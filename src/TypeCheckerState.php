@@ -49,6 +49,18 @@ class TypeCheckerState
     }
 
     /**
+     * @param string|null $message
+     * @return $this
+     */
+    public function shiftReportStack(?string &$message = null): self
+    {
+        if ($this->isReportingEnabled()) {
+            $message = array_pop($this->report_stack);
+        }
+        return $this;
+    }
+
+    /**
      * @return string[]
      */
     public function getReportStack(): array
