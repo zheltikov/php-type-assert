@@ -183,6 +183,8 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for open tuples: `tuple(int, ...)`, `tuple(..., int)`, `tuple(int, ..., int)`
 - [ ] Support for error (type mismatch) reporting, for humans :)
 - [ ] Support for callable types (parameter count and types, return type)
+- [ ] Support for raw integers
+- [ ] Support for raw floats
 
 ## Performance
 
