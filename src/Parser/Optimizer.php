@@ -269,10 +269,10 @@ class Optimizer
                 foreach ($children as $child) {
                     if ($child->getType()->equals(Type::UNION())) {
                         $sub_children =& $child->getChildren();
-                        $new_node->appendChildren($sub_children);
+                        $new_node->prependChildren($sub_children);
                         // $delete_children[] = $child;
                     } else {
-                        $new_node->appendChild($child);
+                        $new_node->prependChild($child);
                     }
                 }
 

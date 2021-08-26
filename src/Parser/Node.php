@@ -273,4 +273,19 @@ class Node implements JsonSerializable
         $this->value = $value;
         return $this;
     }
+
+    /**
+     * @param iterable|null $children
+     * @return $this
+     */
+    public function prependChildren(?iterable $children = null): self
+    {
+        if ($children !== null) {
+            foreach ($children as $child) {
+                $this->prependChild($child);
+            }
+        }
+
+        return $this;
+    }
 }
