@@ -113,7 +113,7 @@ final class TypeChecker
                         }
                     }
 
-                    $state->appendReportStack('Value does not satisfy any of the types in the Union');
+                    $state->appendReportStack('Value does not match any of the Union types');
                     return false;
                 };
 
@@ -130,7 +130,8 @@ final class TypeChecker
                 return function (State $state, $value) use ($sub_fns): bool {
                     foreach ($sub_fns as $sub_fn) {
                         if (!$sub_fn($state, $value)) {
-                            $state->appendReportStack('Value does not satisfy type in Intersection');
+                            // TODO: specify which Intersection type
+                            $state->appendReportStack('Value does not satisfy Intersection type');
                             return false;
                         }
                     }
@@ -168,20 +169,21 @@ final class TypeChecker
                         return false;
                     }
 
-                    if (count($value) !== $count) {
-                        $state->appendReportStack('Tuple has wrong length');
+                    $actual_count = count($value);
+                    if ($actual_count !== $count) {
+                        $state->appendReportStack('Tuple has wrong length %d, expected %d', $actual_count, $count);
                         return false;
                     }
 
                     $i = 0;
                     foreach ($value as $index => $item) {
                         if ($index !== $i) {
-                            $state->appendReportStack('Tuple has a key mismatch (probably not 0-indexed)');
+                            $state->appendReportStack('Tuple has an invalid key %s', var_export($index, true));
                             return false;
                         }
 
                         if (!$sub_fns[$i]($state, $item)) {
-                            $state->appendReportStack('Tuple has a type mismatch in child element');
+                            $state->appendReportStack('Tuple has invalid child at index %d', $i);
                             return false;
                         }
 
@@ -282,15 +284,24 @@ final class TypeChecker
                             return false;
                         }
 
+                        $actual_count = count($value);
                         if (!$open_shape) {
-                            if (count($value) !== $count) {
+                            if ($actual_count !== $count) {
                                 // Length does not match
-                                $state->appendReportStack('Shape element count mismatch');
+                                $state->appendReportStack(
+                                    'Shape has wrong length %d, expected %d',
+                                    $actual_count,
+                                    $count
+                                );
                                 return false;
                             }
-                        } elseif (count($value) < $count) {
+                        } elseif ($actual_count < $count) {
                             // Length does not match
-                            $state->appendReportStack('Open shape element count mismatch');
+                            $state->appendReportStack(
+                                'Open Shape has wrong length %d, expected less than %d',
+                                $actual_count,
+                                $count
+                            );
                             return false;
                         }
 
@@ -301,13 +312,13 @@ final class TypeChecker
 
                             if (!array_key_exists($key, $value)) {
                                 // Required key is not set
-                                $state->appendReportStack('Required shape key is not set');
+                                $state->appendReportStack('Required shape key %s is not set', var_export($key, true));
                                 return false;
                             }
 
                             if (!$sub_fns[$key]($state, $value[$key])) {
                                 // Required type does not match
-                                $state->appendReportStack('Shape value type mismatch');
+                                $state->appendReportStack('Shape has invalid value at key %s', var_export($key, true));
                                 return false;
                             }
                         }
@@ -329,7 +340,6 @@ final class TypeChecker
                         }
 
                         $actual_count = count($value);
-
                         if (!$open_shape) {
                             if (
                                 !(
@@ -338,12 +348,21 @@ final class TypeChecker
                                 )
                             ) {
                                 // Length is not valid
-                                $state->appendReportStack('Shape element count mismatch');
+                                $state->appendReportStack(
+                                    'Shape has wrong length %d, expected %d <= length <= %d',
+                                    $actual_count,
+                                    $count,
+                                    $count + $count_optional
+                                );
                                 return false;
                             }
                         } elseif ($count > $actual_count) {
                             // Length is not valid
-                            $state->appendReportStack('Shape has too much elements');
+                            $state->appendReportStack(
+                                'Shape has wrong length %d, expected at most %d',
+                                $actual_count,
+                                $count
+                            );
                             return false;
                         }
 
@@ -351,7 +370,10 @@ final class TypeChecker
                             if (array_key_exists($key, $sub_fns)) {
                                 if (!$sub_fns[$key]($state, $sub_value)) {
                                     // Required type does not match
-                                    $state->appendReportStack('Shape required value type mismatch');
+                                    $state->appendReportStack(
+                                        'Shape has invalid required value at key %s',
+                                        var_export($key, true)
+                                    );
                                     return false;
                                 }
                                 continue;
@@ -360,7 +382,10 @@ final class TypeChecker
                             if (array_key_exists($key, $optional)) {
                                 if (!$optional[$key]($state, $sub_value)) {
                                     // Optional type does not match
-                                    $state->appendReportStack('Shape optional value type mismatch');
+                                    $state->appendReportStack(
+                                        'Shape has invalid optional value at key %s',
+                                        var_export($key, true)
+                                    );
                                     return false;
                                 }
                                 continue;
@@ -370,7 +395,8 @@ final class TypeChecker
                                 // Key is invalid as it is not either in required
                                 // nor in optional keys
                                 $state->appendReportStack(
-                                    'Shape has invalid key (probably an open shape would fix this)'
+                                    'Shape has invalid key %s (an Open Shape would fix this)',
+                                    var_export($key, true)
                                 );
                                 return false;
                             }
@@ -468,11 +494,20 @@ final class TypeChecker
                                 return false;
                             }
 
-                            foreach ($value as $item) {
+                            $i = 0;
+                            foreach ($value as $index => $item) {
                                 if (!$value_fn($state, $item)) {
-                                    $state->appendReportStack('Array value type mismatch');
+                                    if ($index === $i) {
+                                        $state->appendReportStack('Array has invalid child at index %d', $i);
+                                    } else {
+                                        $state->appendReportStack(
+                                            'Array has invalid child at key %s',
+                                            var_export($index, true)
+                                        );
+                                    }
                                     return false;
                                 }
+                                $i++;
                             }
 
                             return true;
@@ -490,11 +525,14 @@ final class TypeChecker
 
                             foreach ($value as $key => $item) {
                                 if (!$key_fn($state, $key)) {
-                                    $state->appendReportStack('Array key type mismatch');
+                                    $state->appendReportStack('Array has invalid key %s', var_export($key, true));
                                     return false;
                                 }
                                 if (!$value_fn($state, $item)) {
-                                    $state->appendReportStack('Array value type mismatch');
+                                    $state->appendReportStack(
+                                        'Array has invalid value at key %s',
+                                        var_export($key, true)
+                                    );
                                     return false;
                                 }
                             }
@@ -571,7 +609,7 @@ final class TypeChecker
                     if (!$fn($state, $value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value type mismatch (negated type)');
+                        $state->appendReportStack('Value negated type mismatch');
                         return false;
                     }
                 };
@@ -641,7 +679,7 @@ final class TypeChecker
 
             case Type::VOID()->getKey():
                 return function (State $state): bool {
-                    $state->appendReportStack('Values cannot have type void :)');
+                    $state->appendReportStack('Value cannot ever be void :)');
                     return false;
                 };
 

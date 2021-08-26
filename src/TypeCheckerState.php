@@ -37,12 +37,13 @@ class TypeCheckerState
 
     /**
      * @param string $message
+     * @param mixed ...$args
      * @return $this
      */
-    public function appendReportStack(string $message): self
+    public function appendReportStack(string $message, ...$args): self
     {
         if ($this->isReportingEnabled()) {
-            $this->report_stack[] = $message;
+            $this->report_stack[] = vsprintf($message, $args);
         }
         return $this;
     }
