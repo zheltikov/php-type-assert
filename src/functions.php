@@ -3,20 +3,24 @@
 namespace Zheltikov\TypeAssert;
 
 use Zheltikov\Exceptions\TypeAssertionException;
+use Zheltikov\TypeAssert\TypeCheckerState as State;
 
 /**
  * Checks whether a value has the type specified, and returns a boolean result.
  *
  * @param mixed $value
  * @param string $type
- * @param array $report_stack
+ * @param \Zheltikov\TypeAssert\TypeCheckerState|null $state
  * @return bool
  * @throws \Zheltikov\Exceptions\InvariantException
  */
-function is_($value, string $type, array &$report_stack = []): bool
+function is_($value, string $type, ?State &$state = null): bool
 {
+    if ($state === null) {
+        $state = State::create();
+    }
     $checker = TypeChecker::getCheckerFn($type);
-    return $checker($value, $report_stack);
+    return $checker($state, $value);
 }
 
 /**
@@ -26,14 +30,14 @@ function is_($value, string $type, array &$report_stack = []): bool
  *
  * @param mixed $value
  * @param string $expected
- * @param array $report_stack
+ * @param \Zheltikov\TypeAssert\TypeCheckerState|null $state
  * @return mixed
  * @throws \Zheltikov\Exceptions\InvariantException
  * @throws \Zheltikov\Exceptions\TypeAssertionException
  */
-function as_($value, string $expected, array &$report_stack = [])
+function as_($value, string $expected, ?State &$state = null)
 {
-    if (!is_($value, $expected, $report_stack)) {
+    if (!is_($value, $expected, $state)) {
         // FIXME: gettype may not be as good as we need
         $actual = gettype($value);
         $message = sprintf('Expected %s, got %s', $expected, $actual);
@@ -48,14 +52,14 @@ function as_($value, string $expected, array &$report_stack = [])
  *
  * @param mixed $value
  * @param string $expected
- * @param array $report_stack
+ * @param \Zheltikov\TypeAssert\TypeCheckerState|null $state
  * @return mixed|null
  * @throws \Zheltikov\Exceptions\InvariantException
  */
-function null_as_($value, string $expected, array &$report_stack = [])
+function null_as_($value, string $expected, ?State &$state = null)
 {
     try {
-        return as_($value, $expected, $report_stack);
+        return as_($value, $expected, $state);
     } catch (TypeAssertionException $e) {
     }
 
