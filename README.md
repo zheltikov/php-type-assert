@@ -181,7 +181,7 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for regular expressions
 - [ ] Support for named parameters
 - [ ] Support for open tuples: `tuple(int, ...)`, `tuple(..., int)`, `tuple(int, ..., int)`
-- [ ] Support for error (type mismatch) reporting, for humans :)
+- [X] Support for error (type mismatch) reporting, for humans :)
 - [ ] Support for callable types (parameter count and types, return type)
 - [X] Support for raw integers
 - [X] Support for raw floats
