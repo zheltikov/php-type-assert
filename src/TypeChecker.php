@@ -65,24 +65,12 @@ final class TypeChecker
                     );
                 }
 
-                $debug = true; // TODO: disable debug
-
-                if ($debug) {
-                    echo '<b>&gt;&gt;&gt;</b> ', json_encode($ast/*, JSON_PRETTY_PRINT*/), "\n\n";
-                }
-
                 $optimizer = (new Optimizer())
-                    // ->setDebug($debug) // TODO: disable debug
                     ->setRootNode($ast);
 
                 $optimizer->execute();
-                $ast = $optimizer->getRootNode();
-
-                if ($debug) {
-                    echo '<b>&gt;&gt;&gt;</b> ', json_encode($ast/*, JSON_PRETTY_PRINT*/), "\n\n";
-                }
-
-                return $ast;
+                
+                return $optimizer->getRootNode();
             }
         )
             ->call($type);
