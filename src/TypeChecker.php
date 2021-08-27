@@ -69,7 +69,7 @@ final class TypeChecker
                     ->setRootNode($ast);
 
                 $optimizer->execute();
-                
+
                 return $optimizer->getRootNode();
             }
         )
@@ -96,9 +96,11 @@ final class TypeChecker
 
                 return function (State $state, $value) use ($sub_fns): bool {
                     // TODO: unions may need to create a second state object to clean up the non-matched children
+                    $state->pushFrame();
+
                     foreach ($sub_fns as $sub_fn) {
                         if ($sub_fn($state, $value)) {
-                            $state->shiftReportStack();
+                            $state->popFrame();
                             return true;
                         }
                         // $state->shiftReportStack();

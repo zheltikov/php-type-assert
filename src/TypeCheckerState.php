@@ -5,7 +5,7 @@ namespace Zheltikov\TypeAssert;
 class TypeCheckerState
 {
     /**
-     * @var string[]
+     * @var string[][]
      */
     protected array $report_stack;
 
@@ -14,12 +14,15 @@ class TypeCheckerState
      */
     protected bool $reporting_enabled;
 
+    protected int $frame;
+
     /**
      *
      */
     private function __construct()
     {
-        $this->report_stack = [];
+        $this->report_stack = [[]];
+        $this->frame = 0;
         $this->setReportingEnabled();
     }
 
@@ -43,7 +46,7 @@ class TypeCheckerState
     public function appendReportStack(string $message, ...$args): self
     {
         if ($this->isReportingEnabled()) {
-            $this->report_stack[] = vsprintf($message, $args);
+            $this->report_stack[$this->frame][] = vsprintf($message, $args);
         }
         return $this;
     }
@@ -55,7 +58,7 @@ class TypeCheckerState
     public function shiftReportStack(?string &$message = null): self
     {
         if ($this->isReportingEnabled()) {
-            $message = array_pop($this->report_stack);
+            $message = array_pop($this->report_stack[$this->frame]);
         }
         return $this;
     }
@@ -65,7 +68,15 @@ class TypeCheckerState
      */
     public function getReportStack(): array
     {
-        return $this->report_stack;
+        $stack = [];
+
+        foreach ($this->report_stack as $frame) {
+            foreach ($frame as $message) {
+                $stack[] = $message;
+            }
+        }
+
+        return $stack;
     }
 
     /**
@@ -84,5 +95,34 @@ class TypeCheckerState
     public function isReportingEnabled(): bool
     {
         return $this->reporting_enabled;
+    }
+
+    /**
+     * @return $this
+     */
+    public function pushFrame(): self
+    {
+        if ($this->isReportingEnabled()) {
+            $this->frame++;
+            $this->report_stack[$this->frame] = [];
+        }
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function popFrame(): self
+    {
+        if ($this->isReportingEnabled()) {
+            if ($this->frame > 0) {
+                unset($this->report_stack[$this->frame]);
+                $this->frame--;
+            } else {
+                $this->frame = 0;
+                $this->report_stack = [[]];
+            }
+        }
+        return $this;
     }
 }
