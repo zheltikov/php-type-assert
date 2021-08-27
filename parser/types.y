@@ -11,10 +11,32 @@
 root : type                 { $$ = $1; }
      ;
 
-type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
-                                        $$->appendChild($1)->appendChild($3); }
-     | type TOKEN_INTERSECTION type   { $$ = new Node(Type::INTERSECTION());
-                                        $$->appendChild($1)->appendChild($3); }
+type : type TOKEN_UNION type          {
+                                        $$ = new Node(Type::UNION());
+                                        if ($1->getType()->equals(Type::UNION())) {
+                                            $$->appendChildren($1->getChildren());
+                                        } else {
+                                            $$->appendChild($1);
+                                        }
+                                        if ($3->getType()->equals(Type::UNION())) {
+                                            $$->appendChildren($3->getChildren());
+                                        } else {
+                                            $$->appendChild($3);
+                                        }
+                                      }
+     | type TOKEN_INTERSECTION type   {
+                                        $$ = new Node(Type::INTERSECTION());
+                                        if ($1->getType()->equals(Type::INTERSECTION())) {
+                                            $$->appendChildren($1->getChildren());
+                                        } else {
+                                            $$->appendChild($1);
+                                        }
+                                        if ($3->getType()->equals(Type::INTERSECTION())) {
+                                            $$->appendChildren($3->getChildren());
+                                        } else {
+                                            $$->appendChild($3);
+                                        }
+                                      }
      | scalar_type                    { $$ = $1; }
      | compound_type                  { $$ = $1; }
      | special_type                   { $$ = $1; }
@@ -28,6 +50,8 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
      | custom_type                    { $$ = $1; }
      | user_defined_type              { $$ = $1; }
      | raw_string                     { $$ = $1; }
+     | raw_integer                    { $$ = $1; }
+     | raw_float                      { $$ = $1; }
      | generic_array                  { $$ = $1; }
      ;
 
@@ -94,6 +118,14 @@ raw_string : TOKEN_STRING_DQ          { $$ = new Node(Type::RAW_STRING());
            | TOKEN_STRING_SQ          { $$ = new Node(Type::RAW_STRING());
                                         $$->setValue(substr($1, 1, -1)); }
            ;
+
+raw_integer : TOKEN_RAW_INTEGER       { $$ = new Node(Type::RAW_INTEGER());
+                                        $$->setValue(intval($1)); }
+            ;
+
+raw_float : TOKEN_RAW_FLOAT           { $$ = new Node(Type::RAW_FLOAT());
+                                        $$->setValue(floatval($1)); }
+          ;
 
 key_value_pair_list : any_key_value_pair TOKEN_COMMA key_value_pair_list    { $$ = $3;
                                                                           $$->prependChild($1); }
