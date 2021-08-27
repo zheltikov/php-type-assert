@@ -279,12 +279,34 @@ class Types extends ParserAbstract
                  $this->semValue = $this->semStack[$stackPos-(1-1)];
             },
             2 => function ($stackPos) {
-                 $this->semValue = new Node(Type::UNION());
-                                        $this->semValue->appendChild($this->semStack[$stackPos-(3-1)])->appendChild($this->semStack[$stackPos-(3-3)]);
+
+                                        $this->semValue = new Node(Type::UNION());
+                                        if ($this->semStack[$stackPos-(3-1)]->getType()->equals(Type::UNION())) {
+                                            $this->semValue->appendChildren($this->semStack[$stackPos-(3-1)]->getChildren());
+                                        } else {
+                                            $this->semValue->appendChild($this->semStack[$stackPos-(3-1)]);
+                                        }
+                                        if ($this->semStack[$stackPos-(3-3)]->getType()->equals(Type::UNION())) {
+                                            $this->semValue->appendChildren($this->semStack[$stackPos-(3-3)]->getChildren());
+                                        } else {
+                                            $this->semValue->appendChild($this->semStack[$stackPos-(3-3)]);
+                                        }
+
             },
             3 => function ($stackPos) {
-                 $this->semValue = new Node(Type::INTERSECTION());
-                                        $this->semValue->appendChild($this->semStack[$stackPos-(3-1)])->appendChild($this->semStack[$stackPos-(3-3)]);
+
+                                        $this->semValue = new Node(Type::INTERSECTION());
+                                        if ($this->semStack[$stackPos-(3-1)]->getType()->equals(Type::INTERSECTION())) {
+                                            $this->semValue->appendChildren($this->semStack[$stackPos-(3-1)]->getChildren());
+                                        } else {
+                                            $this->semValue->appendChild($this->semStack[$stackPos-(3-1)]);
+                                        }
+                                        if ($this->semStack[$stackPos-(3-3)]->getType()->equals(Type::INTERSECTION())) {
+                                            $this->semValue->appendChildren($this->semStack[$stackPos-(3-3)]->getChildren());
+                                        } else {
+                                            $this->semValue->appendChild($this->semStack[$stackPos-(3-3)]);
+                                        }
+
             },
             4 => function ($stackPos) {
                  $this->semValue = $this->semStack[$stackPos-(1-1)];

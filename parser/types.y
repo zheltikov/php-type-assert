@@ -11,10 +11,32 @@
 root : type                 { $$ = $1; }
      ;
 
-type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
-                                        $$->appendChild($1)->appendChild($3); }
-     | type TOKEN_INTERSECTION type   { $$ = new Node(Type::INTERSECTION());
-                                        $$->appendChild($1)->appendChild($3); }
+type : type TOKEN_UNION type          {
+                                        $$ = new Node(Type::UNION());
+                                        if ($1->getType()->equals(Type::UNION())) {
+                                            $$->appendChildren($1->getChildren());
+                                        } else {
+                                            $$->appendChild($1);
+                                        }
+                                        if ($3->getType()->equals(Type::UNION())) {
+                                            $$->appendChildren($3->getChildren());
+                                        } else {
+                                            $$->appendChild($3);
+                                        }
+                                      }
+     | type TOKEN_INTERSECTION type   {
+                                        $$ = new Node(Type::INTERSECTION());
+                                        if ($1->getType()->equals(Type::INTERSECTION())) {
+                                            $$->appendChildren($1->getChildren());
+                                        } else {
+                                            $$->appendChild($1);
+                                        }
+                                        if ($3->getType()->equals(Type::INTERSECTION())) {
+                                            $$->appendChildren($3->getChildren());
+                                        } else {
+                                            $$->appendChild($3);
+                                        }
+                                      }
      | scalar_type                    { $$ = $1; }
      | compound_type                  { $$ = $1; }
      | special_type                   { $$ = $1; }
