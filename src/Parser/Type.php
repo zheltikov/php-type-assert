@@ -50,6 +50,7 @@ use MyCLabs\Enum\Enum;
  * @method Type ELLIPSIS()
  * @method Type GENERIC_LIST()
  * @method Type RAW_INTEGER()
+ * @method Type RAW_FLOAT()
  *
  */
 final class Type extends Enum
@@ -94,4 +95,5 @@ final class Type extends Enum
     private const ELLIPSIS = 'ellipsis';
     private const GENERIC_LIST = 'generic_list';
     private const RAW_INTEGER = 'raw_integer';
+    private const RAW_FLOAT = 'raw_float';
 }

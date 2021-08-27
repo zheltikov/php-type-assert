@@ -118,8 +118,8 @@ class Lexer
             '"([^"]*)"' => Tokens::TOKEN_STRING_DQ(),
             "'([^']*)'" => Tokens::TOKEN_STRING_SQ(),
 
+            '[-+]?([0-9]+[.][0-9]*)|([0-9]*[.][0-9]+)' => Tokens::TOKEN_RAW_FLOAT(),
             '[-+]?\d+' => Tokens::TOKEN_RAW_INTEGER(),
-            // '[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)' => Tokens::TOKEN_RAW_FLOAT(),
         ];
     }
 

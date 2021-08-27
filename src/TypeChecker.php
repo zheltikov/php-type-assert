@@ -68,7 +68,7 @@ final class TypeChecker
                 $debug = true; // TODO: disable debug
 
                 if ($debug) {
-                    echo '<b>&gt;&gt;&gt;</b> ', json_encode($ast, JSON_PRETTY_PRINT), "\n\n";
+                    echo '<b>&gt;&gt;&gt;</b> ', json_encode($ast/*, JSON_PRETTY_PRINT*/), "\n\n";
                 }
 
                 $optimizer = (new Optimizer())
@@ -79,7 +79,7 @@ final class TypeChecker
                 $ast = $optimizer->getRootNode();
 
                 if ($debug) {
-                    echo '<b>&gt;&gt;&gt;</b> ', json_encode($ast, JSON_PRETTY_PRINT), "\n\n";
+                    echo '<b>&gt;&gt;&gt;</b> ', json_encode($ast/*, JSON_PRETTY_PRINT*/), "\n\n";
                 }
 
                 return $ast;
@@ -778,6 +778,25 @@ final class TypeChecker
                             sprintf(
                                 'Value expected to be exactly the int %d',
                                 $raw_integer
+                            )
+                        );
+                        return false;
+                    }
+                };
+
+            case Type::RAW_FLOAT()->getKey():
+                $raw_float = $ast->getValue();
+
+                invariant($raw_float !== null, 'Raw float Node must have a value.');
+
+                return function (State $state, $value) use ($raw_float): bool {
+                    if ($value === $raw_float) {
+                        return true;
+                    } else {
+                        $state->appendReportStack(
+                            sprintf(
+                                'Value expected to be exactly the float %f',
+                                $raw_float
                             )
                         );
                         return false;
