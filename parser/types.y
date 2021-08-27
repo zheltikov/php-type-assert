@@ -28,6 +28,7 @@ type : type TOKEN_UNION type          { $$ = new Node(Type::UNION());
      | custom_type                    { $$ = $1; }
      | user_defined_type              { $$ = $1; }
      | raw_string                     { $$ = $1; }
+     | raw_integer                    { $$ = $1; }
      | generic_array                  { $$ = $1; }
      ;
 
@@ -94,6 +95,10 @@ raw_string : TOKEN_STRING_DQ          { $$ = new Node(Type::RAW_STRING());
            | TOKEN_STRING_SQ          { $$ = new Node(Type::RAW_STRING());
                                         $$->setValue(substr($1, 1, -1)); }
            ;
+
+raw_integer : TOKEN_RAW_INTEGER       { $$ = new Node(Type::RAW_INTEGER());
+                                        $$->setValue(intval($1)); }
+            ;
 
 key_value_pair_list : any_key_value_pair TOKEN_COMMA key_value_pair_list    { $$ = $3;
                                                                           $$->prependChild($1); }

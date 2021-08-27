@@ -117,6 +117,9 @@ class Lexer
             // FIXME: this string implementation is somewhat limited
             '"([^"]*)"' => Tokens::TOKEN_STRING_DQ(),
             "'([^']*)'" => Tokens::TOKEN_STRING_SQ(),
+
+            '[-+]?\d+' => Tokens::TOKEN_RAW_INTEGER(),
+            // '[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)' => Tokens::TOKEN_RAW_FLOAT(),
         ];
     }
 

@@ -105,15 +105,19 @@ class Node implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
-            'type' => $this->type->getKey(),
-            'value' => $this->value,
-            'children' => $this->children,
+        $data = [
+            'type' => $this->getType()->getKey(),
         ];
-        /*return [
-            $this->type->getKey(),
-            ...$this->children,
-        ];*/
+
+        if ($this->getValue() !== null) {
+            $data['value'] = $this->getValue();
+        }
+
+        if ($this->hasChildren()) {
+            $data['children'] = $this->getChildren();
+        }
+
+        return $data;
     }
 
     /**

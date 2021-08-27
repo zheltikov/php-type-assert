@@ -49,6 +49,7 @@ use MyCLabs\Enum\Enum;
  * @method Type OPTIONAL()
  * @method Type ELLIPSIS()
  * @method Type GENERIC_LIST()
+ * @method Type RAW_INTEGER()
  *
  */
 final class Type extends Enum
@@ -92,4 +93,5 @@ final class Type extends Enum
     private const OPTIONAL = 'optional';
     private const ELLIPSIS = 'ellipsis';
     private const GENERIC_LIST = 'generic_list';
+    private const RAW_INTEGER = 'raw_integer';
 }

@@ -65,10 +65,10 @@ final class TypeChecker
                     );
                 }
 
-                $debug = false; // TODO: disable debug
+                $debug = true; // TODO: disable debug
 
                 if ($debug) {
-                    echo '<b>&gt;&gt;&gt;</b> ', $ast->prettyHtml(), "\n\n";
+                    echo '<b>&gt;&gt;&gt;</b> ', json_encode($ast, JSON_PRETTY_PRINT), "\n\n";
                 }
 
                 $optimizer = (new Optimizer())
@@ -79,7 +79,7 @@ final class TypeChecker
                 $ast = $optimizer->getRootNode();
 
                 if ($debug) {
-                    echo '<b>&gt;&gt;&gt;</b> ', $ast->prettyHtml(), "\n\n";
+                    echo '<b>&gt;&gt;&gt;</b> ', json_encode($ast, JSON_PRETTY_PRINT), "\n\n";
                 }
 
                 return $ast;
@@ -107,6 +107,7 @@ final class TypeChecker
                 );
 
                 return function (State $state, $value) use ($sub_fns): bool {
+                    // TODO: unions may need to create a second state object to clean up the non-matched children
                     foreach ($sub_fns as $sub_fn) {
                         if ($sub_fn($state, $value)) {
                             $state->shiftReportStack();
@@ -756,8 +757,27 @@ final class TypeChecker
                     } else {
                         $state->appendReportStack(
                             sprintf(
-                                'Value expected to be exactly %s',
+                                'Value expected to be exactly the string %s',
                                 var_export($raw_string, true)
+                            )
+                        );
+                        return false;
+                    }
+                };
+
+            case Type::RAW_INTEGER()->getKey():
+                $raw_integer = $ast->getValue();
+
+                invariant($raw_integer !== null, 'Raw integer Node must have a value.');
+
+                return function (State $state, $value) use ($raw_integer): bool {
+                    if ($value === $raw_integer) {
+                        return true;
+                    } else {
+                        $state->appendReportStack(
+                            sprintf(
+                                'Value expected to be exactly the int %d',
+                                $raw_integer
                             )
                         );
                         return false;
