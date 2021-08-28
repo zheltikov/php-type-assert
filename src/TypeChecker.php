@@ -95,7 +95,6 @@ final class TypeChecker
                 );
 
                 return function (State $state, $value) use ($sub_fns): bool {
-                    // TODO: unions may need to create a second state object to clean up the non-matched children
                     $state->pushFrame();
 
                     foreach ($sub_fns as $sub_fn) {
@@ -103,7 +102,6 @@ final class TypeChecker
                             $state->popFrame();
                             return true;
                         }
-                        // $state->shiftReportStack();
                     }
 
                     $state->appendReportStack('Value does not match any of the Union types');
