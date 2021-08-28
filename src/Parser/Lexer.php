@@ -10,8 +10,6 @@ use Tmilos\Lexer\Token;
 
 class Lexer
 {
-    protected string $code;
-
     /**
      * @var \Tmilos\Lexer\Token[]
      */
@@ -20,7 +18,6 @@ class Lexer
     protected int $pos;
     protected int $line;
     protected int $filePos;
-    protected bool $prevCloseTagHasNewline;
 
     protected array $dropTokens;
 
@@ -49,7 +46,7 @@ class Lexer
             1
         );
 
-        $defaultAttributes = []; /// ['comments', 'startLine', 'endLine'];
+        $defaultAttributes = [];
         $usedAttributes = array_fill_keys($options['usedAttributes'] ?? $defaultAttributes, true);
 
         // Create individual boolean properties to make these checks faster.
@@ -190,39 +187,18 @@ class Lexer
     public function startLexing(
         string $code
     ) {
-        $this->code = $code; // keep the code around for __halt_compiler() handling
         $this->pos = -1;
         $this->line = 1;
         $this->filePos = 0;
 
-        // If inline HTML occurs without preceding code, treat it as if it had a leading newline.
-        // This ensures proper composability, because having a newline is the "safe" assumption.
-        $this->prevCloseTagHasNewline = true;
-
-        /// $scream = ini_set('xdebug.scream', '0');
-
-        $this->tokens = $this->token_get_all($code); /// FIXME: need a real lexer
+        $this->tokens = $this->token_get_all($code);
         $this->postprocessTokens();
-
-        /// if (false !== $scream) {
-        ///     ini_set('xdebug.scream', $scream);
-        /// }
     }
 
     protected function postprocessTokens(): void
     {
         $tokens = [];
         $comment_stack = 0;
-
-        /*
-        [
-                'code' => $valid_tokens[$token->getName()]->getValue(),
-                'name' => $token->getName(),
-                'offset' => $token->getOffset(),
-                'position' => $token->getPosition(),
-                'value' => $token->getValue(),
-            ]
-        */
 
         foreach ($this->tokens as $token) {
             if ($token['name'] === Tokens::TOKEN_COMMENT_START()->getKey()) {
@@ -319,14 +295,6 @@ class Lexer
                 $token = $this->tokens[$this->pos];
             } else {
                 // EOF token with ID 0
-                // $token = Tokens::TOKEN_EOF(); // "\0";
-                /* $token = [
-                    'code' => Tokens::TOKEN_EOF()->getValue(),
-                    'name' => 'TOKEN_EOF',
-                    'offset' => -1,
-                    'position' => -1,
-                    'value' => "\0",
-                ]; */
                 $token = "\0";
             }
 
@@ -353,35 +321,13 @@ class Lexer
             } elseif (!isset($this->dropTokens[$token['name']])) {
                 $value = $token['value'];
                 $id = $token['code'];
-                /*if (\T_CLOSE_TAG === $token[0]) {
-                    $this->prevCloseTagHasNewline = false !== strpos($token[1], "\n")
-                                                    || false !== strpos($token[1], "\r");
-                } elseif (\T_INLINE_HTML === $token[0]) {
-                    $startAttributes['hasLeadingNewline'] = $this->prevCloseTagHasNewline;
-                }*/
 
                 $this->line += substr_count($value, "\n");
                 $this->filePos += strlen($value);
             } else {
                 $this->line += substr_count($token['value'], "\n");
                 $this->filePos += strlen($token['value']);
-
-                /*if (\T_COMMENT === $token[0] || \T_DOC_COMMENT === $token[0]) {
-                    if ($this->attributeCommentsUsed) {
-                        $comment = \T_DOC_COMMENT === $token[0]
-                            ? new Comment\Doc(
-                                $token[1],
-                                $origLine, $origFilePos, $this->pos,
-                                $this->line, $this->filePos - 1, $this->pos
-                            )
-                            : new Comment(
-                                $token[1],
-                                $origLine, $origFilePos, $this->pos,
-                                $this->line, $this->filePos - 1, $this->pos
-                            );
-                        $startAttributes['comments'][] = $comment;
-                    }
-                }*/
+                
                 continue;
             }
 
