@@ -177,7 +177,7 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for type alias definitions
 - [ ] Support for type precedence checking definition
 - [X] Support for comments
-- [ ] Support for format strings (like for `sprintf` and `sscanf`)
+- [X] Support for format strings (like for `sprintf` and `sscanf`)
 - [X] Support for regular expressions
 - [ ] Support for named parameters
 - [ ] Support for open tuples: `tuple(int, ...)`, `tuple(..., int)`, `tuple(int, ..., int)`
