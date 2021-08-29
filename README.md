@@ -160,7 +160,7 @@ Here comes a list of the supported types and how they are checked internally:
 - [X] Support for `true` and `false`
 - [X] Support for `positive`, `nonpositive` and `notpositive`
 - [X] Support for `negative`, `nonnegative` and `notnegative`
-- [X] Support for tuples. For example: `(int, ?DateTime, bool)`
+- [X] Support for tuples. For example: `tuple(int, ?DateTime, bool)`
 - [X] Support for closed shapes. For example: `shape('id' => int, 'name' => string)`
 - [X] Support for open shapes. For example: `shape('id' => int, 'name' => string, ...)`
 - [X] Support for optional shape fields. For example: `shape('id' => int, ?'name' => string)`
@@ -177,8 +177,8 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for type alias definitions
 - [ ] Support for type precedence checking definition
 - [X] Support for comments
-- [ ] Support for format strings (like for `sprintf` and `sscanf`)
-- [ ] Support for regular expressions
+- [X] Support for format strings (like for `sprintf` and `sscanf`)
+- [X] Support for regular expressions
 - [ ] Support for named parameters
 - [ ] Support for open tuples: `tuple(int, ...)`, `tuple(..., int)`, `tuple(int, ..., int)`
 - [X] Support for error (type mismatch) reporting, for humans :)

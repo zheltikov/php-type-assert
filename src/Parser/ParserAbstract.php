@@ -448,9 +448,4 @@ abstract class ParserAbstract implements Parser
         echo '% Discard ' . $this->symbolToName[$symbol] . "\n";
     }
     */
-
-    /*
-     * Helper functions invoked by semantic actions
-     */
-
 }

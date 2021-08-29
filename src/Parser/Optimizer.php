@@ -390,7 +390,6 @@ class Optimizer
                     if ($child->getType()->equals(Type::INTERSECTION())) {
                         $sub_children =& $child->getChildren();
                         $new_node->appendChildren($sub_children);
-                        // $delete_children[] = $child;
                     } else {
                         $new_node->appendChild($child);
                     }
