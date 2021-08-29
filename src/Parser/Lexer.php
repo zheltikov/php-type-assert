@@ -86,6 +86,7 @@ class Lexer
             static::getCustomTokenDefinitions(),
             [
                 'regex' => Tokens::TOKEN_REGEX_STR_PREFIX(),
+                'fstring' => Tokens::TOKEN_FORMAT_STR_PREFIX(),
                 '[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*' => Tokens::TYPE_USER_DEFINED(),
             ]
         );

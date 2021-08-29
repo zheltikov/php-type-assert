@@ -819,6 +819,55 @@ final class TypeChecker
                     return false;
                 };
 
+            case Type::FORMAT_STRING()->getKey():
+                invariant($ast->countChildren() === 1, 'Format String Node must have exactly 1 child.');
+
+                $inner = $ast->getChildAt(0);
+
+                invariant(
+                    $inner->getType()->equals(Type::RAW_STRING()),
+                    'Format String Node, child type must be a raw string.'
+                );
+
+                $pattern = $inner->getValue();
+
+                invariant(
+                    $pattern !== null,
+                    'Format String Node, raw string node must have a value.'
+                );
+
+                return function (State $state, $value) use ($pattern): bool {
+                    if (!is_string($value)) {
+                        $state->appendReportStack('Value must be a string');
+                    }
+
+                    $result = sscanf($value, $pattern);
+                    if ($result === null) {
+                        $state->appendReportStack(
+                            'Value expected to match the format %s',
+                            var_export($pattern, true)
+                        );
+                        return false;
+                    }
+
+                    $state->pushFrame();
+                    $n = 0;
+                    foreach ($result as $index => $subresult) {
+                        if ($subresult === null) {
+                            $state->appendReportStack('Value\'s placeholder %d expected to match', $index);
+                            $n++;
+                        }
+                    }
+
+                    if ($n > 0) {
+                        $state->appendReportStack('Value has %d non-matching placeholders', $n);
+                        return false;
+                    }
+
+                    $state->popFrame();
+                    return true;
+                };
+
             default:
                 throw new InvalidArgumentException(
                     sprintf(

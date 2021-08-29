@@ -15,17 +15,17 @@ class Types extends ParserAbstract
     /** @var Node|null */
     protected ?Node $semValue;
 
-    protected int $tokenToSymbolMapSize = 318;
-    protected int $actionTableSize = 67;
-    protected int $gotoTableSize = 21;
+    protected int $tokenToSymbolMapSize = 319;
+    protected int $actionTableSize = 69;
+    protected int $gotoTableSize = 22;
 
-    protected int $invalidSymbol = 63;
+    protected int $invalidSymbol = 64;
     protected int $errorSymbol = 1;
     protected int $defaultAction = -32766;
     protected int $unexpectedTokenRule = 32767;
 
     protected int $YY2TBLSTATE = 15;
-    protected int $numNonLeafStates = 33;
+    protected int $numNonLeafStates = 34;
 
     protected array $symbolToName = [
         "EOF",
@@ -76,6 +76,7 @@ class Types extends ParserAbstract
         "TOKEN_RAW_INTEGER",
         "TOKEN_RAW_FLOAT",
         "TOKEN_REGEX_STR_PREFIX",
+        "TOKEN_FORMAT_STR_PREFIX",
         "TOKEN_EOF",
         "TYPE_COUNTABLE",
         "TYPE_NUMERIC",
@@ -94,117 +95,119 @@ class Types extends ParserAbstract
     ];
 
     protected array $tokenToSymbol = [
-            0,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
-           63,   63,   63,   63,   63,   63,    1,   48,    2,    3,
-            4,    5,    6,    7,    8,    9,   10,   11,   12,   49,
-           50,   13,   14,   15,   16,   17,   51,   52,   53,   18,
-           19,   20,   21,   22,   23,   24,   25,   54,   55,   26,
-           27,   28,   56,   29,   57,   30,   58,   31,   32,   33,
-           34,   35,   36,   37,   38,   39,   59,   60,   40,   41,
-           42,   43,   44,   61,   62,   45,   46,   47
+            0,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
+           64,   64,   64,   64,   64,   64,    1,   49,    2,    3,
+            4,    5,    6,    7,    8,    9,   10,   11,   12,   50,
+           51,   13,   14,   15,   16,   17,   52,   53,   54,   18,
+           19,   20,   21,   22,   23,   24,   25,   55,   56,   26,
+           27,   28,   57,   29,   58,   30,   59,   31,   32,   33,
+           34,   35,   36,   37,   38,   39,   60,   61,   40,   41,
+           42,   43,   44,   62,   63,   45,   46,   47,   48
     ];
 
     protected array $action = [
-           90,   91,   92,   93,   22,   95,   96,   97,   98,   99,
-           58,   59,   60,   61,   62,   57,   23,   24,   64,   65,
-           66,   63,   68,   67,   69,   70,   71,   72,   25,   15,
-            4,    5,    6,   25,   15,    0,   18,   17,   80,   81,
-            7,    8,    2,   82,   83,   16,   79,   80,   81,   11,
-            3,   41,   74,   73,    1,   12,  100,    9,   10,    0,
-            0,    0,    0,    0,    0,    0,  101
+           93,   94,   95,   96,   23,   98,   99,  100,  101,  102,
+           61,   62,   63,   64,   65,   60,   24,   25,   67,   68,
+           69,   66,   71,   70,   72,   73,   74,   75,   26,   15,
+            4,    5,    6,   26,   15,    7,    8,   19,   83,   84,
+            0,   83,   84,   85,   86,   16,   17,   82,   18,    2,
+           11,    9,    1,   42,   77,   76,  103,    3,   12,    0,
+           10,    0,    0,    0,    0,    0,    0,    0,  104
     ];
 
     protected array $actionCheck = [
             2,    3,    4,    5,    6,    7,    8,    9,   10,   11,
            12,   13,   14,   15,   16,   17,   18,   19,   20,   21,
            22,   23,   24,   25,   26,   27,   28,   29,   30,   31,
-           32,   33,   34,   30,   31,    0,   32,   31,   40,   41,
-           38,   39,   34,   45,   46,   47,   42,   40,   41,   34,
-           36,   35,   35,   35,   43,   36,   44,   37,   37,   -1,
-           -1,   -1,   -1,   -1,   -1,   -1,   44
+           32,   33,   34,   30,   31,   38,   39,   32,   40,   41,
+            0,   40,   41,   45,   46,   47,   48,   42,   31,   34,
+           34,   37,   43,   35,   35,   35,   44,   36,   36,   -1,
+           37,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   44
     ];
 
     protected array $actionBase = [
-           -2,   22,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,
-           -2,    4,    4,   16,   14,    3,    7,    3,    7,    2,
-            2,    2,   11,   15,    8,    6,   35,   12,   20,   17,
-           19,   18,   21,    0,   -2,    0,    0,    0,    0,    0,
-            0,    0,    0,    0,    7,    7,    2,    2
+           -2,   24,   -2,   -2,   -2,   -2,   -2,   -2,   -2,   -2,
+           -2,    5,    5,   18,   21,    3,    1,    1,    3,    1,
+           -3,   -3,   -3,    9,   16,   15,   17,   40,   12,   14,
+           19,   22,   20,   23,    0,   -2,    0,    0,    0,    0,
+            0,    0,    0,    0,    0,    1,    1,   -3,   -3
     ];
 
     protected array $actionDefault = [
-        32767,32767,32767,   56,32767,32767,32767,32767,32767,32767,
-        32767,32767,   53,32767,   55,32767,32767,32767,32767,    1,
-           42,   43,   61,32767,32767,   23,32767,32767,32767,32767,
-           52,32767,32767
+        32767,32767,32767,   58,32767,32767,32767,32767,32767,32767,
+        32767,32767,   55,32767,   57,32767,32767,32767,32767,32767,
+            1,   44,   45,   63,32767,32767,   25,32767,32767,32767,
+        32767,   54,32767,32767
     ];
 
     protected array $goto = [
-           55,   19,   54,   84,    0,   40,   44,   13,   35,   36,
-           20,   21,    0,   28,   28,   31,   87,    0,   52,    0,
-           32
+           58,   20,   87,   57,    0,   41,   45,   13,   36,   37,
+           21,   22,    0,   29,   29,   32,   90,    0,   54,   55,
+            0,   33
     ];
 
     protected array $gotoCheck = [
-            9,    2,    9,   17,   -1,    2,    2,    2,    2,    2,
-            2,    2,   -1,   10,   10,   16,   16,   -1,   10,   -1,
-           10
+            9,    2,   18,    9,   -1,    2,    2,    2,    2,    2,
+            2,    2,   -1,   10,   10,   17,   17,   -1,   10,   10,
+           -1,   10
     ];
 
     protected array $gotoBase = [
             0,    0,    1,    0,    0,    0,    0,    0,    0,  -15,
-            2,    0,    0,    0,    0,    0,   13,   -9,    0,    0,
-            0
+            2,    0,    0,    0,    0,    0,    0,   13,  -10,    0,
+            0,    0
     ];
 
     protected array $gotoDefault = [
-        -32768,   26,   14,   37,   38,   39,   42,   43,   45,   46,
-           47,   48,   49,   50,   51,   53,   27,   29,   77,   78,
-           30
+        -32768,   27,   14,   38,   39,   40,   43,   44,   46,   47,
+           48,   49,   50,   51,   52,   53,   56,   28,   30,   80,
+           81,   31
     ];
 
     protected array $ruleToNonTerminal = [
             0,    1,    2,    2,    2,    2,    2,    2,    2,    2,
-            2,    2,    2,    2,    2,    2,    2,    2,    2,   14,
-           13,    9,    9,    9,    8,    8,    8,    8,    8,    8,
+            2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
+           14,   15,   13,    9,    9,    9,    8,    8,    8,    8,
             8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
-            6,    7,   18,   19,   20,   20,   20,   10,   10,   11,
-           12,   17,   17,   17,   16,   16,   16,    3,    3,    3,
-            3,    4,    4,    4,    4,    5,    5,   15,   15
+            8,    8,    6,    7,   19,   20,   21,   21,   21,   10,
+           10,   11,   12,   18,   18,   18,   17,   17,   17,    3,
+            3,    3,    3,    4,    4,    4,    4,    5,    5,   16,
+           16
     ];
 
     protected array $ruleToLength = [
             1,    1,    3,    3,    1,    1,    1,    2,    3,    1,
-            1,    2,    1,    1,    1,    1,    1,    1,    1,    2,
-            2,    3,    2,    1,    1,    1,    1,    1,    1,    1,
+            1,    2,    1,    1,    1,    1,    1,    1,    1,    1,
+            2,    2,    2,    3,    2,    1,    1,    1,    1,    1,
             1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-            4,    4,    3,    4,    1,    1,    1,    1,    1,    1,
-            1,    3,    1,    2,    3,    1,    2,    1,    1,    1,
-            1,    1,    1,    1,    1,    1,    1,    3,    2
+            1,    1,    4,    4,    3,    4,    1,    1,    1,    1,
+            1,    1,    1,    3,    1,    2,    3,    1,    2,    1,
+            1,    1,    1,    1,    1,    1,    1,    1,    1,    3,
+            2
     ];
 
     protected array $productions = [
@@ -227,7 +230,9 @@ class Types extends ParserAbstract
         "type : raw_float",
         "type : generic_array",
         "type : regex_string",
+        "type : format_string",
         "regex_string : TOKEN_REGEX_STR_PREFIX raw_string",
+        "format_string : TOKEN_FORMAT_STR_PREFIX raw_string",
         "generic_array : TYPE_ARRAY generic_list",
         "user_defined_type : TYPE_USER_DEFINED TOKEN_NS_SEPARATOR user_defined_type",
         "user_defined_type : TOKEN_NS_SEPARATOR user_defined_type",
@@ -366,173 +371,180 @@ class Types extends ParserAbstract
                  $this->semValue = $this->semStack[$stackPos-(1-1)];
             },
             19 => function ($stackPos) {
+                 $this->semValue = $this->semStack[$stackPos-(1-1)];
+            },
+            20 => function ($stackPos) {
                  $this->semValue = new Node(Type::REGEX_STRING());
                                                       $this->semValue->appendChild($this->semStack[$stackPos-(2-2)]);
             },
-            20 => function ($stackPos) {
+            21 => function ($stackPos) {
+                 $this->semValue = new Node(Type::FORMAT_STRING());
+                                                        $this->semValue->appendChild($this->semStack[$stackPos-(2-2)]);
+            },
+            22 => function ($stackPos) {
                  $this->semValue = $this->semValue = new Node(Type::ARRAY());
                                         $this->semValue->appendChild($this->semStack[$stackPos-(2-2)]);
             },
-            21 => function ($stackPos) {
+            23 => function ($stackPos) {
                  $this->semValue = $this->semStack[$stackPos-(3-3)]; $this->semValue->setValue($this->semStack[$stackPos-(3-1)] . '\\' . $this->semValue->getValue());
             },
-            22 => function ($stackPos) {
+            24 => function ($stackPos) {
                  $this->semValue = $this->semStack[$stackPos-(2-2)]; $this->semValue->setValue('\\' . $this->semValue->getValue());
             },
-            23 => function ($stackPos) {
+            25 => function ($stackPos) {
                  $this->semValue = new Node(Type::USER_DEFINED(), $this->semStack[$stackPos-(1-1)]);
             },
-            24 => function ($stackPos) {
+            26 => function ($stackPos) {
                  $this->semValue = new Node(Type::ARRAYKEY());
             },
-            25 => function ($stackPos) {
+            27 => function ($stackPos) {
                  $this->semValue = new Node(Type::NOT_NULL());
             },
-            26 => function ($stackPos) {
+            28 => function ($stackPos) {
                  $this->semValue = new Node(Type::SCALAR());
             },
-            27 => function ($stackPos) {
+            29 => function ($stackPos) {
                  $this->semValue = new Node(Type::NUMBER());
             },
-            28 => function ($stackPos) {
+            30 => function ($stackPos) {
                  $this->semValue = new Node(Type::MIXED());
             },
-            29 => function ($stackPos) {
+            31 => function ($stackPos) {
                  $this->semValue = new Node(Type::VOID());
             },
-            30 => function ($stackPos) {
+            32 => function ($stackPos) {
                  $this->semValue = new Node(Type::VEC_OR_DICT());
             },
-            31 => function ($stackPos) {
+            33 => function ($stackPos) {
                  $this->semValue = new Node(Type::VEC());
             },
-            32 => function ($stackPos) {
+            34 => function ($stackPos) {
                  $this->semValue = new Node(Type::DICT());
             },
-            33 => function ($stackPos) {
+            35 => function ($stackPos) {
                  $this->semValue = new Node(Type::KEYSET());
             },
-            34 => function ($stackPos) {
+            36 => function ($stackPos) {
                  $this->semValue = new Node(Type::NOT_EMPTY());
             },
-            35 => function ($stackPos) {
+            37 => function ($stackPos) {
                  $this->semValue = new Node(Type::EMPTY());
             },
-            36 => function ($stackPos) {
+            38 => function ($stackPos) {
                  $this->semValue = new Node(Type::TRUE());
             },
-            37 => function ($stackPos) {
+            39 => function ($stackPos) {
                  $this->semValue = new Node(Type::FALSE());
             },
-            38 => function ($stackPos) {
+            40 => function ($stackPos) {
                  $this->semValue = new Node(Type::POSITIVE());
             },
-            39 => function ($stackPos) {
+            41 => function ($stackPos) {
                  $this->semValue = new Node(Type::NEGATIVE());
             },
-            40 => function ($stackPos) {
+            42 => function ($stackPos) {
                  $this->semValue = new Node(Type::TUPLE());
                                         $this->semValue->appendChildren($this->semStack[$stackPos-(4-3)]->getChildren());
             },
-            41 => function ($stackPos) {
+            43 => function ($stackPos) {
                  $this->semValue = new Node(Type::SHAPE());
                                         $this->semValue->appendChildren($this->semStack[$stackPos-(4-3)]->getChildren());
             },
-            42 => function ($stackPos) {
+            44 => function ($stackPos) {
                  $this->semValue = new Node(Type::KEY_VALUE_PAIR());
                                         $this->semValue->appendChild($this->semStack[$stackPos-(3-1)])->appendChild($this->semStack[$stackPos-(3-3)]);
             },
-            43 => function ($stackPos) {
+            45 => function ($stackPos) {
                  $this->semValue = new Node(Type::KEY_VALUE_PAIR());
                                         $this->semValue->appendChild(
                                             (new Node(Type::OPTIONAL()))
                                                 ->appendChild($this->semStack[$stackPos-(4-2)])
                                         )->appendChild($this->semStack[$stackPos-(4-4)]);
             },
-            44 => function ($stackPos) {
-                 $this->semValue = $this->semStack[$stackPos-(1-1)];
-            },
-            45 => function ($stackPos) {
-                 $this->semValue = $this->semStack[$stackPos-(1-1)];
-            },
             46 => function ($stackPos) {
-                 $this->semValue = new Node(Type::ELLIPSIS());
+                 $this->semValue = $this->semStack[$stackPos-(1-1)];
             },
             47 => function ($stackPos) {
-                 $this->semValue = new Node(Type::RAW_STRING());
-                                        $this->semValue->setValue(substr($this->semStack[$stackPos-(1-1)], 1, -1));
+                 $this->semValue = $this->semStack[$stackPos-(1-1)];
             },
             48 => function ($stackPos) {
+                 $this->semValue = new Node(Type::ELLIPSIS());
+            },
+            49 => function ($stackPos) {
                  $this->semValue = new Node(Type::RAW_STRING());
                                         $this->semValue->setValue(substr($this->semStack[$stackPos-(1-1)], 1, -1));
             },
-            49 => function ($stackPos) {
+            50 => function ($stackPos) {
+                 $this->semValue = new Node(Type::RAW_STRING());
+                                        $this->semValue->setValue(substr($this->semStack[$stackPos-(1-1)], 1, -1));
+            },
+            51 => function ($stackPos) {
                  $this->semValue = new Node(Type::RAW_INTEGER());
                                         $this->semValue->setValue(intval($this->semStack[$stackPos-(1-1)]));
             },
-            50 => function ($stackPos) {
+            52 => function ($stackPos) {
                  $this->semValue = new Node(Type::RAW_FLOAT());
                                         $this->semValue->setValue(floatval($this->semStack[$stackPos-(1-1)]));
             },
-            51 => function ($stackPos) {
+            53 => function ($stackPos) {
                  $this->semValue = $this->semStack[$stackPos-(3-3)];
                                                                           $this->semValue->prependChild($this->semStack[$stackPos-(3-1)]);
             },
-            52 => function ($stackPos) {
+            54 => function ($stackPos) {
                  $this->semValue = new Node(Type::LIST());
                                                                       $this->semValue->appendChild($this->semStack[$stackPos-(1-1)]);
             },
-            53 => function ($stackPos) {
+            55 => function ($stackPos) {
                  $this->semValue = new Node(Type::LIST());
                                                                       $this->semValue->appendChild($this->semStack[$stackPos-(2-1)]);
             },
-            54 => function ($stackPos) {
+            56 => function ($stackPos) {
                  $this->semValue = $this->semStack[$stackPos-(3-3)];
                                                         $this->semValue->prependChild($this->semStack[$stackPos-(3-1)]);
             },
-            55 => function ($stackPos) {
+            57 => function ($stackPos) {
                  $this->semValue = new Node(Type::LIST());
                                                         $this->semValue->appendChild($this->semStack[$stackPos-(1-1)]);
             },
-            56 => function ($stackPos) {
+            58 => function ($stackPos) {
                  $this->semValue = new Node(Type::LIST());
                                                         $this->semValue->appendChild($this->semStack[$stackPos-(2-1)]);
             },
-            57 => function ($stackPos) {
+            59 => function ($stackPos) {
                  $this->semValue = new Node(Type::BOOL());
             },
-            58 => function ($stackPos) {
+            60 => function ($stackPos) {
                  $this->semValue = new Node(Type::INT());
             },
-            59 => function ($stackPos) {
+            61 => function ($stackPos) {
                  $this->semValue = new Node(Type::FLOAT());
             },
-            60 => function ($stackPos) {
+            62 => function ($stackPos) {
                  $this->semValue = new Node(Type::STRING());
             },
-            61 => function ($stackPos) {
+            63 => function ($stackPos) {
                  $this->semValue = new Node(Type::ARRAY());
             },
-            62 => function ($stackPos) {
+            64 => function ($stackPos) {
                  $this->semValue = new Node(Type::OBJECT());
             },
-            63 => function ($stackPos) {
+            65 => function ($stackPos) {
                  $this->semValue = new Node(Type::CALLABLE());
             },
-            64 => function ($stackPos) {
+            66 => function ($stackPos) {
                  $this->semValue = new Node(Type::ITERABLE());
             },
-            65 => function ($stackPos) {
+            67 => function ($stackPos) {
                  $this->semValue = new Node(Type::RESOURCE());
             },
-            66 => function ($stackPos) {
+            68 => function ($stackPos) {
                  $this->semValue = new Node(Type::NULL());
             },
-            67 => function ($stackPos) {
+            69 => function ($stackPos) {
                  $this->semValue = new Node(Type::GENERIC_LIST());
                                         $this->semValue->appendChildren($this->semStack[$stackPos-(3-2)]->getChildren());
             },
-            68 => function ($stackPos) {
+            70 => function ($stackPos) {
                  $this->semValue = new Node(Type::GENERIC_LIST());
             },
         ];
