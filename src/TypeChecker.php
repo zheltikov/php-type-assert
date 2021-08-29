@@ -744,10 +744,8 @@ final class TypeChecker
                         return true;
                     } else {
                         $state->appendReportStack(
-                            sprintf(
-                                'Value expected to be exactly the string %s',
-                                var_export($raw_string, true)
-                            )
+                            'Value expected to be exactly the string %s',
+                            var_export($raw_string, true)
                         );
                         return false;
                     }
@@ -763,10 +761,8 @@ final class TypeChecker
                         return true;
                     } else {
                         $state->appendReportStack(
-                            sprintf(
-                                'Value expected to be exactly the int %d',
-                                $raw_integer
-                            )
+                            'Value expected to be exactly the int %d',
+                            $raw_integer
                         );
                         return false;
                     }
@@ -782,13 +778,45 @@ final class TypeChecker
                         return true;
                     } else {
                         $state->appendReportStack(
-                            sprintf(
-                                'Value expected to be exactly the float %f',
-                                $raw_float
-                            )
+                            'Value expected to be exactly the float %f',
+                            $raw_float
                         );
                         return false;
                     }
+                };
+
+            case Type::REGEX_STRING()->getKey():
+                invariant($ast->countChildren() === 1, 'Regex String Node must have exactly 1 child.');
+
+                $inner = $ast->getChildAt(0);
+
+                invariant(
+                    $inner->getType()->equals(Type::RAW_STRING()),
+                    'Regex String Node, child type must be a raw string.'
+                );
+
+                $pattern = $inner->getValue();
+
+                invariant(
+                    $pattern !== null,
+                    'Regex String Node, raw string node must have a value.'
+                );
+
+                return function (State $state, $value) use ($pattern): bool {
+                    if (!is_string($value)) {
+                        $state->appendReportStack('Value must be a string');
+                    }
+
+                    if (preg_match($pattern, $value)) {
+                        return true;
+                    }
+
+                    $state->appendReportStack(
+                        'Value expected to match the regex %s',
+                        var_export($pattern, true)
+                    );
+
+                    return false;
                 };
 
             default:

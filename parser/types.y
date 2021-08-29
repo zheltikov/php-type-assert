@@ -53,7 +53,12 @@ type : type TOKEN_UNION type          {
      | raw_integer                    { $$ = $1; }
      | raw_float                      { $$ = $1; }
      | generic_array                  { $$ = $1; }
+     | regex_string                   { $$ = $1; }
      ;
+
+regex_string : TOKEN_REGEX_STR_PREFIX raw_string    { $$ = new Node(Type::REGEX_STRING());
+                                                      $$->appendChild($2); }
+             ;
 
 generic_array : TYPE_ARRAY generic_list
                                       { $$ = $$ = new Node(Type::ARRAY());

@@ -85,6 +85,7 @@ class Lexer
             static::getBuiltInTypeTokenDefinitions(),
             static::getCustomTokenDefinitions(),
             [
+                'regex' => Tokens::TOKEN_REGEX_STR_PREFIX(),
                 '[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*' => Tokens::TYPE_USER_DEFINED(),
             ]
         );
@@ -192,6 +193,7 @@ class Lexer
         $this->filePos = 0;
 
         $this->tokens = $this->token_get_all($code);
+        //var_dump($this->tokens);
         $this->postprocessTokens();
     }
 
@@ -327,7 +329,7 @@ class Lexer
             } else {
                 $this->line += substr_count($token['value'], "\n");
                 $this->filePos += strlen($token['value']);
-                
+
                 continue;
             }
 
