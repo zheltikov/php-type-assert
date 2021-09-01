@@ -187,7 +187,7 @@ Here comes a list of the supported types and how they are checked internally:
     - [ ] Support for variable-count parameters: `(function(string, ...): int)`
 - [X] Support for raw integers
 - [X] Support for raw floats
-- [ ] Support for shape integer keys
+- [X] Support for shape integer keys
 
 ## Performance
 
