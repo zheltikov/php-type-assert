@@ -228,6 +228,21 @@ final class TypeChecker
                             'Shape Node key must not be duplicated.'
                         );
 
+                        $sub_fns[$key] = self::astToCheckerFn($type);
+                        $count++;
+                    } elseif ($raw_string->getType()->equals(Type::RAW_INTEGER())) {
+                        $key = $raw_string->getValue();
+
+                        invariant(
+                            $key !== null,
+                            'Shape Node key node must have a value.'
+                        );
+
+                        // Check that key is not duplicated
+                        invariant(
+                            !array_key_exists($key, $sub_fns),
+                            'Shape Node key must not be duplicated.'
+                        );
 
                         $sub_fns[$key] = self::astToCheckerFn($type);
                         $count++;
@@ -240,8 +255,9 @@ final class TypeChecker
                         $inner = $raw_string->getChildAt(0);
 
                         invariant(
-                            $inner->getType()->equals(Type::RAW_STRING()),
-                            'Shape Node optional key type must be a raw string.'
+                            $inner->getType()->equals(Type::RAW_STRING())
+                            || $inner->getType()->equals(Type::RAW_INTEGER()),
+                            'Shape Node optional key type must be a raw string or a raw integer.'
                         );
 
                         $key = $inner->getValue();
@@ -262,7 +278,7 @@ final class TypeChecker
                         $count_optional++;
                     } else {
                         invariant_violation(
-                            'Shape Node key type must be a, maybe optional, raw string.'
+                            'Shape Node key type must be a, maybe optional, raw string or raw integer.'
                         );
                     }
                 }
