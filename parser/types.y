@@ -108,9 +108,20 @@ shape : TYPE_SHAPE PAREN_LEFT key_value_pair_list PAREN_RIGHT
 key_value_pair : raw_string TOKEN_ARROW type
                                       { $$ = new Node(Type::KEY_VALUE_PAIR());
                                         $$->appendChild($1)->appendChild($3); }
+
+               | raw_integer TOKEN_ARROW type
+                                      { $$ = new Node(Type::KEY_VALUE_PAIR());
+                                        $$->appendChild($1)->appendChild($3); }
                ;
 
 optional_key_value_pair : PREFIX_NULLABLE raw_string TOKEN_ARROW type
+                                      { $$ = new Node(Type::KEY_VALUE_PAIR());
+                                        $$->appendChild(
+                                            (new Node(Type::OPTIONAL()))
+                                                ->appendChild($2)
+                                        )->appendChild($4); }
+
+                        | PREFIX_NULLABLE raw_integer TOKEN_ARROW type
                                       { $$ = new Node(Type::KEY_VALUE_PAIR());
                                         $$->appendChild(
                                             (new Node(Type::OPTIONAL()))
