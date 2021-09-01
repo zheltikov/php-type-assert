@@ -182,9 +182,12 @@ Here comes a list of the supported types and how they are checked internally:
 - [ ] Support for named parameters
 - [ ] Support for open tuples: `tuple(int, ...)`, `tuple(..., int)`, `tuple(int, ..., int)`
 - [X] Support for error (type mismatch) reporting, for humans :)
-- [ ] Support for callable types (parameter count and types, return type)
+- [ ] Support for callable types:
+    - [ ] Support for fixed-count parameters: `(function(string, int): array<string, int>)`
+    - [ ] Support for variable-count parameters: `(function(string, ...): int)`
 - [X] Support for raw integers
 - [X] Support for raw floats
+- [X] Support for shape integer keys
 
 ## Performance
 
