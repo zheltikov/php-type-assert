@@ -7,6 +7,7 @@ use RuntimeException;
 use Throwable;
 use Zheltikov\TypeAssert\Parser\{Lexer, Node, Optimizer, Type, Types};
 use Zheltikov\TypeAssert\TypeCheckerState as State;
+use Zheltikov\TypeAssert\StateMessage as Message;
 
 use function Zheltikov\Invariant\invariant;
 use function Zheltikov\Invariant\invariant_violation;
@@ -104,7 +105,7 @@ final class TypeChecker
                         }
                     }
 
-                    $state->appendReportStack('Value does not match any of the Union types');
+                    $state->appendReportStack(Message::UNION_MISMATCH());
                     return false;
                 };
 
@@ -122,7 +123,7 @@ final class TypeChecker
                     foreach ($sub_fns as $sub_fn) {
                         if (!$sub_fn($state, $value)) {
                             // TODO: specify which Intersection type
-                            $state->appendReportStack('Value does not satisfy Intersection type');
+                            $state->appendReportStack(Message::INTERSECTION_MISMATCH());
                             return false;
                         }
                     }
@@ -156,25 +157,25 @@ final class TypeChecker
 
                 return function (State $state, $value) use ($sub_fns, $count): bool {
                     if (!is_array($value)) {
-                        $state->appendReportStack('Value is not an array');
+                        $state->appendReportStack(Message::NOT_ARRAY());
                         return false;
                     }
 
                     $actual_count = count($value);
                     if ($actual_count !== $count) {
-                        $state->appendReportStack('Tuple has wrong length %d, expected %d', $actual_count, $count);
+                        $state->appendReportStack(Message::TUPLE_WRONG_LENGTH(), $actual_count, $count);
                         return false;
                     }
 
                     $i = 0;
                     foreach ($value as $index => $item) {
                         if ($index !== $i) {
-                            $state->appendReportStack('Tuple has an invalid key %s', var_export($index, true));
+                            $state->appendReportStack(Message::TUPLE_INVALID_KEY(), var_export($index, true));
                             return false;
                         }
 
                         if (!$sub_fns[$i]($state, $item)) {
-                            $state->appendReportStack('Tuple has invalid child at index %d', $i);
+                            $state->appendReportStack(Message::TUPLE_INVALID_CHILD(), $i);
                             return false;
                         }
 
@@ -287,7 +288,7 @@ final class TypeChecker
                     return function (State $state, $value) use ($sub_fns, $count, $open_shape): bool {
                         if (!is_array($value)) {
                             // TODO: add support for Dicts
-                            $state->appendReportStack('Value is not an array');
+                            $state->appendReportStack(Message::NOT_ARRAY());
                             return false;
                         }
 
@@ -296,7 +297,7 @@ final class TypeChecker
                             if ($actual_count !== $count) {
                                 // Length does not match
                                 $state->appendReportStack(
-                                    'Shape has wrong length %d, expected %d',
+                                    Message::SHAPE_WRONG_LENGTH(),
                                     $actual_count,
                                     $count
                                 );
@@ -305,7 +306,7 @@ final class TypeChecker
                         } elseif ($actual_count < $count) {
                             // Length does not match
                             $state->appendReportStack(
-                                'Open Shape has wrong length %d, expected less than %d',
+                                Message::OPEN_SHAPE_WRONG_LENGTH(),
                                 $actual_count,
                                 $count
                             );
@@ -319,13 +320,13 @@ final class TypeChecker
 
                             if (!array_key_exists($key, $value)) {
                                 // Required key is not set
-                                $state->appendReportStack('Required shape key %s is not set', var_export($key, true));
+                                $state->appendReportStack(Message::SHAPE_REQUIRED_KEY(), var_export($key, true));
                                 return false;
                             }
 
                             if (!$sub_fns[$key]($state, $value[$key])) {
                                 // Required type does not match
-                                $state->appendReportStack('Shape has invalid value at key %s', var_export($key, true));
+                                $state->appendReportStack(Message::SHAPE_WRONG_VALUE(), var_export($key, true));
                                 return false;
                             }
                         }
@@ -342,7 +343,7 @@ final class TypeChecker
                     ): bool {
                         if (!is_array($value)) {
                             // TODO: add support for Dicts
-                            $state->appendReportStack('Value is not an array');
+                            $state->appendReportStack(Message::NOT_ARRAY());
                             return false;
                         }
 
@@ -356,7 +357,7 @@ final class TypeChecker
                             ) {
                                 // Length is not valid
                                 $state->appendReportStack(
-                                    'Shape has wrong length %d, expected %d <= length <= %d',
+                                    Message::OPTIONAL_SHAPE_WRONG_LENGTH(),
                                     $actual_count,
                                     $count,
                                     $count + $count_optional
@@ -366,7 +367,7 @@ final class TypeChecker
                         } elseif ($count > $actual_count) {
                             // Length is not valid
                             $state->appendReportStack(
-                                'Shape has wrong length %d, expected at most %d',
+                                Message::OPEN_OPTIONAL_SHAPE_WRONG_LENGTH(),
                                 $actual_count,
                                 $count
                             );
@@ -378,7 +379,7 @@ final class TypeChecker
                                 if (!$sub_fns[$key]($state, $sub_value)) {
                                     // Required type does not match
                                     $state->appendReportStack(
-                                        'Shape has invalid required value at key %s',
+                                        Message::SHAPE_WRONG_VALUE(),
                                         var_export($key, true)
                                     );
                                     return false;
@@ -390,7 +391,7 @@ final class TypeChecker
                                 if (!$optional[$key]($state, $sub_value)) {
                                     // Optional type does not match
                                     $state->appendReportStack(
-                                        'Shape has invalid optional value at key %s',
+                                        Message::SHAPE_WRONG_VALUE(),
                                         var_export($key, true)
                                     );
                                     return false;
@@ -402,7 +403,7 @@ final class TypeChecker
                                 // Key is invalid as it is not either in required
                                 // nor in optional keys
                                 $state->appendReportStack(
-                                    'Shape has invalid key %s (an Open Shape would fix this)',
+                                    Message::SHAPE_INVALID_KEY(),
                                     var_export($key, true)
                                 );
                                 return false;
@@ -425,7 +426,7 @@ final class TypeChecker
                     if (is_bool($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be bool');
+                        $state->appendReportStack(Message::EXPECTED_BOOL());
                         return false;
                     }
                 };
@@ -435,7 +436,7 @@ final class TypeChecker
                     if (is_int($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be int');
+                        $state->appendReportStack(Message::EXPECTED_INT());
                         return false;
                     }
                 };
@@ -445,7 +446,7 @@ final class TypeChecker
                     if (is_float($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be float');
+                        $state->appendReportStack(Message::EXPECTED_FLOAT());
                         return false;
                     }
                 };
@@ -455,7 +456,7 @@ final class TypeChecker
                     if (is_string($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be string');
+                        $state->appendReportStack(Message::EXPECTED_STRING());
                         return false;
                     }
                 };
@@ -468,7 +469,7 @@ final class TypeChecker
                         if (is_array($value)) {
                             return true;
                         } else {
-                            $state->appendReportStack('Value expected to be array');
+                            $state->appendReportStack(Message::EXPECTED_ARRAY());
                             return false;
                         }
                     };
@@ -487,7 +488,7 @@ final class TypeChecker
                             if (is_array($value)) {
                                 return true;
                             } else {
-                                $state->appendReportStack('Value expected to be array');
+                                $state->appendReportStack(Message::EXPECTED_ARRAY());
                                 return false;
                             }
                         };
@@ -497,7 +498,7 @@ final class TypeChecker
 
                         return function (State $state, $value) use ($value_fn): bool {
                             if (!is_array($value)) {
-                                $state->appendReportStack('Value is not an array');
+                                $state->appendReportStack(Message::NOT_ARRAY());
                                 return false;
                             }
 
@@ -505,10 +506,10 @@ final class TypeChecker
                             foreach ($value as $index => $item) {
                                 if (!$value_fn($state, $item)) {
                                     if ($index === $i) {
-                                        $state->appendReportStack('Array has invalid child at index %d', $i);
+                                        $state->appendReportStack(Message::ARRAY_INVALID_INDEX_CHILD(), $i);
                                     } else {
                                         $state->appendReportStack(
-                                            'Array has invalid child at key %s',
+                                            Message::ARRAY_INVALID_KEY_CHILD(),
                                             var_export($index, true)
                                         );
                                     }
@@ -526,18 +527,18 @@ final class TypeChecker
 
                         return function (State $state, $value) use ($key_fn, $value_fn): bool {
                             if (!is_array($value)) {
-                                $state->appendReportStack('Value is not an array');
+                                $state->appendReportStack(Message::NOT_ARRAY());
                                 return false;
                             }
 
                             foreach ($value as $key => $item) {
                                 if (!$key_fn($state, $key)) {
-                                    $state->appendReportStack('Array has invalid key %s', var_export($key, true));
+                                    $state->appendReportStack(Message::ARRAY_INVALID_KEY(), var_export($key, true));
                                     return false;
                                 }
                                 if (!$value_fn($state, $item)) {
                                     $state->appendReportStack(
-                                        'Array has invalid value at key %s',
+                                        Message::ARRAY_INVALID_KEY_CHILD(),
                                         var_export($key, true)
                                     );
                                     return false;
@@ -562,7 +563,7 @@ final class TypeChecker
                     if (is_object($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be object');
+                        $state->appendReportStack(Message::EXPECTED_OBJECT());
                         return false;
                     }
                 };
@@ -572,7 +573,7 @@ final class TypeChecker
                     if (is_callable($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be callable');
+                        $state->appendReportStack(Message::EXPECTED_CALLABLE());
                         return false;
                     }
                 };
@@ -582,7 +583,7 @@ final class TypeChecker
                     if (is_iterable($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be iterable');
+                        $state->appendReportStack(Message::EXPECTED_ITERABLE());
                         return false;
                     }
                 };
@@ -592,7 +593,7 @@ final class TypeChecker
                     if (is_resource($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be resource');
+                        $state->appendReportStack(Message::EXPECTED_RESOURCE());
                         return false;
                     }
                 };
@@ -602,7 +603,7 @@ final class TypeChecker
                     if ($value === null) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be null');
+                        $state->appendReportStack(Message::EXPECTED_NULL());
                         return false;
                     }
                 };
@@ -616,7 +617,7 @@ final class TypeChecker
                     if (!$fn($state, $value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value negated type mismatch');
+                        $state->appendReportStack(Message::NEGATED_MISMATCH());
                         return false;
                     }
                 };
@@ -634,7 +635,7 @@ final class TypeChecker
                     if ($value instanceof $type) {
                         return true;
                     } else {
-                        $state->appendReportStack(sprintf('Value is not instanceof %s', $type));
+                        $state->appendReportStack(Message::NOT_INSTANCEOF(), $type);
                         return false;
                     }
                 };
@@ -663,7 +664,7 @@ final class TypeChecker
                     if (is_scalar($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be scalar');
+                        $state->appendReportStack(Message::EXPECTED_SCALAR());
                         return false;
                     }
                 };
@@ -686,7 +687,7 @@ final class TypeChecker
 
             case Type::VOID()->getKey():
                 return function (State $state): bool {
-                    $state->appendReportStack('Value cannot ever be void :)');
+                    $state->appendReportStack(Message::NOT_VOID());
                     return false;
                 };
 
@@ -705,7 +706,7 @@ final class TypeChecker
                     if (empty($value)) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be empty');
+                        $state->appendReportStack(Message::EXPECTED_EMPTY());
                         return false;
                     }
                 };
@@ -715,7 +716,7 @@ final class TypeChecker
                     if ($value === true) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be true');
+                        $state->appendReportStack(Message::EXPECTED_TRUE());
                         return false;
                     }
                 };
@@ -725,7 +726,7 @@ final class TypeChecker
                     if ($value === false) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be false');
+                        $state->appendReportStack(Message::EXPECTED_FALSE());
                         return false;
                     }
                 };
@@ -735,7 +736,7 @@ final class TypeChecker
                     if ($value > 0) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be positive');
+                        $state->appendReportStack(Message::EXPECTED_POSITIVE());
                         return false;
                     }
                 };
@@ -745,7 +746,7 @@ final class TypeChecker
                     if ($value < 0) {
                         return true;
                     } else {
-                        $state->appendReportStack('Value expected to be negative');
+                        $state->appendReportStack(Message::EXPECTED_NEGATIVE());
                         return false;
                     }
                 };
@@ -760,7 +761,7 @@ final class TypeChecker
                         return true;
                     } else {
                         $state->appendReportStack(
-                            'Value expected to be exactly the string %s',
+                            Message::MATCH_STRING(),
                             var_export($raw_string, true)
                         );
                         return false;
@@ -777,7 +778,7 @@ final class TypeChecker
                         return true;
                     } else {
                         $state->appendReportStack(
-                            'Value expected to be exactly the int %d',
+                            Message::MATCH_INT(),
                             $raw_integer
                         );
                         return false;
@@ -794,7 +795,7 @@ final class TypeChecker
                         return true;
                     } else {
                         $state->appendReportStack(
-                            'Value expected to be exactly the float %f',
+                            Message::MATCH_FLOAT(),
                             $raw_float
                         );
                         return false;
@@ -820,7 +821,7 @@ final class TypeChecker
 
                 return function (State $state, $value) use ($pattern): bool {
                     if (!is_string($value)) {
-                        $state->appendReportStack('Value must be a string');
+                        $state->appendReportStack(Message::EXPECTED_STRING());
                     }
 
                     if (preg_match($pattern, $value)) {
@@ -828,7 +829,7 @@ final class TypeChecker
                     }
 
                     $state->appendReportStack(
-                        'Value expected to match the regex %s',
+                        Message::MATCH_REGEX(),
                         var_export($pattern, true)
                     );
 
@@ -854,13 +855,13 @@ final class TypeChecker
 
                 return function (State $state, $value) use ($pattern): bool {
                     if (!is_string($value)) {
-                        $state->appendReportStack('Value must be a string');
+                        $state->appendReportStack(Message::EXPECTED_STRING());
                     }
 
                     $result = sscanf($value, $pattern);
                     if ($result === null) {
                         $state->appendReportStack(
-                            'Value expected to match the format %s',
+                            Message::MATCH_FORMAT(),
                             var_export($pattern, true)
                         );
                         return false;
@@ -870,13 +871,13 @@ final class TypeChecker
                     $n = 0;
                     foreach ($result as $index => $subresult) {
                         if ($subresult === null) {
-                            $state->appendReportStack('Value\'s placeholder %d expected to match', $index);
+                            $state->appendReportStack(Message::EXPECTED_MATCH_PLACEHOLDER(), $index);
                             $n++;
                         }
                     }
 
                     if ($n > 0) {
-                        $state->appendReportStack('Value has %d non-matching placeholders', $n);
+                        $state->appendReportStack(Message::NON_MATCHING_PLACEHOLDERS(), $n);
                         return false;
                     }
 
