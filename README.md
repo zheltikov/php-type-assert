@@ -188,6 +188,8 @@ Here comes a list of the supported types and how they are checked internally:
 - [X] Support for raw integers
 - [X] Support for raw floats
 - [X] Support for shape integer keys
+- [ ] The function `as_` should convert (cast) the value, rather than checking it. Use some (extendable) converter
+  class.
 
 ## Performance
 
