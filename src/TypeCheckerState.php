@@ -60,7 +60,7 @@ class TypeCheckerState
     public function appendReportStack(Message $message, ...$args): self
     {
         if ($this->isReportingEnabled()) {
-            $this->report_stack[$this->frame][] = $this->messageToString($message, $args);
+            $this->report_stack[$this->frame][] = $this->messageToString($message, ...$args);
         }
         return $this;
     }
