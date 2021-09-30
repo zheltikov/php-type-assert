@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "780dd44035f41e15b597840ab8a2a397",
+    "content-hash": "cb5364924846e6e8b40ebd48d645256e",
     "packages": [
         {
             "name": "myclabs/php-enum",
