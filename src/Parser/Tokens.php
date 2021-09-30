@@ -72,4 +72,5 @@ final class Tokens extends Enum
     private const TOKEN_RAW_FLOAT = 316;
     private const TOKEN_REGEX_STR_PREFIX = 317;
     private const TOKEN_FORMAT_STR_PREFIX = 318;
+    private const TOKEN_BLOCK_COMMENT = 319;
 }
