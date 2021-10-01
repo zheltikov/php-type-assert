@@ -113,6 +113,7 @@ class Lexer
             // '/\*' => Tokens::TOKEN_COMMENT_START(),
             // '\*/' => Tokens::TOKEN_COMMENT_END(),
             '\/\*(\*(?!\/)|[^*])*\*\/' => Tokens::TOKEN_BLOCK_COMMENT(),
+            '\/\/([^\n])*\n' => Tokens::TOKEN_LINE_COMMENT(),
 
             // FIXME: this string implementation is somewhat limited
             '"([^"]*)"' => Tokens::TOKEN_STRING_DQ(),
@@ -216,7 +217,10 @@ class Lexer
             }
 
             if ($comment_stack === 0) {
-                if ($token['name'] !== Tokens::TOKEN_BLOCK_COMMENT()->getKey()) {
+                if (
+                    $token['name'] !== Tokens::TOKEN_BLOCK_COMMENT()->getKey()
+                    && $token['name'] !== Tokens::TOKEN_LINE_COMMENT()->getKey()
+                ) {
                     $tokens[] = $token;
                 }
             }
