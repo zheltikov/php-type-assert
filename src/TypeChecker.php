@@ -885,6 +885,21 @@ final class TypeChecker
                     return true;
                 };
 
+            case Type::INTABLE()->getKey():
+                return function (State $state, $value): bool {
+                    if (!is_numeric($value)) {
+                        return false;
+                    }
+
+                    $normalized = (string) (int) $value;
+
+                    if ($normalized !== (string) $value) {
+                        return false;
+                    }
+
+                    return true;
+                };
+
             default:
                 throw new InvalidArgumentException(
                     sprintf(

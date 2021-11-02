@@ -271,6 +271,9 @@ class TypeCheckerState
                 'Value has %d non-matching placeholders',
                 $n
             ),
+
+            Message::NOT_NUMERIC()->getKey() => fn() => 'Value expected to be numeric',
+            Message::NOT_INTABLE()->getKey() => fn() => 'Value expected to be intable',
         ];
     }
 

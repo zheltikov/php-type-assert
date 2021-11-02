@@ -93,6 +93,7 @@ custom_type : TYPE_ARRAYKEY             { $$ = new Node(Type::ARRAYKEY()); }
             | TYPE_FALSE                { $$ = new Node(Type::FALSE()); }
             | TYPE_POSITIVE             { $$ = new Node(Type::POSITIVE()); }
             | TYPE_NEGATIVE             { $$ = new Node(Type::NEGATIVE()); }
+            | TYPE_INTABLE              { $$ = new Node(Type::INTABLE()); }
             ;
 
 tuple : TYPE_TUPLE PAREN_LEFT type_comma_list PAREN_RIGHT
