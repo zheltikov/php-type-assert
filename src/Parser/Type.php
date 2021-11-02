@@ -53,6 +53,7 @@ use MyCLabs\Enum\Enum;
  * @method Type RAW_FLOAT()
  * @method Type REGEX_STRING()
  * @method Type FORMAT_STRING()
+ * @method Type INTABLE()
  *
  */
 final class Type extends Enum
@@ -100,4 +101,5 @@ final class Type extends Enum
     private const RAW_FLOAT = 'raw_float';
     private const REGEX_STRING = 'regex_string';
     private const FORMAT_STRING = 'format_string';
+    private const INTABLE = 'intable';
 }

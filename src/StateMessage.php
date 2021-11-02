@@ -52,6 +52,8 @@ use MyCLabs\Enum\Enum;
  * @method static StateMessage MATCH_FORMAT()
  * @method static StateMessage EXPECTED_MATCH_PLACEHOLDER()
  * @method static StateMessage NON_MATCHING_PLACEHOLDERS()
+ * @method static StateMessage NOT_NUMERIC()
+ * @method static StateMessage NOT_INTABLE()
  *
  */
 final class StateMessage extends Enum
@@ -98,4 +100,6 @@ final class StateMessage extends Enum
     private const MATCH_FORMAT = 'match_format';
     private const EXPECTED_MATCH_PLACEHOLDER = 'expected_match_placeholder';
     private const NON_MATCHING_PLACEHOLDERS = 'non_matching_placeholders';
+    private const NOT_NUMERIC = 'not_numeric';
+    private const NOT_INTABLE = 'not_intable';
 }

@@ -177,6 +177,7 @@ class Lexer
             $not . 'negative' => Tokens::TYPE_NOT_NEGATIVE(),
             'tuple' => Tokens::TYPE_TUPLE(),
             '_' => Tokens::TYPE_PLACEHOLDER(),
+            'intable' => Tokens::TYPE_INTABLE(),
         ];
     }
 
