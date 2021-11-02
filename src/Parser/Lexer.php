@@ -81,6 +81,7 @@ class Lexer
             [
 
                 'arraykey' => Tokens::TYPE_ARRAYKEY(),
+                'intable' => Tokens::TYPE_INTABLE(),
             ],
             static::getBuiltInTypeTokenDefinitions(),
             static::getCustomTokenDefinitions(),
@@ -177,7 +178,6 @@ class Lexer
             $not . 'negative' => Tokens::TYPE_NOT_NEGATIVE(),
             'tuple' => Tokens::TYPE_TUPLE(),
             '_' => Tokens::TYPE_PLACEHOLDER(),
-            'intable' => Tokens::TYPE_INTABLE(),
         ];
     }
 
